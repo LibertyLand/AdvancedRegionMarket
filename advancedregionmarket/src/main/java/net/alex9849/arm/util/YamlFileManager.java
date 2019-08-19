@@ -4,10 +4,12 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
-public abstract class YamlFileManager<ManagedObject extends Saveable> {
+public abstract class YamlFileManager<ManagedObject extends Saveable> implements Iterable<ManagedObject> {
     private List<ManagedObject> objectList;
     private YamlConfiguration yamlConfiguration;
     private File savepath;
@@ -22,25 +24,29 @@ public abstract class YamlFileManager<ManagedObject extends Saveable> {
         this.objectList.addAll(loadSavedObjects(this.yamlConfiguration));
     }
 
-    public void add(ManagedObject managedObject, boolean unsafe) {
+    public boolean add(ManagedObject managedObject, boolean unsafe) {
+        boolean result = false;
         if(!this.objectList.contains(managedObject)) {
-            this.objectList.add(managedObject);
+            result = this.objectList.add(managedObject);
             managedObject.queueSave();
             if(!unsafe) {
-                updateFile();
+                this.updateFile();
             }
         }
+        return result;
     }
 
-    public void add(ManagedObject managedObject) {
-        this.add(managedObject, false);
+    public boolean add(ManagedObject managedObject) {
+        return this.add(managedObject, false);
     }
 
-    public void remove(ManagedObject managedObject) {
+    public boolean remove(ManagedObject managedObject) {
         if(this.objectList.remove(managedObject)) {
-            this.queueSaveCompleteSave();
+            this.queueCompleteSave();
             this.updateFile();
+            return true;
         }
+        return false;
     }
 
     public void saveFile() {
@@ -87,12 +93,27 @@ public abstract class YamlFileManager<ManagedObject extends Saveable> {
 
     public abstract void writeStaticSettings(YamlConfiguration yamlConfiguration);
 
-    public void queueSaveCompleteSave() {
+    public void queueCompleteSave() {
         this.completeSaveQueuned = true;
     }
 
-    public List<ManagedObject> getObjectListCopy() {
-        return new ArrayList<>(this.objectList);
+    public ManagedObject get(int index) {
+        return this.objectList.get(index);
+
+    }
+
+    public int size() {
+        return this.objectList.size();
+    }
+
+    @Override
+    public Iterator<ManagedObject> iterator() {
+        return this.objectList.iterator();
+    }
+
+    @Override
+    public void forEach(Consumer<? super ManagedObject> action) {
+        this.objectList.forEach(action);
     }
 
     public static void writeResourceToDisc(File savepath, InputStream resourceStream) {
@@ -118,4 +139,8 @@ public abstract class YamlFileManager<ManagedObject extends Saveable> {
         }
         return false;
     }
+
+
+
+
 }

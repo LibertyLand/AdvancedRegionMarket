@@ -3,7 +3,6 @@ package net.alex9849.arm.entitylimit;
 import net.alex9849.arm.Messages;
 import net.alex9849.arm.regions.Region;
 import net.alex9849.arm.util.Saveable;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -11,7 +10,6 @@ import org.bukkit.entity.EntityType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 public class EntityLimitGroup implements Saveable {
     private List<EntityLimit> entityLimits;
@@ -187,12 +185,9 @@ public class EntityLimitGroup implements Saveable {
 
     public String getConvertedMessage(String message, List<Entity> entities, int entityExpansion) {
         String result = message;
-        result = result.replace("%entitytype%", Messages.ENTITYLIMIT_TOTAL);
-        result = result.replace("%actualentities%", entities.size() + "");
         result = result.replace("%softlimitentities%", EntityLimitGroup.intToLimitString(this.getSoftLimit(entityExpansion)));
-        result = result.replace("%hardlimitentities%", EntityLimitGroup.intToLimitString(this.getHardLimit()));
-        result = result.replace("%priceperextraentity%", this.getPricePerExtraEntity() + "");
-        result = result.replace("%currency%", Messages.CURRENCY);
+        result = result.replace("%actualentities%", entities.size() + "");
+        result = getConvertedMessage(result);
         return result;
     }
 
@@ -244,5 +239,14 @@ public class EntityLimitGroup implements Saveable {
             confSection.set(i + ".pricePerExtraEntity", entityLimit.getPricePerExtraEntity());
         }
         return confSection;
+    }
+
+    public String getConvertedMessage(String message) {
+        if(message.contains("%entitylimitgroup%")) message = message.replace("%entitylimitgroup%", this.getName());
+        if(message.contains("%priceperextraentity%")) message = message.replace("%priceperextraentity%", this.getPricePerExtraEntity() + "");
+        if(message.contains("%currency%")) message = message.replace("%currency%", Messages.CURRENCY);
+        if(message.contains("%entitytype%")) message = message.replace("%entitytype%", Messages.ENTITYLIMIT_TOTAL);
+        if(message.contains("%hardlimitentities%")) message = message.replace("%hardlimitentities%", EntityLimitGroup.intToLimitString(this.getHardLimit()));
+        return message;
     }
 }

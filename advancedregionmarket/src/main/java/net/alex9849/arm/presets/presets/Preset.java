@@ -2,8 +2,9 @@ package net.alex9849.arm.presets.presets;
 
 import net.alex9849.arm.Messages;
 import net.alex9849.arm.entitylimit.EntityLimitGroup;
-import net.alex9849.arm.regions.Region;
+import net.alex9849.arm.flaggroups.FlagGroup;
 import net.alex9849.arm.regionkind.RegionKind;
+import net.alex9849.arm.regions.Region;
 import net.alex9849.arm.regions.price.Autoprice.AutoPrice;
 import net.alex9849.arm.util.Saveable;
 import net.alex9849.inter.WGRegion;
@@ -11,7 +12,6 @@ import net.alex9849.signs.SignData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
-import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -30,12 +30,13 @@ public abstract class Preset implements Saveable {
     protected boolean doBlockReset = true;
     protected boolean isUserResettable = true;
     protected int allowedSubregions = 0;
+    protected FlagGroup flagGroup = FlagGroup.DEFAULT;
     protected AutoPrice autoPrice;
     protected EntityLimitGroup entityLimitGroup;
     protected List<String> setupCommands = new ArrayList<>();
     private boolean needsSave = false;
 
-    public Preset(String name, boolean hasPrice, double price, RegionKind regionKind, boolean autoReset, boolean isHotel, boolean doBlockReset, boolean isUserResettable, int allowedSubregions, AutoPrice autoPrice, EntityLimitGroup entityLimitGroup, List<String> setupCommands){
+    public Preset(String name, boolean hasPrice, double price, RegionKind regionKind, FlagGroup flagGroup, boolean autoReset, boolean isHotel, boolean doBlockReset, boolean isUserResettable, int allowedSubregions, AutoPrice autoPrice, EntityLimitGroup entityLimitGroup, List<String> setupCommands){
         this.name = name;
         this.hasPrice = hasPrice;
         this.price = price;
@@ -47,12 +48,21 @@ public abstract class Preset implements Saveable {
         this.allowedSubregions = allowedSubregions;
         this.setupCommands = setupCommands;
         this.autoPrice = autoPrice;
+        this.flagGroup = flagGroup;
         this.entityLimitGroup = entityLimitGroup;
         this.needsSave = false;
     }
 
     public String getName(){
         return this.name;
+    }
+
+    public FlagGroup getFlagGroup() {
+        return this.flagGroup;
+    }
+
+    public void setFlagGroup(FlagGroup flagGroup) {
+        this.flagGroup = flagGroup;
     }
 
     public void setName(String name){
@@ -152,6 +162,7 @@ public abstract class Preset implements Saveable {
         player.sendMessage(Messages.REGION_INFO_PRICE + price);
         this.getAdditionalInfo(player);
         player.sendMessage(Messages.REGION_INFO_TYPE + regKind.getName());
+        player.sendMessage(Messages.REGION_INFO_FLAGGROUP + flagGroup.getName());
         player.sendMessage(Messages.REGION_INFO_ENTITYLIMITGROUP + entityLimitGroup.getName());
         player.sendMessage(Messages.REGION_INFO_AUTORESET + this.isAutoReset());
         player.sendMessage(Messages.REGION_INFO_HOTEL + this.isHotel());
@@ -241,6 +252,7 @@ public abstract class Preset implements Saveable {
         section.set("regionKind", this.getRegionKind().getName());
         section.set("isHotel", this.isHotel());
         section.set("doBlockReset", this.isDoBlockReset());
+        section.set("flaggroup", this.flagGroup.getName());
         section.set("entityLimitGroup", this.getEntityLimitGroup().getName());
         section.set("autoreset", this.isAutoReset());
         if(this.hasAutoPrice()) {

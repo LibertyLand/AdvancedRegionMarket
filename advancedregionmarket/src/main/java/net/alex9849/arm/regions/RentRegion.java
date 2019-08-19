@@ -2,12 +2,13 @@ package net.alex9849.arm.regions;
 
 import net.alex9849.arm.AdvancedRegionMarket;
 import net.alex9849.arm.ArmSettings;
-import net.alex9849.arm.limitgroups.LimitGroup;
 import net.alex9849.arm.Messages;
 import net.alex9849.arm.Permission;
 import net.alex9849.arm.entitylimit.EntityLimitGroup;
 import net.alex9849.arm.events.BuyRegionEvent;
 import net.alex9849.arm.events.ExtendRegionEvent;
+import net.alex9849.arm.flaggroups.FlagGroup;
+import net.alex9849.arm.limitgroups.LimitGroup;
 import net.alex9849.arm.minifeatures.teleporter.Teleporter;
 import net.alex9849.arm.regionkind.RegionKind;
 import net.alex9849.arm.regions.price.ContractPrice;
@@ -20,7 +21,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
@@ -38,10 +38,10 @@ public class RentRegion extends Region {
     private static Boolean sendExpirationWarning;
 
     public RentRegion(WGRegion region, World regionworld, List<SignData> rentsign, RentPrice rentPrice, Boolean sold, Boolean autoreset, Boolean allowOnlyNewBlocks,
-                      Boolean doBlockReset, RegionKind regionKind, Location teleportLoc, long lastreset, boolean isUserResettable, long payedTill,
+                      Boolean doBlockReset, RegionKind regionKind, FlagGroup flagGroup, Location teleportLoc, long lastreset, boolean isUserResettable, long payedTill,
                       List<Region> subregions, int allowedSubregions, EntityLimitGroup entityLimitGroup, HashMap<EntityType, Integer> extraEntitys,
                       int boughtExtraTotalEntitys) {
-        super(region, regionworld, rentsign, rentPrice, sold, autoreset, allowOnlyNewBlocks, doBlockReset, regionKind, teleportLoc, lastreset, isUserResettable,
+        super(region, regionworld, rentsign, rentPrice, sold, autoreset, allowOnlyNewBlocks, doBlockReset, regionKind, flagGroup, teleportLoc, lastreset, isUserResettable,
                 subregions, allowedSubregions, entityLimitGroup, extraEntitys, boughtExtraTotalEntitys);
 
         this.payedTill = payedTill;
@@ -120,10 +120,23 @@ public class RentRegion extends Region {
     }
 
     @Override
-    public void displayExtraInfo(CommandSender sender) {
-        sender.sendMessage(Messages.REGION_INFO_REMAINING_TIME + this.calcRemainingTime());
-        sender.sendMessage(Messages.REGION_INFO_EXTEND_PER_CLICK + this.getExtendPerClick());
-        sender.sendMessage(Messages.REGION_INFO_MAX_RENT_TIME + this.getMaxRentTimeString());
+    public void regionInfo(CommandSender sender) {
+        super.regionInfo(sender);
+        List<String> msg;
+
+        if(sender.hasPermission(Permission.ADMIN_INFO)) {
+            msg = Messages.REGION_INFO_RENTREGION_ADMIN;
+        } else {
+            msg = Messages.REGION_INFO_RENTREGION;
+        }
+
+        if(this.isSubregion()) {
+            msg = Messages.REGION_INFO_RENTREGION_SUBREGION;
+        }
+
+        for(String s : msg) {
+            sender.sendMessage(this.getConvertedMessage(s));
+        }
     }
 
     @Override
@@ -151,7 +164,7 @@ public class RentRegion extends Region {
         this.getRegion().setOwner(player);
 
         this.updateSigns();
-
+        this.flagGroup.applyToRegion(this, FlagGroup.ResetMode.COMPLETE);
         this.queueSave();
 
     }

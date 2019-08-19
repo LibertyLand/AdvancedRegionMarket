@@ -7,7 +7,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>advancedregionmarket</artifactId>
-  <version>1.0</version>
+  <version>1.9.2</version>
   <build>
     <resources>
       <resource>
@@ -21,6 +21,7 @@
           <include>presets.yml</include>
           <include>entitylimits.yml</include>
           <include>regionkinds.yml</include>
+          <include>flaggroups.yml</include>
         </includes>
       </resource>
     </resources>

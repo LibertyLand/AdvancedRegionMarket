@@ -23,7 +23,6 @@
         <module>mc1-13adapter</module>
         <module>mc1-14adapter</module>
         <module>armimporter</module>
-        <module>armquickshopbridge</module>
     </modules>
 
 
@@ -59,6 +58,21 @@
             <id>maven-central</id>
             <url>http://central.maven.org/maven2</url>
         </repository>
+        <repository>
+            <id>advanced-region-market</id>
+            <url>https://gitlab.com/api/v4/projects/10068588/packages/maven/</url>
+        </repository>
     </repositories>
+
+ <distributionManagement>
+   <repository>
+     <id>gitlab-maven</id>
+     <url>https://gitlab.com/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
+   </repository>
+   <snapshotRepository>
+     <id>gitlab-maven</id>
+     <url>https://gitlab.com/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
+   </snapshotRepository>
+ </distributionManagement>
 
 </project>

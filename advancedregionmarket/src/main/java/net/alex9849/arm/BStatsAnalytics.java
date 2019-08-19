@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
@@ -95,9 +94,8 @@ public class BStatsAnalytics {
 
     private static RegionStatistics getRegionStatistics() {
         RegionStatistics regionStatistics = new RegionStatistics();
-        List<Region> regionList = AdvancedRegionMarket.getRegionManager().getObjectListCopy();
 
-        for(Region region : regionList) {
+        for(Region region : AdvancedRegionMarket.getRegionManager()) {
             if(region instanceof SellRegion) {
                 if(region.isSold()) {
                     regionStatistics.soldSellRegions++;

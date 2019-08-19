@@ -99,6 +99,18 @@ RegionKinds:
   # and to be able to buy them. Replace REGIONKIND_INTERNAL_NAME with the internal name of the regionkind
   activateRegionKindPermissions: false
 
+SignLinkingMode:
+  # The regions listed below will automatically be ignored if you try to select a region via SignLinkingMode
+  regionblacklist:
+    world:
+      - blacklistedTestRegionInWorld1
+      - blacklistedTestRegionInWorld2
+    world_nether:
+      - blacklistedTestRegionInWorld_nether1
+      - blacklistedTestRegionInWorld_nether2
+    world_the_end:
+      - anotherBlacklistedRegion
+
 PriceFormatting:
   # Describes how prices will be formatted. For example:
   # US would format the price like this: 123,456.78
@@ -145,6 +157,10 @@ Other:
   AllowRegionfinderTeleportToBuySign: true
   # If true all entities will be removed if the region gets resetted
   RemoveEntitiesOnRegionBlockReset: true
+  # If true the plugin will send me your servers ip address and playercount every 5 minutes. This allows me to visit your server and is one
+  # of my biggest motivations to continue to develop this plugin. If you disable this plugin or set Sendstats to false and do not start it
+  # for 2 weeks, all data from your server will automatically be deleted.
+  Sendstats: true
 
   #These commands will be executed by the player if the clicks on a sign. "buyaction" means the buyaction of the region will be executed (For example extending the region
   #or teminating the contract) you can use all region-variables in your commands.
@@ -152,7 +168,7 @@ SignClickActions:
   RightClickNotSneakCmd: "buyaction"
   RightClickSneakCmd: "arm sellback %regionid%"
   LeftClickNotSneakCmd: "arm info %regionid%"
-  LeftClickSneakCmd: "arm info %regionid%"
+  LeftClickSneakCmd: "arm flageditor %regionid%"
 
 Subregions:
   AllowSubRegionUserReset: false
@@ -194,11 +210,20 @@ GUI:
   PrevPageItem: ARROW
   HotelSettingItem: RED_BED
   UnsellItem: NAME_TAG
+  FlageditorItem: BANNER
+  FlagItem: SIGN
+  FlagSettingsSelectedItem: EMERALD_BLOCK
+  FlagSettingsNotSelectedItem: REDSTONE_BLOCK
+  FlagGroupSelectedItem: EMERALD_BLOCK
+  FlagGroupNotSelectedItem: REDSTONE_BLOCK
+  FlagRemoveItem: BARRIER
+  FlagUserInputItem: WRITABLE_BOOK
+  FlageditorResetItem: TNT
   DisplayRegionOwnerButton: true
   DisplayRegionMemberButton: true
   DisplayRegionFinderButton: true
 
 #Do not change this
-Version: 1.83
+Version: 1.92
 # Programmed by Alex9849
 # If you like my plugin you are free to donate me via PayPal https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2Z6VVLS5SZXJS

@@ -3,11 +3,11 @@ package net.alex9849.arm.regions;
 import net.alex9849.arm.AdvancedRegionMarket;
 import net.alex9849.arm.ArmSettings;
 import net.alex9849.arm.Messages;
-import net.alex9849.arm.Permission;
 import net.alex9849.arm.entitylimit.EntityLimitGroup;
 import net.alex9849.arm.events.ResetBlocksEvent;
 import net.alex9849.arm.events.UnsellRegionEvent;
 import net.alex9849.arm.events.UpdateRegionEvent;
+import net.alex9849.arm.flaggroups.FlagGroup;
 import net.alex9849.arm.minifeatures.ParticleBorder;
 import net.alex9849.arm.minifeatures.teleporter.Teleporter;
 import net.alex9849.arm.regionkind.RegionKind;
@@ -17,7 +17,6 @@ import net.alex9849.exceptions.InputException;
 import net.alex9849.exceptions.SchematicNotFoundException;
 import net.alex9849.inter.WGRegion;
 import net.alex9849.signs.SignData;
-import net.alex9849.signs.SignDataFactory;
 import org.bukkit.*;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
@@ -53,6 +52,7 @@ public abstract class Region implements Saveable {
     protected int allowedSubregions;
     protected Region parentRegion;
     protected boolean isUserResettable;
+    protected FlagGroup flagGroup;
     protected EntityLimitGroup entityLimitGroup;
     private boolean needsSave;
     private HashMap<EntityType, Integer> extraEntitys;
@@ -60,7 +60,7 @@ public abstract class Region implements Saveable {
     Integer m2Amount;
 
     public Region(WGRegion region, World regionworld, List<SignData> sellsign, Price price, Boolean sold, Boolean autoreset,
-                  Boolean isHotel, Boolean doBlockReset, RegionKind regionKind, Location teleportLoc, long lastreset,
+                  Boolean isHotel, Boolean doBlockReset, RegionKind regionKind, FlagGroup flagGroup, Location teleportLoc, long lastreset,
                   boolean isUserResettable, List<Region> subregions, int allowedSubregions, EntityLimitGroup entityLimitGroup,
                   HashMap<EntityType, Integer> extraEntitys, int boughtExtraTotalEntitys){
         this.region = region;
@@ -69,6 +69,7 @@ public abstract class Region implements Saveable {
         this.price = price;
         this.regionworld = regionworld;
         this.regionKind = regionKind;
+        this.flagGroup = flagGroup;
         this.autoreset = autoreset;
         this.isDoBlockReset = doBlockReset;
         this.lastreset = lastreset;
@@ -150,6 +151,11 @@ public abstract class Region implements Saveable {
 
     public Region getParentRegion() {
         return this.parentRegion;
+    }
+
+    public void setFlagGroup(FlagGroup flagGroup) {
+        this.flagGroup = flagGroup;
+        this.queueSave();
     }
 
     private void setParentRegion(Region region) {
@@ -265,6 +271,10 @@ public abstract class Region implements Saveable {
         return region;
     }
 
+    public void applyFlagGroup(FlagGroup.ResetMode resetMode) {
+        this.flagGroup.applyToRegion(this, resetMode);
+    }
+
     public void updateSigns() {
 
         for(SignData signData : this.sellsign) {
@@ -345,6 +355,7 @@ public abstract class Region implements Saveable {
                 }
             }
             this.resetBuiltBlocks();
+            this.flagGroup.applyToRegion(this, FlagGroup.ResetMode.COMPLETE);
 
         } catch (IOException e) {
             if(e instanceof SchematicNotFoundException) {
@@ -373,65 +384,7 @@ public abstract class Region implements Saveable {
         }
     }
 
-    public void regionInfo(CommandSender sender){
-        String owners = "";
-        String members = "";
-        String subregions = "";
-        List<UUID> ownerslist = this.getRegion().getOwners();
-        List<UUID> memberslist = this.getRegion().getMembers();
-        for(int i = 0; i < ownerslist.size() - 1; i++){
-            owners = owners + Bukkit.getOfflinePlayer(ownerslist.get(i)).getName() + ", ";
-        }
-        if(ownerslist.size() != 0){
-            owners = owners + Bukkit.getOfflinePlayer(ownerslist.get(ownerslist.size() - 1)).getName();
-        }
-        for(int i = 0; i < memberslist.size() - 1; i++){
-            members = members + Bukkit.getOfflinePlayer(memberslist.get(i)).getName() + ", ";
-        }
-        if(memberslist.size() != 0){
-            members = members + Bukkit.getOfflinePlayer(memberslist.get(memberslist.size() - 1)).getName();
-        }
-        for (int i = 0; i < this.getSubregions().size() - 1; i++) {
-            subregions = subregions + this.getSubregions().get(i).getRegion().getId() + ", ";
-        }
-        if(this.getSubregions().size() != 0){
-            subregions = subregions + this.getSubregions().get(this.getSubregions().size() - 1).getRegion().getId();
-        }
-
-
-
-        sender.sendMessage(Messages.REGION_INFO);
-        sender.sendMessage(Messages.REGION_INFO_ID + this.getRegion().getId());
-        sender.sendMessage(Messages.REGION_INFO_SOLD + Messages.convertYesNo(this.isSold()));
-        sender.sendMessage(Messages.REGION_INFO_PRICE + this.price.calcPrice(this.getRegion()) + " " + Messages.CURRENCY);
-        sender.sendMessage(Messages.REGION_INFO_TYPE + this.getRegionKind().getDisplayName());
-        sender.sendMessage(Messages.REGION_INFO_ENTITYLIMITGROUP + this.getEntityLimitGroup().getName());
-        sender.sendMessage(Messages.REGION_INFO_OWNER + owners);
-        sender.sendMessage(Messages.REGION_INFO_MEMBERS + members);
-        sender.sendMessage(Messages.REGION_INFO_HOTEL + Messages.convertYesNo(this.isHotel));
-        if(sender.hasPermission(Permission.ADMIN_INFO)){
-            String autoresetmsg = Messages.REGION_INFO_AUTORESET + Messages.convertYesNo(this.autoreset);
-            if((!ArmSettings.isEnableAutoReset()) && this.autoreset){
-                autoresetmsg = autoresetmsg + " (but globally disabled)";
-            }
-            sender.sendMessage(autoresetmsg);
-            sender.sendMessage(Messages.REGION_INFO_DO_BLOCK_RESET + Messages.convertYesNo(this.isDoBlockReset));
-            sender.sendMessage(Messages.REGION_INFO_IS_USER_RESETTABLE + Messages.convertYesNo(this.isUserResettable));
-            String isAutoPriceInfo = "";
-            if(this.getPriceObject().isAutoPrice()) {
-                isAutoPriceInfo = this.getPriceObject().getAutoPrice().getName();
-            } else {
-                isAutoPriceInfo = Messages.convertYesNo(this.getPriceObject().isAutoPrice());
-            }
-            sender.sendMessage(Messages.REGION_INFO_AUTOPRICE + isAutoPriceInfo);
-        }
-        this.displayExtraInfo(sender);
-        if(!this.isSubregion()) {
-            sender.sendMessage(Messages.REGION_INFO_ALLOWED_SUBREGIONS + this.getAllowedSubregions());
-            sender.sendMessage(Messages.REGION_INFO_SUBREGIONS + subregions);
-        }
-
-
+    public void regionInfo(CommandSender sender) {
         if(sender instanceof Player) {
             if(ArmSettings.isRegionInfoParticleBorder()) {
                 Player player = (Player) sender;
@@ -444,8 +397,6 @@ public abstract class Region implements Saveable {
             }
         }
     }
-
-    public abstract void displayExtraInfo(CommandSender sender);
 
     public abstract void updateRegion();
 
@@ -583,6 +534,10 @@ public abstract class Region implements Saveable {
         this.automaticResetRegion(null);
     }
 
+    public FlagGroup getFlagGroup() {
+        return this.flagGroup;
+    }
+
     public void automaticResetRegion(Player player){
         UnsellRegionEvent unsellRegionEvent = new UnsellRegionEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(unsellRegionEvent);
@@ -633,10 +588,8 @@ public abstract class Region implements Saveable {
 
         this.extraEntitys.clear();
         this.extraTotalEntitys = 0;
-
-        for(SignData signData : this.sellsign){
-            this.updateSignText(signData);
-        }
+        this.updateSigns();
+        this.flagGroup.applyToRegion(this, FlagGroup.ResetMode.COMPLETE);
         this.queueSave();
     }
 
@@ -717,22 +670,75 @@ public abstract class Region implements Saveable {
     public abstract void setPrice(Price price);
 
     public String getConvertedMessage(String message) {
-        message = message.replace("%regionid%", this.getRegion().getId());
-        message = message.replace("%region%", this.getRegion().getId());
-        message = message.replace("%price%", Price.formatPrice(this.getPrice()) + "");
-        message = message.replace("%dimensions%", this.getDimensions());
-        message = message.replace("%priceperm2%", Price.formatPrice(this.getPricePerM2()) + "");
-        message = message.replace("%priceperm3%", Price.formatPrice(this.getPricePerM3()) + "");
-        message = message.replace("%remainingdays%", (Region.getResetCooldown() - this.timeSinceLastReset()) + "");
-        message = message.replace("%paybackmoney%", Price.formatPrice(this.getPaybackMoney()));
-        message = message.replace("%currency%", Messages.CURRENCY);
-        message = message.replace("%owner%", this.getOwnerName());
-        message = message.replace("%world%", this.getRegionworld().getName());
-        message = message.replace("%subregionlimit%", this.getAllowedSubregions() + "");
-        message = message.replace("%hotelfunctionstatus%", Messages.convertEnabledDisabled(this.isHotel));
-        message = message.replace("%soldstatus%", this.getSoldStringStatus());
-        message = message.replace("%selltype%", this.getSellType().getName());
+        if(message.contains("%regionid%")) message = message.replace("%regionid%", this.getRegion().getId());
+        if(message.contains("%region%")) message = message.replace("%region%", this.getRegion().getId());
+        if(message.contains("%price%")) message = message.replace("%price%", Price.formatPrice(this.getPrice()) + "");
+        if(message.contains("%dimensions%")) message = message.replace("%dimensions%", this.getDimensions());
+        if(message.contains("%priceperm2%")) message = message.replace("%priceperm2%", Price.formatPrice(this.getPricePerM2()) + "");
+        if(message.contains("%priceperm3%")) message = message.replace("%priceperm3%", Price.formatPrice(this.getPricePerM3()) + "");
+        if(message.contains("%remainingdays%")) message = message.replace("%remainingdays%", (Region.getResetCooldown() - this.timeSinceLastReset()) + "");
+        if(message.contains("%paybackmoney%")) message = message.replace("%paybackmoney%", Price.formatPrice(this.getPaybackMoney()));
+        if(message.contains("%currency%")) message = message.replace("%currency%", Messages.CURRENCY);
+        if(message.contains("%world%")) message = message.replace("%world%", this.getRegionworld().getName());
+        if(message.contains("%subregionlimit%")) message = message.replace("%subregionlimit%", this.getAllowedSubregions() + "");
+        if(message.contains("%hotelfunctionstatus%")) message = message.replace("%hotelfunctionstatus%", Messages.convertEnabledDisabled(this.isHotel));
+        if(message.contains("%soldstatus%")) message = message.replace("%soldstatus%", this.getSoldStringStatus());
+        if(message.contains("%issold%")) message = message.replace("%issold%", Messages.convertYesNo(this.isSold()));
+        if(message.contains("%selltype%")) message = message.replace("%selltype%", this.getSellType().getName());
+        if(message.contains("%ishotel%")) message = message.replace("%ishotel%", Messages.convertYesNo(this.isHotel()));
+        if(message.contains("%isuserresettable%")) message = message.replace("%isuserresettable%", Messages.convertYesNo(this.isUserResettable()));
+        if(message.contains("%isdoblockreset%")) message = message.replace("%isdoblockreset%", Messages.convertYesNo(this.isDoBlockReset()));
+        if(message.contains("%autoprice%")) {
+            String autopriceInfo = "";
+            if(this.getPriceObject().isAutoPrice()) {
+                autopriceInfo = this.getPriceObject().getAutoPrice().getName();
+            } else {
+                autopriceInfo = Messages.convertYesNo(this.getPriceObject().isAutoPrice());
+            }
+            message = message.replace("%autoprice%", autopriceInfo);
+        }
+        if(message.contains("%isautoreset%")) {
+            String autoresetInfo = Messages.convertYesNo(this.isAutoreset());
+            if(this.isAutoreset() && !ArmSettings.isEnableAutoReset()) {
+                autoresetInfo += " (but globally disabled)";
+            }
+            message = message.replace("%isautoreset%", autoresetInfo);
+        }
+        if(message.contains("%subregions%")) {
+            String subregions = "";
+            for (int i = 0; i < this.getSubregions().size() - 1; i++) {
+                subregions = subregions + this.getSubregions().get(i).getRegion().getId() + ", ";
+            }
+            if(this.getSubregions().size() != 0){
+                subregions = subregions + this.getSubregions().get(this.getSubregions().size() - 1).getRegion().getId();
+            }
+            message = message.replace("%subregions%", subregions);
+        }
+        if(message.contains("%owner%")) {
+            String ownersInfo = "";
+            List<UUID> ownerslist = this.getRegion().getOwners();
+            for(int i = 0; i < ownerslist.size() - 1; i++){
+                ownersInfo = ownersInfo + Bukkit.getOfflinePlayer(ownerslist.get(i)).getName() + ", ";
+            }
+            if(ownerslist.size() != 0){
+                ownersInfo = ownersInfo + Bukkit.getOfflinePlayer(ownerslist.get(ownerslist.size() - 1)).getName();
+            }
+            message = message.replace("%owner%", ownersInfo);
+        }
+        if(message.contains("%members%")) {
+            String membersInfo = "";
+            List<UUID> memberslist = this.getRegion().getMembers();
+            for(int i = 0; i < memberslist.size() - 1; i++){
+                membersInfo = membersInfo + Bukkit.getOfflinePlayer(memberslist.get(i)).getName() + ", ";
+            }
+            if(memberslist.size() != 0){
+                membersInfo = membersInfo + Bukkit.getOfflinePlayer(memberslist.get(memberslist.size() - 1)).getName();
+            }
+            message = message.replace("%members%", membersInfo);
+        }
         message = this.getRegionKind().getConvertedMessage(message);
+        message = this.getEntityLimitGroup().getConvertedMessage(message);
+        message = this.flagGroup.getConvertedMessage(message);
         return message;
     }
 
@@ -910,6 +916,7 @@ public abstract class Region implements Saveable {
 
         if(!this.isSubregion()) {
             yamlConfiguration.set("kind", this.getRegionKind().getName());
+            yamlConfiguration.set("flagGroup", this.flagGroup.getName());
             yamlConfiguration.set("autoreset", this.isAutoreset());
             yamlConfiguration.set("entityLimitGroup", this.getEntityLimitGroup().getName());
             yamlConfiguration.set("doBlockReset", this.isDoBlockReset());
@@ -951,4 +958,16 @@ public abstract class Region implements Saveable {
         return  returnme;
     }
 
+    public Set<Chunk> getChunks() {
+        Set<Chunk> chunkSet = new HashSet<>();
+        int maxX = this.getRegion().getMaxPoint().getBlockX();
+        int maxZ = this.getRegion().getMaxPoint().getBlockZ();
+
+        for(int x = this.getRegion().getMinPoint().getBlockX(); x <= maxX + 16; x += 16) {
+            for(int z = this.getRegion().getMinPoint().getBlockZ(); z <= maxZ + 16; z += 16) {
+                chunkSet.add(this.getRegionworld().getChunkAt(x >> 4, z >> 4));
+            }
+        }
+        return chunkSet;
+    }
 }

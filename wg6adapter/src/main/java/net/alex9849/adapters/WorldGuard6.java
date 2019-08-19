@@ -1,27 +1,24 @@
 package net.alex9849.adapters;
 
 import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.BlockVector2D;
-import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.domains.DefaultDomain;
+import com.sk89q.worldguard.protection.flags.*;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import com.sk89q.worldguard.protection.regions.RegionType;
 import net.alex9849.inter.WGRegion;
 import net.alex9849.inter.WorldGuardInterface;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
 
 public class WorldGuard6 extends WorldGuardInterface {
-    private static List<WG6Region> createdRegions = new ArrayList<WG6Region>();
+    private static HashMap<ProtectedRegion, WG6Region> createdRegions = new HashMap<ProtectedRegion, WG6Region>();
 
     @Override
     public RegionManager getRegionManager(World world, WorldGuardPlugin worldGuardPlugin) {
@@ -76,13 +73,28 @@ public class WorldGuard6 extends WorldGuardInterface {
     }
 
     private WG6Region getUniqueRegion(ProtectedRegion protectedRegion) {
-        for(WG6Region wgRegion : createdRegions) {
-            if(wgRegion.getRegion() == protectedRegion) {
-                return wgRegion;
-            }
+        if(protectedRegion == null) {
+            return null;
         }
-        WG6Region wg6Region = new WG6Region(protectedRegion);
-        return wg6Region;
+        if(createdRegions.containsKey(protectedRegion)) {
+            return createdRegions.get(protectedRegion);
+        }
+        WG6Region wg7Region = new WG6Region(protectedRegion);
+        createdRegions.put(protectedRegion, wg7Region);
+        return wg7Region;
+    }
+
+    public Flag fuzzyMatchFlag(String id) {
+        return DefaultFlag.fuzzyMatchFlag(id);
+    }
+
+    public <V> V parseFlagInput(Flag<V> flag , String input) throws InvalidFlagFormat {
+        return flag.parseInput(WorldGuardPlugin.inst(), null, input);
+    }
+
+    @Override
+    public RegionGroup parseFlagInput(RegionGroupFlag flag, String input) throws InvalidFlagFormat {
+        return flag.parseInput(WorldGuardPlugin.inst(), null, input);
     }
 
 }

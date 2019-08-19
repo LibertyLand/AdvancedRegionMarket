@@ -2,12 +2,13 @@ package net.alex9849.arm.regions;
 
 import net.alex9849.arm.AdvancedRegionMarket;
 import net.alex9849.arm.ArmSettings;
-import net.alex9849.arm.limitgroups.LimitGroup;
 import net.alex9849.arm.Messages;
 import net.alex9849.arm.Permission;
 import net.alex9849.arm.entitylimit.EntityLimitGroup;
 import net.alex9849.arm.events.BuyRegionEvent;
 import net.alex9849.arm.events.ExtendRegionEvent;
+import net.alex9849.arm.flaggroups.FlagGroup;
+import net.alex9849.arm.limitgroups.LimitGroup;
 import net.alex9849.arm.minifeatures.teleporter.Teleporter;
 import net.alex9849.arm.regionkind.RegionKind;
 import net.alex9849.arm.regions.price.ContractPrice;
@@ -19,7 +20,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
@@ -38,10 +38,10 @@ public class ContractRegion extends Region {
     private boolean terminated;
 
     public ContractRegion(WGRegion region, World regionworld, List<SignData> contractsign, ContractPrice contractPrice, Boolean sold, Boolean autoreset,
-                          Boolean isHotel, Boolean doBlockReset, RegionKind regionKind, Location teleportLoc, long lastreset, boolean isUserResettable,
+                          Boolean isHotel, Boolean doBlockReset, RegionKind regionKind, FlagGroup flagGroup, Location teleportLoc, long lastreset, boolean isUserResettable,
                           long payedTill, Boolean terminated, List<Region> subregions, int allowedSubregions, EntityLimitGroup entityLimitGroup,
                           HashMap<EntityType, Integer> extraEntitys, int boughtExtraTotalEntitys) {
-        super(region, regionworld, contractsign, contractPrice, sold, autoreset, isHotel, doBlockReset, regionKind, teleportLoc, lastreset, isUserResettable,
+        super(region, regionworld, contractsign, contractPrice, sold, autoreset, isHotel, doBlockReset, regionKind, flagGroup, teleportLoc, lastreset, isUserResettable,
                 subregions, allowedSubregions, entityLimitGroup, extraEntitys, boughtExtraTotalEntitys);
         this.payedTill = payedTill;
         this.extendTime = contractPrice.getExtendTime();
@@ -51,10 +51,23 @@ public class ContractRegion extends Region {
     }
 
     @Override
-    public void displayExtraInfo(CommandSender sender) {
-        sender.sendMessage(Messages.REGION_INFO_TERMINATED + Messages.convertYesNo(this.terminated));
-        sender.sendMessage(Messages.REGION_INFO_AUTO_EXTEND_TIME + this.getExtendTimeString());
-        sender.sendMessage(Messages.REGION_INFO_NEXT_EXTEND_REMAINING_TIME + this.calcRemainingTime());
+    public void regionInfo(CommandSender sender) {
+        super.regionInfo(sender);
+        List<String> msg;
+
+        if(sender.hasPermission(Permission.ADMIN_INFO)) {
+            msg = Messages.REGION_INFO_CONTRACTREGION_ADMIN;
+        } else {
+            msg = Messages.REGION_INFO_CONTRACTREGION;
+        }
+
+        if(this.isSubregion()) {
+            msg = Messages.REGION_INFO_CONTRACTREGION_SUBREGION;
+        }
+
+        for(String s : msg) {
+            sender.sendMessage(this.getConvertedMessage(s));
+        }
     }
 
     @Override
@@ -112,9 +125,8 @@ public class ContractRegion extends Region {
         this.terminated = false;
         this.getRegion().deleteMembers();
         this.getRegion().setOwner(player);
-
         this.updateSigns();
-
+        this.flagGroup.applyToRegion(this, FlagGroup.ResetMode.COMPLETE);
         this.queueSave();
     }
 
@@ -450,6 +462,7 @@ public class ContractRegion extends Region {
         message = super.getConvertedMessage(message);
         message = message.replace("%extend%", this.getExtendTimeString());
         message = message.replace("%remaining%", this.calcRemainingTime());
+        message = message.replace("%isterminated%", Messages.convertYesNo(this.isTerminated()));
         message = message.replace("%priceperm2perweek%", Price.formatPrice(this.getPricePerM2PerWeek()));
         message = message.replace("%priceperm3perweek%", Price.formatPrice(this.getPricePerM3PerWeek()));
         return message;

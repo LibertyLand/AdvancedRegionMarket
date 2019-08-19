@@ -3,8 +3,8 @@ package net.alex9849.arm.limitgroups;
 import net.alex9849.arm.AdvancedRegionMarket;
 import net.alex9849.arm.Messages;
 import net.alex9849.arm.Permission;
-import net.alex9849.arm.regions.Region;
 import net.alex9849.arm.regionkind.RegionKind;
+import net.alex9849.arm.regions.Region;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -192,7 +192,7 @@ public class LimitGroup {
             player.sendMessage(syntaxtotal);
         }
 
-        for(RegionKind regionKind : AdvancedRegionMarket.getRegionKindManager().getObjectListCopy()){
+        for(RegionKind regionKind : AdvancedRegionMarket.getRegionKindManager()){
             if(RegionKind.hasPermission(player, regionKind) && regionKind.isDisplayInLimits()){
 
                 syntaxtotal = Messages.LIMIT_INFO;

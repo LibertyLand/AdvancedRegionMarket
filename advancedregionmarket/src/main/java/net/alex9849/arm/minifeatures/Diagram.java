@@ -3,8 +3,9 @@ package net.alex9849.arm.minifeatures;
 import net.alex9849.arm.AdvancedRegionMarket;
 import net.alex9849.arm.Messages;
 import net.alex9849.arm.regionkind.RegionKind;
+import net.alex9849.arm.regions.Region;
+import net.alex9849.arm.regions.SellType;
 import net.alex9849.exceptions.InputException;
-import net.alex9849.arm.regions.*;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -14,7 +15,7 @@ public class Diagram {
         sender.sendMessage(Messages.REGION_STATS);
         sendStatsForAllSellTypes(sender);
         sendStatsByRegionKind(sender, RegionKind.DEFAULT);
-        for(RegionKind regionKind : AdvancedRegionMarket.getRegionKindManager().getObjectListCopy()) {
+        for(RegionKind regionKind : AdvancedRegionMarket.getRegionKindManager()) {
             sendStatsByRegionKind(sender, regionKind);
         }
         sendStatsByRegionKind(sender, RegionKind.SUBREGION);
@@ -44,7 +45,7 @@ public class Diagram {
         int allRegions = 0;
         int allSoldRegions = 0;
 
-        for(Region region : AdvancedRegionMarket.getRegionManager().getObjectListCopy()) {
+        for(Region region : AdvancedRegionMarket.getRegionManager()) {
             allRegions++;
             if (region.isSold()) {
                 allSoldRegions++;

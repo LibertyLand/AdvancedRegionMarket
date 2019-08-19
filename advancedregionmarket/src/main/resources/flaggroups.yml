@@ -1,0 +1,230 @@
+FlagGroups:
+  examplegroup:
+    priority: 10
+    available:
+      0:
+        setting: 'deny g:non_members'
+        editable: false
+        flag: ride
+      1:
+        setting: 'allow g:all'
+        editable: false
+        flag: use
+      2:
+        setting: 'deny g:non_members'
+        editable: false
+        flag: build
+      3:
+        setting: 'deny g:non_members'
+        editable: false
+        flag: block-break
+      4:
+        setting: 'deny g:non_members'
+        editable: false
+        flag: block-place
+      5:
+        setting: 'deny g:non_members'
+        editable: false
+        flag: chest-access
+    sold:
+      0:
+        setting: 'deny g:non_members'
+        editable: true
+        flag: ride
+        guidescription:
+          - '&2Decides if players can use vehicles'
+      1:
+        setting: 'deny g:non_members'
+        editable: true
+        flag: use
+        guidescription:
+          - '&2Decides if players can use things'
+          - '&2like doors, levers, etc.'
+      2:
+        setting: 'deny g:non_members'
+        editable: false
+        flag: build
+      3:
+        setting: 'deny g:non_members'
+        editable: false
+        flag: block-break
+      4:
+        setting: 'deny g:non_members'
+        editable: false
+        flag: block-place
+      5:
+        setting: 'deny g:non_members'
+        editable: false
+        flag: chest-access
+
+DefaultFlagGroup:
+  priority: 10
+  available:
+    0:
+      setting: 'deny g:non_members'
+      editable: false
+      flag: ride
+    1:
+      setting: '&b[ARM] &6This region can be bought for &2%price%%currency%'
+      editable: false
+      flag: greeting
+      applyto:
+        - SellRegion
+    2:
+      setting: '&b[ARM] &6This region can be rented for &2%price%%currency%&6/&2%extendperclick% &6and extended for up to &2%maxrenttime%'
+      editable: false
+      flag: greeting
+      applyto:
+        - RentRegion
+    3:
+      setting: '&b[ARM] &6Contract available for &2%price%%currency%&6/&2%extend%'
+      editable: false
+      flag: greeting
+      applyto:
+        - ContractRegion
+    4:
+      setting: 'allow g:all'
+      editable: false
+      flag: use
+    5:
+      setting: 'deny g:non_members'
+      editable: false
+      flag: build
+    6:
+      setting: 'deny g:non_members'
+      editable: false
+      flag: block-break
+    7:
+      setting: 'deny g:non_members'
+      editable: false
+      flag: block-place
+    8:
+      setting: 'deny g:non_members'
+      editable: false
+      flag: chest-access
+  sold:
+    0:
+      setting: 'deny g:non_members'
+      editable: true
+      flag: ride
+      editPermission: "my.custom.permission"
+      guidescription:
+        - '&2Decides if players can use vehicles'
+    1:
+      setting: 'remove'
+      editable: true
+      flag: greeting
+      guidescription:
+        - '&2Sets a message that will be'
+        - '&2shown to players that enter'
+        - '&2the region'
+    2:
+      setting: 'deny g:non_members'
+      editable: true
+      flag: use
+      guidescription:
+        - '&2Decides if players can use things'
+        - '&2like doors, levers, etc.'
+    3:
+      setting: 'deny g:non_members'
+      editable: false
+      flag: build
+    4:
+      setting: 'deny g:non_members'
+      editable: false
+      flag: block-break
+    5:
+      setting: 'deny g:non_members'
+      editable: false
+      flag: block-place
+    6:
+      setting: 'deny g:non_members'
+      editable: false
+      flag: chest-access
+
+SubregionFlagGroup:
+  # Pritority will be ignored for Subregions.
+  # ARM will automatically select the priority based on your settings for subregions!
+  priority: 0
+  available:
+    0:
+      setting: 'deny g:non_members'
+      editable: false
+      flag: ride
+    1:
+      setting: '&b[ARM] &6This region can be bought for &2%price%%currency%'
+      editable: false
+      flag: greeting
+      applyto:
+        - SellRegion
+    2:
+      setting: '&b[ARM] &6This region can be rented for &2%price%%currency%&6/&2%extendperclick% &6and extended for up to &2%maxrenttime%'
+      editable: false
+      flag: greeting
+      applyto:
+        - RentRegion
+    3:
+      setting: '&b[ARM] &6Contract available for &2%price%%currency%&6/&2%extend%'
+      editable: false
+      flag: greeting
+      applyto:
+        - ContractRegion
+    4:
+      setting: 'allow g:all'
+      editable: false
+      flag: use
+    5:
+      setting: 'deny g:non_members'
+      editable: false
+      flag: build
+    6:
+      setting: 'deny g:non_members'
+      editable: false
+      flag: block-break
+    7:
+      setting: 'deny g:non_members'
+      editable: false
+      flag: block-place
+    8:
+      setting: 'deny g:non_members'
+      editable: false
+      flag: chest-access
+  sold:
+    0:
+      setting: 'deny g:non_members'
+      editable: true
+      flag: ride
+      editPermission: "my.custom.permission"
+      guidescription:
+        - '&2Decides if players can use vehicles'
+    1:
+      setting: 'remove'
+      editable: true
+      flag: greeting
+      guidescription:
+        - '&2Sets a message that will be'
+        - '&2shown to players that enter'
+        - '&2the region'
+    2:
+      setting: 'deny g:non_members'
+      editable: true
+      flag: use
+      guidescription:
+        - '&2Decides if players can use things'
+        - '&2like doors, levers, etc.'
+    3:
+      setting: 'deny g:non_members'
+      editable: false
+      flag: build
+    4:
+      setting: 'deny g:non_members'
+      editable: false
+      flag: block-break
+    5:
+      setting: 'deny g:non_members'
+      editable: false
+      flag: block-place
+    6:
+      setting: 'deny g:non_members'
+      editable: false
+      flag: chest-access

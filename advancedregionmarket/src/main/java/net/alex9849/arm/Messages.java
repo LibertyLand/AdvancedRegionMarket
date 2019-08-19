@@ -38,26 +38,19 @@ public class Messages {
     public static String CURRENCY = "";
     public static String REGION_KIND_SET = "";
     public static String REGION_KIND_NOT_EXIST = "";
-    public static String REGION_KIND_REGION_NOT_EXIST = "";
     public static String COMMAND_ONLY_INGAME = "";
-    public static String REGION_INFO = "";
-    public static String REGION_INFO_ID = "";
     public static String REGION_INFO_PRICE = "";
     public static String REGION_INFO_TYPE = "";
-    public static String REGION_INFO_OWNER = "";
-    public static String REGION_INFO_MEMBERS = "";
-    public static String REGION_INFO_SOLD = "";
     public static String REGION_INFO_AUTORESET = "";
     public static String REGION_INFO_MAX_RENT_TIME = "";
     public static String REGION_INFO_EXTEND_PER_CLICK = "";
-    public static String REGION_INFO_REMAINING_TIME = "";
     public static String REGION_INFO_HOTEL = "";
     public static String REGION_INFO_ALLOWED_SUBREGIONS = "";
-    public static String REGION_INFO_SUBREGIONS = "";
     public static String REGION_INFO_EXPIRED = "&6Expired";
     public static String GUI_MAIN_MENU_NAME = "";
     public static String GUI_GO_BACK = "";
     public static String GUI_MY_OWN_REGIONS = "";
+    public static String GUI_MEMBER_REGIONS_MENU_NAME = "";
     public static String GUI_MY_MEMBER_REGIONS = "";
     public static String GUI_SEARCH_FREE_REGION = "";
     public static String GUI_OWN_REGIONS_MENU_NAME = "";
@@ -71,14 +64,10 @@ public class Messages {
     public static String GUI_MAKE_OWNER_WARNING_NAME = "";
     public static String GUI_YES = "";
     public static String GUI_NO = "";
-    public static String GUI_MEMBER_REGIONS_MENU_NAME = "";
     public static String REGION_TELEPORT_MESSAGE = "";
     public static String NO_PERMISSIONS_TO_BUY_THIS_KIND_OF_REGION = "";
-    public static String REGIONKINDS = "";
     public static String NO_FREE_REGION_WITH_THIS_KIND = "";
-    public static String NO_PERMISSION_TO_SEARCH_THIS_KIND = "";
     public static String REGIONKIND_DOES_NOT_EXIST = "";
-    public static String RESET_REGION_RESETING_BLOCKS = "";
     public static String REGION_NOW_AVIABLE = "";
     public static String NO_REGION_AT_PLAYERS_POSITION = "";
     public static String REGION_ADD_MEMBER_NOT_ONLINE = "";
@@ -94,7 +83,6 @@ public class Messages {
     public static String GUI_TAKEOVER_MENU_NAME = "";
     public static String REGION_TRANSFER_COMPLETE_MESSAGE = "";
     public static String GUI_CLOSE = "";
-    public static String MEMBERLIST_INFO = "";
     public static String RENT_SIGN1 = "";
     public static String RENT_SIGN2 = "";
     public static String RENT_SIGN3 = "";
@@ -107,9 +95,6 @@ public class Messages {
     public static String RENT_EXTEND_ERROR = "";
     public static String GUI_EXTEND_BUTTON = "";
     public static String COMPLETE = "";
-    public static String RESET_IN_PERCENT = "";
-    public static String LOADING_SCHEMATIC = "";
-    public static String LOADING_SCHEMATIC_COMPLETE = "";
     public static String REGION_BUY_OUT_OF_LIMIT = "";
     public static String REGION_ERROR_CAN_NOT_BUILD_HERE = "";
     public static String UNLIMITED = "";
@@ -145,10 +130,8 @@ public class Messages {
     public static String CONTRACT_SOLD_SIGN4 = "%remaining%";
     public static String CONTRACT_REGION_EXTENDED = "&aYour contract region %regionid% has been extended for %extend%. (For %price%%currency%.) ";
     public static String GUI_CONTRACT_ITEM = "&aManage contract";
-    public static String REGION_INFO_TERMINATED = "&6Terminated: ";
     public static String REGION_INFO_AUTO_EXTEND_TIME = "&6Extend time: ";
     public static String REGION_INFO_AUTOPRICE = "&6Autoprice: ";
-    public static String REGION_INFO_NEXT_EXTEND_REMAINING_TIME = "&6Next extend in: ";
     public static String CONTRACT_REGION_CHANGE_TERMINATED = "&6The contract of &a%regionid% &6has been set to %statuslong%";
     public static String CONTRACT_REGION_STATUS_ACTIVE_LONG = "&aActive&6! Next Extension in %remaining%";
     public static String CONTRACT_REGION_STATUS_ACTIVE = "&aActive";
@@ -238,23 +221,23 @@ public class Messages {
     public static String GUI_TELEPORT_TO_SIGN = "&6Teleport to buy sign!";
     public static String GUI_TELEPORT_TO_REGION = "&6Teleport to region!";
     public static String GUI_NEXT_PAGE = "&6Next page";
-    public static String GUI_PREV_PAGE = "&Prev page";
+    public static String GUI_PREV_PAGE = "&6Prev page";
     public static String ENABLED = "&aenabled";
     public static String DISABLED = "&cdisabled";
     public static String SOLD = "&csold";
     public static String AVAILABLE = "&aavailable";
     public static String REGION_INFO_IS_USER_RESETTABLE = "&6UserResettable: ";
     public static String SUB_REGION_IS_USER_RESETTABLE_ERROR = "&4The selected region is a subregion. You can change the isUserResettable setting for all subregions in the config.yml!";
-    public static List<String> GUI_SUBREGION_HOTEL_BUTTON_LORE = new ArrayList<String>(Arrays.asList("&6The hotel function allows you to prevent players", "&6from breaking blocks they do not have placed", "&6Status: %hotelfunctionstatus%", "&6Click to enable/disable"));
-    public static List<String> GUI_SUBREGION_REGION_INFO_SELL = new ArrayList<String>(Arrays.asList("%regionid%", "Selltype: %selltype%", "Status: %soldstatus%", "Price: %price%", "Price per M2: %priceperm2%", "Dimensions: %dimensions%"));
-    public static List<String> GUI_SUBREGION_REGION_INFO_RENT = new ArrayList<String>(Arrays.asList("%regionid%", "Selltype: %selltype%", "Status: %soldstatus%", "Price: %price%", "Price per M2 (per week): %priceperm2perweek%", "Extend per click: %extendperclick%", "Max. extended time: %maxrenttime%", "Dimensions: %dimensions%"));
-    public static List<String> GUI_SUBREGION_REGION_INFO_CONTRACT = new ArrayList<String>(Arrays.asList("%regionid%", "Selltype: %selltype%", "Status: %soldstatus%", "Price: %price%", "Price per M2 (per week): %priceperm2perweek%", "Automatic extend time: %extend%", "Dimensions: %dimensions%"));
-    public static List<String> GUI_REGIONFINDER_REGION_INFO_SELL = new ArrayList<String>(Arrays.asList("%regionid%", "Price: %price%", "Price per M2: %priceperm2%", "Dimensions: %dimensions%", "World: %world%"));
-    public static List<String> GUI_REGIONFINDER_REGION_INFO_RENT = new ArrayList<String>(Arrays.asList("%regionid%", "Price: %price%" ,"Price per M2 (per week): %priceperm2perweek%", "Extend per click: %extendperclick%","Max. extended time: %maxrenttime%", "Dimensions: %dimensions%", "World: %world%"));
-    public static List<String> GUI_REGIONFINDER_REGION_INFO_CONTRACT = new ArrayList<String>(Arrays.asList("%regionid%", "Price: %price%", "Price per M2 (per week): %priceperm2perweek%", "Automatic extend time: %extend%","Dimensions: %dimensions%", "World: %world%"));
-    public static List<String> SELECTION_SAVED_CREATE_SIGN = new ArrayList<String>(Arrays.asList("&aYour selection has been saved! You can now create a sign to sell the region.", "&aCreate a Sell-Region:", "&6First line: &1[sub-sell]", "&6Last line: &1price", "", "&aCreate a Rent-Region:", "&6First line: &1[sub-rent]",
+    public static List<String> GUI_SUBREGION_HOTEL_BUTTON_LORE = new ArrayList<>(Arrays.asList("&6The hotel function allows you to prevent players", "&6from breaking blocks they do not have placed", "&6Status: %hotelfunctionstatus%", "&6Click to enable/disable"));
+    public static List<String> GUI_SUBREGION_REGION_INFO_SELL = new ArrayList<>(Arrays.asList("%regionid%", "Selltype: %selltype%", "Status: %soldstatus%", "Price: %price%", "Price per M2: %priceperm2%", "Dimensions: %dimensions%"));
+    public static List<String> GUI_SUBREGION_REGION_INFO_RENT = new ArrayList<>(Arrays.asList("%regionid%", "Selltype: %selltype%", "Status: %soldstatus%", "Price: %price%", "Price per M2 (per week): %priceperm2perweek%", "Extend per click: %extendperclick%", "Max. extended time: %maxrenttime%", "Dimensions: %dimensions%"));
+    public static List<String> GUI_SUBREGION_REGION_INFO_CONTRACT = new ArrayList<>(Arrays.asList("%regionid%", "Selltype: %selltype%", "Status: %soldstatus%", "Price: %price%", "Price per M2 (per week): %priceperm2perweek%", "Automatic extend time: %extend%", "Dimensions: %dimensions%"));
+    public static List<String> GUI_REGIONFINDER_REGION_INFO_SELL = new ArrayList<>(Arrays.asList("%regionid%", "Price: %price%", "Price per M2: %priceperm2%", "Dimensions: %dimensions%", "World: %world%"));
+    public static List<String> GUI_REGIONFINDER_REGION_INFO_RENT = new ArrayList<>(Arrays.asList("%regionid%", "Price: %price%" ,"Price per M2 (per week): %priceperm2perweek%", "Extend per click: %extendperclick%","Max. extended time: %maxrenttime%", "Dimensions: %dimensions%", "World: %world%"));
+    public static List<String> GUI_REGIONFINDER_REGION_INFO_CONTRACT = new ArrayList<>(Arrays.asList("%regionid%", "Price: %price%", "Price per M2 (per week): %priceperm2perweek%", "Automatic extend time: %extend%","Dimensions: %dimensions%", "World: %world%"));
+    public static List<String> SELECTION_SAVED_CREATE_SIGN = new ArrayList<>(Arrays.asList("&aYour selection has been saved! You can now create a sign to sell the region.", "&aCreate a Sell-Region:", "&6First line: &1[sub-sell]", "&6Last line: &1price", "", "&aCreate a Rent-Region:", "&6First line: &1[sub-rent]",
             "&6Last line: &1PricePerPeriod&6;&1ExtendPerClick&6;&1MaxExtendTime", "&6example for ExtendPerClick/MaxExtendTime: 5d (5 days)", "", "&aCreate a Contract-Region:", "&6First line: &1[sub-contract]", "&6Last line: &1PricePerPeriod&6;&1ExtendTime", "&6example for ExtendTime: 12h (12 hours)"));
-    public static List<String> SUBREGION_TOOL_INSTRUCTION = new ArrayList<String>(Arrays.asList("&aYou got a tool in your inventory (feather) to select 2 points of your region that will mark the corners of your new subregion.", "&aLeft click to select pos1", "&aRight click to select pos2", "&aType \"&6/arm subregion create\" &aif you are done"));
+    public static List<String> SUBREGION_TOOL_INSTRUCTION = new ArrayList<>(Arrays.asList("&aYou got a tool in your inventory (feather) to select 2 points of your region that will mark the corners of your new subregion.", "&aLeft click to select pos1", "&aRight click to select pos2", "&aType \"&6/arm subregion create\" &aif you are done"));
     public static String SUBREGION_TOOL_ALREADY_OWNED = "&4You already own a Subregion Tool. Please use this instead of a new one!";
     public static String AUTOPRICE_LIST = "&6=========[Autoprices]=========";
     public static String GUI_SUBREGION_MANAGER_NO_SUBREGION_ITEM = "&6Info";
@@ -300,7 +283,7 @@ public class Messages {
     public static String MASSACTION_SPLITTER = "&6all regions with regionkind &a%regionkind%";
     public static String SUB_REGION_ENTITYLIMITGROUP_ERROR = "&4Could not change EntiyLimitGroup for the region &6%regionid%&4! Region is a Subregion!";
     public static String GUI_ENTITYLIMIT_ITEM_BUTTON = "&6EntityLimits";
-    public static List<String> GUI_ENTITYLIMIT_ITEM_LORE = new ArrayList<String>(Arrays.asList("&6Click to display the entity-limits", "&6for this region in chat", "%entityinfopattern%"));
+    public static List<String> GUI_ENTITYLIMIT_ITEM_LORE = new ArrayList<>(Arrays.asList("&6Click to display the entity-limits", "&6for this region in chat", "%entityinfopattern%"));
     public static String GUI_ENTITYLIMIT_ITEM_INFO_PATTERN = "&6%entitytype%: &a(&r%actualentities%&a/&r%softlimitentities%&a  %entityextensioninfo%)";
     public static String GUI_ENTITYLIMIT_ITEM_INFO_EXTENSION_INFO = "\n&6&o--> Limit extendable up to &r%hardlimitentities% &6entities for &r%priceperextraentity% %currency%&6/entity";
     public static String ENTITYLIMITGROUP_ENTITYLIMIT_ALREADY_UNLIMITED = "&4EntityLimit for the selected entity and region is already unlimited!";
@@ -309,8 +292,9 @@ public class Messages {
     public static String ENTITYLIMITGROUP_EXTRA_ENTITIES_HARDLIMIT_REACHED = "&4Can not buy another entity-expansion! Hardlimit has been reached!";
     public static String ENTITYLIMITGROUP_EXTRA_ENTITIES_SET_SUBREGION_ERROR = "&4Can not change entitylimit! Region is a Subregion";
     public static String ENTITYLIMITGROUP_EXTRA_ENTITIES_BUY_SUBREGION_ERROR = "&4Can not expand entitylimit! Region is a Subregion";
+    public static String ENTITYLIMITGROUP_COULD_NOT_SPAWN_ENTITY = "&4Could not spawn entity on region %region%! The not spawned entity would exeed the regions " +
+            "entitylimit for more information type &6/arm entitylimit check %region%&4! Everybody on region %region% recieved this message! If you are not a member of this region, you can ignore this message!";
     public static String ARM_BASIC_COMMAND_MESSAGE = "&6AdvancedRegionMarket v%pluginversion% by Alex9849\n&6Download: &3https://bit.ly/2CfO3An\n&6Get a list with all commands with &3/arm help";
-
     public static String REGIONKIND_CREATED = "&aRegionKind created!";
     public static String REGIONKIND_ALREADY_EXISTS = "&4RegionKind already exists!";
     public static String REGIONKIND_DELETED = "&aRegionKind deleted!";
@@ -330,16 +314,89 @@ public class Messages {
     public static String REGIONKIND_HELP_HEADLINE = "&6=====[AdvancedRegionMarket RegionKind Help ]=====\n&3Page %actualpage% / %maxpage%";
     public static String PLAYER_NOT_FOUND = "&4Could not find selected player!";
 
+    public static List<String> REGION_INFO_SELLREGION = new ArrayList<>(Arrays.asList("&6=========[Region Info]=========",
+            "&6ID: %regionid%", "&6Sold: %issold%", "&6Price: %price%", "&6Type: %selltype%", "&6Regionkind: %regionkinddisplay%",
+            "&6EntityLimitGroup: %entitylimitgroup%", "&6Owner: %owner%", "&6Members: %members%", "&6isHotel: %ishotel%",
+            "&6Allowed Subregions: %subregionlimit%", "&6Subregions: %subregions%"));
+    public static List<String> REGION_INFO_RENTREGION = new ArrayList<>(Arrays.asList("&6=========[Region Info]=========",
+            "&6ID: %regionid%", "&6Sold: %issold%", "&6Price: %price%", "&6Type: %selltype%", "&6Regionkind: %regionkinddisplay%",
+            "&6EntityLimitGroup: %entitylimitgroup%", "&6Owner: %owner%", "&6Members: %members%", "&6isHotel: %ishotel%",
+            "&6Allowed Subregions: %subregionlimit%", "&6Subregions: %subregions%", "&6Remaining time: %remaining%",
+            "&6Extend per click: %extendperclick%", "&6Max rent time: %maxrenttime%"));
+    public static List<String> REGION_INFO_CONTRACTREGION = new ArrayList<>(Arrays.asList("&6=========[Region Info]=========",
+            "&6ID: %regionid%", "&6Sold: %issold%", "&6Price: %price%", "&6Type: %selltype%", "&6Regionkind: %regionkinddisplay%",
+            "&6EntityLimitGroup: %entitylimitgroup%", "&6Owner: %owner%", "&6Members: %members%", "&6isHotel: %ishotel%",
+            "&6Allowed Subregions: %subregionlimit%", "&6Subregions: %subregions%", "&6Terminated: %isterminated%",
+            "&6Extend Time: %extend%", "&6Next extend in: %remaining%"));
+    public static List<String> REGION_INFO_SELLREGION_ADMIN = new ArrayList<>(Arrays.asList("&6=========[Region Info]=========",
+            "&6ID: %regionid%", "&6Sold: %issold%", "&6Price: %price%", "&6Type: %selltype%", "&6Regionkind: %regionkinddisplay%",
+            "&6EntityLimitGroup: %entitylimitgroup%", "&6Owner: %owner%", "&6Members: %members%", "&6isHotel: %ishotel%",
+            "&6Autoreset: %isautoreset%", "&6UserResettable: %isuserresettable%" , "&6DoBlockReset: %isdoblockreset%", "&6Autoprice: %autoprice%",
+            "&6Allowed Subregions: %subregionlimit%", "&6Subregions: %subregions%"));
+    public static List<String> REGION_INFO_RENTREGION_ADMIN = new ArrayList<>(Arrays.asList("&6=========[Region Info]=========",
+            "&6ID: %regionid%", "&6Sold: %issold%", "&6Price: %price%", "&6Type: %selltype%", "&6Regionkind: %regionkinddisplay%",
+            "&6EntityLimitGroup: %entitylimitgroup%", "&6Owner: %owner%", "&6Members: %members%", "&6isHotel: %ishotel%",
+            "&6Autoreset: %isautoreset%", "&6UserResettable: %isuserresettable%" , "&6DoBlockReset: %isdoblockreset%" , "&6Autoprice: %autoprice%",
+            "&6Allowed Subregions: %subregionlimit%", "&6Subregions: %subregions%", "&6Remaining time: %remaining%",
+            "&6Extend per click: %extendperclick%", "&6Max rent time: %maxrenttime%"));
+    public static List<String> REGION_INFO_CONTRACTREGION_ADMIN = new ArrayList<>(Arrays.asList("&6=========[Region Info]=========",
+            "&6ID: %regionid%", "&6Sold: %issold%", "&6Price: %price%", "&6Type: %selltype%", "&6Regionkind: %regionkinddisplay%",
+            "&6EntityLimitGroup: %entitylimitgroup%", "&6Owner: %owner%", "&6Members: %members%", "&6isHotel: %ishotel%",
+            "&6Autoreset: %isautoreset%", "&6UserResettable: %isuserresettable%" , "&6DoBlockReset: %isdoblockreset%" , "&6Autoprice: %autoprice%",
+            "&6Allowed Subregions: %subregionlimit%", "&6Subregions: %subregions%", "&6Terminated: %isterminated%",
+            "&6Extend Time: %extend%", "&6Next extend in: %remaining%"));
+    public static List<String> REGION_INFO_SELLREGION_SUBREGION = new ArrayList<>(Arrays.asList("&6=========[Region Info]=========",
+            "&6ID: %regionid%", "&6Sold: %issold%", "&6Price: %price%", "&6Type: %selltype%", "&6Regionkind: %regionkinddisplay%",
+            "&6EntityLimitGroup: %entitylimitgroup%", "&6Owner: %owner%", "&6Members: %members%", "&6isHotel: %ishotel%",
+            "&6Autoreset: %isautoreset%", "&6UserResettable: %isuserresettable%" , "&6DoBlockReset: %isdoblockreset%" , "&6Autoprice: %autoprice%",
+            "&6Allowed Subregions: %subregionlimit%", "&6Subregions: %subregions%"));
+    public static List<String> REGION_INFO_RENTREGION_SUBREGION = new ArrayList<>(Arrays.asList("&6=========[Region Info]=========",
+            "&6ID: %regionid%", "&6Sold: %issold%", "&6Price: %price%", "&6Type: %selltype%", "&6Regionkind: %regionkinddisplay%",
+            "&6EntityLimitGroup: %entitylimitgroup%", "&6Owner: %owner%", "&6Members: %members%", "&6isHotel: %ishotel%",
+            "&6Autoreset: %isautoreset%", "&6UserResettable: %isuserresettable%" , "&6DoBlockReset: %isdoblockreset%" , "&6Autoprice: %autoprice%",
+            "&6Allowed Subregions: %subregionlimit%", "&6Subregions: %subregions%", "&6Remaining time: %remaining%",
+            "&6Extend per click: %extendperclick%", "&6Max rent time: %maxrenttime%"));
+    public static List<String> REGION_INFO_CONTRACTREGION_SUBREGION = new ArrayList<>(Arrays.asList("&6=========[Region Info]=========",
+            "&6ID: %regionid%", "&6Sold: %issold%", "&6Price: %price%", "&6Type: %selltype%", "&6Regionkind: %regionkinddisplay%",
+            "&6EntityLimitGroup: %entitylimitgroup%", "&6Owner: %owner%", "&6Members: %members%", "&6isHotel: %ishotel%",
+            "&6Autoreset: %isautoreset%", "&6UserResettable: %isuserresettable%" , "&6DoBlockReset: %isdoblockreset%" , "&6Autoprice: %autoprice%",
+            "&6Allowed Subregions: %subregionlimit%", "&6Subregions: %subregions%", "&6Terminated: %isterminated%",
+            "&6Extend Time: %extend%", "&6Next extend in: %remaining%"));
 
-
-
+    public static String GUI_FLAGEDITOR_BUTTON = "&6FlagEditor";
+    public static String GUI_FLAGEDITOR_MENU_NAME = "&1FlagEditor (%region%)";
+    public static String GUI_FLAGEDITOR_DELETE_FLAG_BUTTON = "&4Delete flag";
+    public static String GUI_FLAGEDITOR_SET_FLAG_GROUP_ALL_BUTTON = "&9Set for everyone";
+    public static String GUI_FLAGEDITOR_SET_FLAG_GROUP_MEMBERS_BUTTON = "&9Set for members";
+    public static String GUI_FLAGEDITOR_SET_FLAG_GROUP_OWNERS_BUTTON = "&9Set for owners";
+    public static String GUI_FLAGEDITOR_SET_FLAG_GROUP_NON_MEMBERS_BUTTON = "&9Set for non members\n (Everyone without permissions on your region)";
+    public static String GUI_FLAGEDITOR_SET_FLAG_GROUP_NON_OWNERS_BUTTON = "&9Set for non owners";
+    public static String GUI_FLAGEDITOR_SET_STATEFLAG_ALLOW_BUTTON = "&2Allow";
+    public static String GUI_FLAGEDITOR_SET_STATEFLAG_DENY_BUTTON = "&4Deny";
+    public static String GUI_FLAGEDITOR_SET_BOOLEANFLAG_TRUE_BUTTON = "&2Yes";
+    public static String GUI_FLAGEDITOR_SET_BOOLEANFLAG_FALSE_BUTTON = "&4No";
+    public static String GUI_FLAGEDITOR_SET_STRINGFLAG_SET_MESSAGE_BUTTON = "&2Set message";
+    public static String GUI_FLAGEDITOR_SET_INTEGERFLAG_SET_INTEGER_BUTTON = "&2Set number";
+    public static String GUI_FLAGEDITOR_SET_DOUBLEFLAG_SET_DOUBLE_BUTTON = "&2Set number";
+    public static String FlAGEDITOR_FLAG_NOT_ACTIVATED = "&4Flag not activated!";
+    public static String FlAGEDITOR_FLAG_HAS_BEEN_DELETED = "&2Flag has been deleted!";
+    public static String FLAGEDITOR_FLAG_HAS_BEEN_UPDATED = "&2Flag has been updated!";
+    public static String FLAGEDITOR_FLAG_COULD_NOT_BE_MODIFIED = "Could not modify flag %flag%!";
+    public static String FLAGEDITOR_STRINGFLAG_SET_MESSAGE_INFO = "&9Please write down a message:";
+    public static String FLAGEDITOR_INTEGERFLAG_SET_NUMBER_INFO = "&9Please write down a number that does not have decimals:";
+    public static String FLAGEDITOR_DOUBLEFLAG_SET_NUMBER_INFO = "&9Please write down a number:";
+    public static String GUI_FLAGEDITOR_RESET_BUTTON = "&4Reset all Flags to default settings";
+    public static String GUI_FLAGEDITOR_UNKNOWNFLAG_SET_PROPERTIES_BUTTON = "&2Set properties";
+    public static String FLAGEDITOR_UNKNOWNFLAG_SET_PROPERTIES_INFO = "&9Please write down your new flag properties:";
+    public static String FLAGGROUP_DOES_NOT_EXIST = "&4Flaggroup does not exist!";
+    public static String SUBREGION_FLAGGROUP_ONLY_FOR_SUBREGIONS = "&4Subregion flaggroup only for subregions";
+    public static String REGION_INFO_FLAGGROUP = "&6FlagGroup: ";
 
     public static List<String> GUI_TELEPORT_TO_REGION_BUTTON_LORE = new ArrayList<>();
     public static List<String> GUI_MAKE_OWNER_BUTTON_LORE = new ArrayList<>();
     public static List<String> GUI_REMOVE_MEMBER_BUTTON_LORE = new ArrayList<>();
     public static List<String> GUI_RESET_REGION_BUTTON_LORE = new ArrayList<>();
     public static List<String> GUI_TAKEOVER_ITEM_LORE = new ArrayList<>();
-    public static List<String> MEMBERLIST_INFO_LORE = new ArrayList<>();
     public static List<String> GUI_EXTEND_BUTTON_LORE = new ArrayList<>();
     public static List<String> GUI_RENT_REGION_LORE = new ArrayList<>();
     public static List<String> GUI_USER_SELL_BUTTON_LORE = new ArrayList<>();
@@ -350,7 +407,7 @@ public class Messages {
     public static List<String> GUI_SUBREGION_MANAGER_NO_SUBREGION_ITEM_LORE = new ArrayList<>();
 
 
-    public static void read(){
+    static void read(){
         Messages.generatedefaultConfig();
         File pluginfolder = Bukkit.getPluginManager().getPlugin("AdvancedRegionMarket").getDataFolder();
         File messagesconfigdic = new File(pluginfolder + "/messages.yml");
@@ -381,18 +438,11 @@ public class Messages {
         CURRENCY = config.getString("Messages.Currency");
         REGION_KIND_SET = config.getString("Messages.RegionKindSet");
         REGION_KIND_NOT_EXIST = config.getString("Messages.RegionKindNotExist");
-        REGION_KIND_REGION_NOT_EXIST = config.getString("Messages.RegionKindRegionNotExist");
         COMMAND_ONLY_INGAME = config.getString("Messages.CommandOnlyIngame");
-        REGION_INFO = config.getString("Messages.RegionInfo");
-        REGION_INFO_ID = config.getString("Messages.RegionInfoID");
         REGION_INFO_PRICE = config.getString("Messages.RegionInfoPrice");
         REGION_INFO_TYPE = config.getString("Messages.RegionInfoType");
-        REGION_INFO_OWNER = config.getString("Messages.RegionInfoOwner");
-        REGION_INFO_MEMBERS = config.getString("Messages.RegionInfoMembers");
-        REGION_INFO_SOLD = config.getString("Messages.RegionInfoSold");
         REGION_INFO_AUTORESET = config.getString("Messages.RegionInfoAutoreset");
         REGION_INFO_ALLOWED_SUBREGIONS = config.getString("Messages.RegionInfoAllowedSubregions");
-        REGION_INFO_SUBREGIONS = config.getString("Messages.RegionInfoSubregions");
         REGION_INFO_EXPIRED = config.getString("Messages.RegionInfoExpired");
         REGION_INFO_AUTOPRICE = config.getString("Messages.RegionInfoAutoprice");
         GUI_MAIN_MENU_NAME = config.getString("Messages.GUIMainMenuName");
@@ -411,14 +461,10 @@ public class Messages {
         GUI_MAKE_OWNER_WARNING_NAME = config.getString("Messages.GUIMakeOwnerWarningName");
         GUI_YES = config.getString("Messages.GUIWarningYes");
         GUI_NO = config.getString("Messages.GUIWarningNo");
-        GUI_MEMBER_REGIONS_MENU_NAME = config.getString("Messages.GUIMemberRegionsMenuName");
         REGION_TELEPORT_MESSAGE = config.getString("Messages.RegionTeleportMessage");
         NO_PERMISSIONS_TO_BUY_THIS_KIND_OF_REGION = config.getString("Messages.NoPermissionsToBuyThisKindOfRegion");
-        REGIONKINDS = config.getString("Messages.RegionKinds");
         NO_FREE_REGION_WITH_THIS_KIND = config.getString("Messages.NoFreeRegionWithThisKind");
-        NO_PERMISSION_TO_SEARCH_THIS_KIND = config.getString("Messages.NoPermissionToSearchKind");
         REGIONKIND_DOES_NOT_EXIST = config.getString("Messages.RegionkindDoesNotExist");
-        RESET_REGION_RESETING_BLOCKS = config.getString("Messages.ResetRegionResetingBlocks");
         REGION_NOW_AVIABLE = config.getString("Messages.RegionNowAviable");
         NO_REGION_AT_PLAYERS_POSITION = config.getString("Messages.NoRegionAtPlayersPosition");
         REGION_ADD_MEMBER_NOT_ONLINE = config.getString("Messages.RegionAddMemberNotOnline");
@@ -430,10 +476,7 @@ public class Messages {
         GUI_RESET_REGION_BUTTON = config.getString("Messages.GUIResetRegionButton");
         GUI_RESET_REGION_WARNING_NAME = config.getString("Messages.GUIResetRegionWarningName");
         RESET_COMPLETE = config.getString("Messages.ResetComplete");
-        RESET_IN_PERCENT = config.getString("Messages.ResetPerCentComplete");
         COMPLETE = config.getString("Messages.Complete");
-        LOADING_SCHEMATIC = config.getString("Messages.LoadingSchematic");
-        LOADING_SCHEMATIC_COMPLETE = config.getString("Messages.LoadingSchematicComplete");
         RESET_REGION_COOLDOWN_ERROR = config.getString("Messages.ResetRegionCooldownError");
         GUI_TAKEOVER_MENU_NAME = config.getString("Messages.GUIRegionTakeOverMenuName");
         REGION_TRANSFER_COMPLETE_MESSAGE = config.getString("Messages.RegionTransferCompleteMessage");
@@ -454,7 +497,6 @@ public class Messages {
         GUI_EXTEND_BUTTON = config.getString("Messages.GUIExtendRentRegionButton");
         REGION_INFO_MAX_RENT_TIME = config.getString("Messages.RegionInfoMaxRentTime");
         REGION_INFO_EXTEND_PER_CLICK = config.getString("Messages.RegionInfoExtendPerClick");
-        REGION_INFO_REMAINING_TIME = config.getString("Messages.RentRegionInfoRemainingTime");
         GUI_TELEPORT_TO_REGION_BUTTON_LORE = config.getStringList("Messages.GUITeleportToRegionButtonLore");
         GUI_MAKE_OWNER_BUTTON_LORE = config.getStringList("Messages.GUIMakeOwnerButtonLore");
         GUI_REMOVE_MEMBER_BUTTON_LORE = config.getStringList("Messages.GUIRemoveMemberButtonLore");
@@ -499,9 +541,7 @@ public class Messages {
         CONTRACT_SOLD_SIGN4 = config.getString("Messages.ContractSoldSign4");
         CONTRACT_REGION_EXTENDED = config.getString("Messages.ContractRegionExtended");
         GUI_CONTRACT_ITEM = config.getString("Messages.GUIContractItem");
-        REGION_INFO_TERMINATED = config.getString("Messages.RegionInfoTerminated");
         REGION_INFO_AUTO_EXTEND_TIME = config.getString("Messages.RegionInfoAutoExtendTime");
-        REGION_INFO_NEXT_EXTEND_REMAINING_TIME = config.getString("Messages.ContractRegionInfoRemainingTime");
         CONTRACT_REGION_CHANGE_TERMINATED = config.getString("Messages.ContractRegionChangeTerminated");
         CONTRACT_REGION_STATUS_ACTIVE_LONG = config.getString("Messages.ContractRegionStatusActiveLong");
         CONTRACT_REGION_STATUS_ACTIVE = config.getString("Messages.ContractRegionStatusActive");
@@ -584,6 +624,7 @@ public class Messages {
         GUI_TELEPORT_TO_SIGN_OR_REGION = config.getString("Messages.GUITeleportToSignOrRegionButton");
         GUI_TELEPORT_TO_SIGN = config.getString("Messages.GUIRegionfinderTeleportToSignButton");
         GUI_TELEPORT_TO_REGION = config.getString("Messages.GUIRegionfinderTeleportToRegionButton");
+        GUI_MEMBER_REGIONS_MENU_NAME = config.getString("Messages.GUIMemberRegionsMenuName");
         GUI_NEXT_PAGE = config.getString("Messages.GUINextPageButton");
         GUI_PREV_PAGE = config.getString("Messages.GUIPrevPageButton");
         ENABLED = config.getString("Messages.Enabled");
@@ -644,6 +685,7 @@ public class Messages {
         ENTITYLIMITGROUP_INFO_GROUPNAME = config.getString("Messages.EntityLimitGroupInfoGroupname");
         ENTITYLIMITGROUP_INFO_PATTERN = config.getString("Messages.EntityLimitGroupInfoPattern");
         ENTITYLIMITGROUP_LIST_HEADLINE = config.getString("Messages.EntityLimitGroupListHeadline");
+        ENTITYLIMITGROUP_COULD_NOT_SPAWN_ENTITY = config.getString("Messages.EntityLimitGroupCouldNotspawnEntity");
         REGION_INFO_ENTITYLIMITGROUP = config.getString("Messages.RegionInfoEntityLimit");
         ENTITYLIMITGROUP_SUBREGION_GROUP_ONLY_FOR_SUBREGIONS = config.getString("Messages.SubregionEntityLimitOnlyForSubregions");
         MASSACTION_SPLITTER = config.getString("Messages.MassactionSplitter");
@@ -681,6 +723,45 @@ public class Messages {
         REGIONKIND_HELP_HEADLINE = config.getString("Messages.RegionKindHelpHeadline");
         PLAYER_NOT_FOUND = config.getString("Messages.PlayerNotFound");
 
+        REGION_INFO_SELLREGION = config.getStringList("Messages.RegionInfoSellregionUser");
+        REGION_INFO_RENTREGION = config.getStringList("Messages.RegionInfoRentregionUser");
+        REGION_INFO_CONTRACTREGION = config.getStringList("Messages.RegionInfoContractregionUser");
+        REGION_INFO_SELLREGION_ADMIN = config.getStringList("Messages.RegionInfoSellregionAdmin");
+        REGION_INFO_RENTREGION_ADMIN = config.getStringList("Messages.RegionInfoRentregionAdmin");
+        REGION_INFO_CONTRACTREGION_ADMIN = config.getStringList("Messages.RegionInfoContractregionAdmin");
+        REGION_INFO_SELLREGION_SUBREGION = config.getStringList("Messages.RegionInfoSellregionSubregion");
+        REGION_INFO_RENTREGION_SUBREGION = config.getStringList("Messages.RegionInfoRentregionSubregion");
+        REGION_INFO_CONTRACTREGION_SUBREGION = config.getStringList("Messages.RegionInfoContractregionSubregion");
+
+        GUI_FLAGEDITOR_BUTTON = config.getString("Messages.GUIFlageditorButton");
+        GUI_FLAGEDITOR_MENU_NAME = config.getString("Messages.GUIFlageditorMenuName");
+        GUI_FLAGEDITOR_DELETE_FLAG_BUTTON = config.getString("Messages.GUIFlageditorDeleteFlagButton");
+        GUI_FLAGEDITOR_SET_FLAG_GROUP_ALL_BUTTON = config.getString("Messages.GUIFlageditorSetFlagGroupAllButton");
+        GUI_FLAGEDITOR_SET_FLAG_GROUP_MEMBERS_BUTTON = config.getString("Messages.GUIFlageditorSetFlagGroupMembersButton");
+        GUI_FLAGEDITOR_SET_FLAG_GROUP_OWNERS_BUTTON = config.getString("Messages.GUIFlageditorSetFlagGroupOwnersButton");
+        GUI_FLAGEDITOR_SET_FLAG_GROUP_NON_MEMBERS_BUTTON = config.getString("Messages.GUIFlageditorSetFlagGroupNonMembersButton");
+        GUI_FLAGEDITOR_SET_FLAG_GROUP_NON_OWNERS_BUTTON = config.getString("Messages.GUIFlageditorSetFlagGroupNonOwnersButton");
+        GUI_FLAGEDITOR_SET_STATEFLAG_ALLOW_BUTTON = config.getString("Messages.GUIFlageditorSetStateflagAllowButton");
+        GUI_FLAGEDITOR_SET_STATEFLAG_DENY_BUTTON = config.getString("Messages.GUIFlageditorSetStateflagDenyButton");
+        GUI_FLAGEDITOR_SET_BOOLEANFLAG_TRUE_BUTTON = config.getString("Messages.GUIFlageditorSetBooleanflagTrueButton");
+        GUI_FLAGEDITOR_SET_BOOLEANFLAG_FALSE_BUTTON = config.getString("Messages.GUIFlageditorSetBooleanflagFalseButton");
+        GUI_FLAGEDITOR_SET_STRINGFLAG_SET_MESSAGE_BUTTON = config.getString("Messages.GUIFlageditorSetStringflagSetMessageButton");
+        GUI_FLAGEDITOR_SET_INTEGERFLAG_SET_INTEGER_BUTTON = config.getString("Messages.GUIFlageditorSetIntegerflagSetIntegerButton");
+        GUI_FLAGEDITOR_SET_DOUBLEFLAG_SET_DOUBLE_BUTTON = config.getString("Messages.GUIFlageditorSetDoubleflagSetDoubleButton");
+        FlAGEDITOR_FLAG_NOT_ACTIVATED = config.getString("Messages.FlageditorFlagNotActivated");
+        FLAGEDITOR_FLAG_HAS_BEEN_UPDATED = config.getString("Messages.FlageditorFlagHasBeenUpdated");
+        FLAGEDITOR_FLAG_COULD_NOT_BE_MODIFIED = config.getString("Messages.FlageditorFlagCouldNotBeUpdated");
+        FlAGEDITOR_FLAG_HAS_BEEN_DELETED = config.getString("Messages.FlageditorFlagHasBeenDeleted");
+        FLAGEDITOR_STRINGFLAG_SET_MESSAGE_INFO = config.getString("Messages.FlageditorStringflagSetMessageInfo");
+        FLAGEDITOR_INTEGERFLAG_SET_NUMBER_INFO = config.getString("Messages.FlageditorIntegerflagSetMessageInfo");
+        FLAGEDITOR_DOUBLEFLAG_SET_NUMBER_INFO = config.getString("Messages.FlageditorDoubleflagSetMessageInfo");
+        GUI_FLAGEDITOR_RESET_BUTTON = config.getString("Messages.GUIFlageditorResetButton");
+        GUI_FLAGEDITOR_UNKNOWNFLAG_SET_PROPERTIES_BUTTON = config.getString("Messages.GUIFlageditorUnknownFlagSetPropertiesButton");
+        FLAGEDITOR_UNKNOWNFLAG_SET_PROPERTIES_INFO = config.getString("Messages.GUIFlageditorUnknownFlagSetPropertiesInfo");
+        FLAGGROUP_DOES_NOT_EXIST = config.getString("Messages.FlaggroupDoesNotExist");
+        SUBREGION_FLAGGROUP_ONLY_FOR_SUBREGIONS = config.getString("Messages.SubregionFlaggroupOnlyForSubregions");
+        REGION_INFO_FLAGGROUP = config.getString("Messages.RegionInfoFlaggroup");
+
         Messages.translateColorCodes();
     }
 
@@ -707,15 +788,9 @@ public class Messages {
         CURRENCY = ChatColor.translateAlternateColorCodes('&', CURRENCY);
         REGION_KIND_SET = ChatColor.translateAlternateColorCodes('&', REGION_KIND_SET);
         REGION_KIND_NOT_EXIST = ChatColor.translateAlternateColorCodes('&', REGION_KIND_NOT_EXIST);
-        REGION_KIND_REGION_NOT_EXIST = ChatColor.translateAlternateColorCodes('&', REGION_KIND_REGION_NOT_EXIST);
-        REGION_INFO = ChatColor.translateAlternateColorCodes('&', REGION_INFO);
-        REGION_INFO_ID = ChatColor.translateAlternateColorCodes('&', REGION_INFO_ID);
         REGION_INFO_PRICE = ChatColor.translateAlternateColorCodes('&', REGION_INFO_PRICE);
         REGION_INFO_TYPE = ChatColor.translateAlternateColorCodes('&', REGION_INFO_TYPE);
-        REGION_INFO_OWNER = ChatColor.translateAlternateColorCodes('&', REGION_INFO_OWNER);
-        REGION_INFO_MEMBERS = ChatColor.translateAlternateColorCodes('&', REGION_INFO_MEMBERS);
         COMMAND_ONLY_INGAME = ChatColor.translateAlternateColorCodes('&', COMMAND_ONLY_INGAME);
-        REGION_INFO_SOLD = ChatColor.translateAlternateColorCodes('&', REGION_INFO_SOLD);
         REGION_INFO_AUTORESET = ChatColor.translateAlternateColorCodes('&', REGION_INFO_AUTORESET);
         GUI_MAIN_MENU_NAME = ChatColor.translateAlternateColorCodes('&', GUI_MAIN_MENU_NAME);
         GUI_GO_BACK = ChatColor.translateAlternateColorCodes('&', GUI_GO_BACK);
@@ -733,15 +808,11 @@ public class Messages {
         GUI_MAKE_OWNER_WARNING_NAME = ChatColor.translateAlternateColorCodes('&', GUI_MAKE_OWNER_WARNING_NAME);
         GUI_YES = ChatColor.translateAlternateColorCodes('&', GUI_YES);
         GUI_NO = ChatColor.translateAlternateColorCodes('&', GUI_NO);
-        GUI_MEMBER_REGIONS_MENU_NAME = ChatColor.translateAlternateColorCodes('&', GUI_MEMBER_REGIONS_MENU_NAME);
         SIGN_REMOVED_FROM_REGION = ChatColor.translateAlternateColorCodes('&', SIGN_REMOVED_FROM_REGION);
         REGION_TELEPORT_MESSAGE = ChatColor.translateAlternateColorCodes('&', REGION_TELEPORT_MESSAGE);
         NO_PERMISSIONS_TO_BUY_THIS_KIND_OF_REGION = ChatColor.translateAlternateColorCodes('&', NO_PERMISSIONS_TO_BUY_THIS_KIND_OF_REGION);
-        REGIONKINDS = ChatColor.translateAlternateColorCodes('&', REGIONKINDS);
         NO_FREE_REGION_WITH_THIS_KIND = ChatColor.translateAlternateColorCodes('&', NO_FREE_REGION_WITH_THIS_KIND);
-        NO_PERMISSION_TO_SEARCH_THIS_KIND = ChatColor.translateAlternateColorCodes('&', NO_PERMISSION_TO_SEARCH_THIS_KIND);
         REGIONKIND_DOES_NOT_EXIST = ChatColor.translateAlternateColorCodes('&', REGIONKIND_DOES_NOT_EXIST);
-        RESET_REGION_RESETING_BLOCKS = ChatColor.translateAlternateColorCodes('&', RESET_REGION_RESETING_BLOCKS);
         REGION_NOW_AVIABLE = ChatColor.translateAlternateColorCodes('&', REGION_NOW_AVIABLE);
         NO_REGION_AT_PLAYERS_POSITION = ChatColor.translateAlternateColorCodes('&', NO_REGION_AT_PLAYERS_POSITION);
         REGION_ADD_MEMBER_NOT_ONLINE = ChatColor.translateAlternateColorCodes('&', REGION_ADD_MEMBER_NOT_ONLINE);
@@ -757,7 +828,6 @@ public class Messages {
         GUI_TAKEOVER_MENU_NAME = ChatColor.translateAlternateColorCodes('&', GUI_TAKEOVER_MENU_NAME);
         REGION_TRANSFER_COMPLETE_MESSAGE = ChatColor.translateAlternateColorCodes('&', REGION_TRANSFER_COMPLETE_MESSAGE);
         GUI_CLOSE = ChatColor.translateAlternateColorCodes('&', GUI_CLOSE);
-        MEMBERLIST_INFO = ChatColor.translateAlternateColorCodes('&', MEMBERLIST_INFO);
         RENT_SIGN1 = ChatColor.translateAlternateColorCodes('&', RENT_SIGN1);
         RENT_SIGN2 = ChatColor.translateAlternateColorCodes('&', RENT_SIGN2);
         RENT_SIGN3 = ChatColor.translateAlternateColorCodes('&', RENT_SIGN3);
@@ -771,13 +841,9 @@ public class Messages {
         GUI_EXTEND_BUTTON = ChatColor.translateAlternateColorCodes('&', GUI_EXTEND_BUTTON);
         REGION_INFO_MAX_RENT_TIME = ChatColor.translateAlternateColorCodes('&', REGION_INFO_MAX_RENT_TIME);
         REGION_INFO_EXTEND_PER_CLICK = ChatColor.translateAlternateColorCodes('&', REGION_INFO_EXTEND_PER_CLICK);
-        REGION_INFO_REMAINING_TIME = ChatColor.translateAlternateColorCodes('&', REGION_INFO_REMAINING_TIME);
         REGION_INFO_HOTEL = ChatColor.translateAlternateColorCodes('&', REGION_INFO_HOTEL);
         REGION_ERROR_CAN_NOT_BUILD_HERE = ChatColor.translateAlternateColorCodes('&', REGION_ERROR_CAN_NOT_BUILD_HERE);
         COMPLETE = ChatColor.translateAlternateColorCodes('&', COMPLETE);
-        RESET_IN_PERCENT = ChatColor.translateAlternateColorCodes('&', RESET_IN_PERCENT);
-        LOADING_SCHEMATIC_COMPLETE = ChatColor.translateAlternateColorCodes('&', LOADING_SCHEMATIC_COMPLETE);
-        LOADING_SCHEMATIC = ChatColor.translateAlternateColorCodes('&', LOADING_SCHEMATIC);
         REGION_BUY_OUT_OF_LIMIT = ChatColor.translateAlternateColorCodes('&', REGION_BUY_OUT_OF_LIMIT);
         UNLIMITED = ChatColor.translateAlternateColorCodes('&', UNLIMITED);
         GUI_USER_SELL_BUTTON = ChatColor.translateAlternateColorCodes('&', GUI_USER_SELL_BUTTON);
@@ -812,9 +878,7 @@ public class Messages {
         CONTRACT_SOLD_SIGN4 = ChatColor.translateAlternateColorCodes('&', CONTRACT_SOLD_SIGN4);
         CONTRACT_REGION_EXTENDED = ChatColor.translateAlternateColorCodes('&', CONTRACT_REGION_EXTENDED);
         GUI_CONTRACT_ITEM = ChatColor.translateAlternateColorCodes('&', GUI_CONTRACT_ITEM);
-        REGION_INFO_TERMINATED = ChatColor.translateAlternateColorCodes('&', REGION_INFO_TERMINATED);
         REGION_INFO_AUTO_EXTEND_TIME = ChatColor.translateAlternateColorCodes('&', REGION_INFO_AUTO_EXTEND_TIME);
-        REGION_INFO_NEXT_EXTEND_REMAINING_TIME = ChatColor.translateAlternateColorCodes('&', REGION_INFO_NEXT_EXTEND_REMAINING_TIME);
         CONTRACT_REGION_CHANGE_TERMINATED = ChatColor.translateAlternateColorCodes('&', CONTRACT_REGION_CHANGE_TERMINATED);
         CONTRACT_REGION_STATUS_ACTIVE_LONG = ChatColor.translateAlternateColorCodes('&', CONTRACT_REGION_STATUS_ACTIVE_LONG);
         CONTRACT_REGION_STATUS_ACTIVE = ChatColor.translateAlternateColorCodes('&', CONTRACT_REGION_STATUS_ACTIVE);
@@ -873,7 +937,6 @@ public class Messages {
         SUB_REGION_REGIONKIND_ONLY_FOR_SUB_REGIONS = ChatColor.translateAlternateColorCodes('&', SUB_REGION_REGIONKIND_ONLY_FOR_SUB_REGIONS);
         SUB_REGION_TELEPORT_LOCATION_ERROR = ChatColor.translateAlternateColorCodes('&', SUB_REGION_TELEPORT_LOCATION_ERROR);
         REGION_INFO_ALLOWED_SUBREGIONS = ChatColor.translateAlternateColorCodes('&', REGION_INFO_ALLOWED_SUBREGIONS);
-        REGION_INFO_SUBREGIONS = ChatColor.translateAlternateColorCodes('&', REGION_INFO_SUBREGIONS);
         REGION_INFO_EXPIRED = ChatColor.translateAlternateColorCodes('&', REGION_INFO_EXPIRED);
         REGION_NOT_REGISTRED  = ChatColor.translateAlternateColorCodes('&', REGION_NOT_REGISTRED);
         FIRST_POSITION_SET  = ChatColor.translateAlternateColorCodes('&', FIRST_POSITION_SET);
@@ -950,6 +1013,7 @@ public class Messages {
         ENTITYLIMITGROUP_INFO_GROUPNAME = ChatColor.translateAlternateColorCodes('&', ENTITYLIMITGROUP_INFO_GROUPNAME);
         ENTITYLIMITGROUP_INFO_PATTERN = ChatColor.translateAlternateColorCodes('&', ENTITYLIMITGROUP_INFO_PATTERN);
         ENTITYLIMITGROUP_LIST_HEADLINE = ChatColor.translateAlternateColorCodes('&', ENTITYLIMITGROUP_LIST_HEADLINE);
+        ENTITYLIMITGROUP_COULD_NOT_SPAWN_ENTITY = ChatColor.translateAlternateColorCodes('&', ENTITYLIMITGROUP_COULD_NOT_SPAWN_ENTITY);
         REGION_INFO_ENTITYLIMITGROUP = ChatColor.translateAlternateColorCodes('&', REGION_INFO_ENTITYLIMITGROUP);
         ENTITYLIMITGROUP_SUBREGION_GROUP_ONLY_FOR_SUBREGIONS = ChatColor.translateAlternateColorCodes('&', ENTITYLIMITGROUP_SUBREGION_GROUP_ONLY_FOR_SUBREGIONS);
         MASSACTION_SPLITTER = ChatColor.translateAlternateColorCodes('&', MASSACTION_SPLITTER);
@@ -965,6 +1029,7 @@ public class Messages {
         ENTITYLIMITGROUP_EXTRA_ENTITIES_HARDLIMIT_REACHED = ChatColor.translateAlternateColorCodes('&', ENTITYLIMITGROUP_EXTRA_ENTITIES_HARDLIMIT_REACHED);
         ENTITYLIMITGROUP_EXTRA_ENTITIES_SET_SUBREGION_ERROR = ChatColor.translateAlternateColorCodes('&', ENTITYLIMITGROUP_EXTRA_ENTITIES_SET_SUBREGION_ERROR);
         ENTITYLIMITGROUP_EXTRA_ENTITIES_BUY_SUBREGION_ERROR = ChatColor.translateAlternateColorCodes('&', ENTITYLIMITGROUP_EXTRA_ENTITIES_BUY_SUBREGION_ERROR);
+        GUI_MEMBER_REGIONS_MENU_NAME = ChatColor.translateAlternateColorCodes('&', GUI_MEMBER_REGIONS_MENU_NAME);
         ARM_BASIC_COMMAND_MESSAGE = ChatColor.translateAlternateColorCodes('&', ARM_BASIC_COMMAND_MESSAGE);
 
         REGIONKIND_CREATED = ChatColor.translateAlternateColorCodes('&', REGIONKIND_CREATED);
@@ -986,11 +1051,65 @@ public class Messages {
         REGIONKIND_HELP_HEADLINE = ChatColor.translateAlternateColorCodes('&', REGIONKIND_HELP_HEADLINE);
         PLAYER_NOT_FOUND = ChatColor.translateAlternateColorCodes('&', PLAYER_NOT_FOUND);
 
+        GUI_FLAGEDITOR_BUTTON = ChatColor.translateAlternateColorCodes('&', GUI_FLAGEDITOR_BUTTON);
+        GUI_FLAGEDITOR_MENU_NAME = ChatColor.translateAlternateColorCodes('&', GUI_FLAGEDITOR_MENU_NAME);
+        GUI_FLAGEDITOR_DELETE_FLAG_BUTTON = ChatColor.translateAlternateColorCodes('&', GUI_FLAGEDITOR_DELETE_FLAG_BUTTON);
+        GUI_FLAGEDITOR_SET_FLAG_GROUP_ALL_BUTTON = ChatColor.translateAlternateColorCodes('&', GUI_FLAGEDITOR_SET_FLAG_GROUP_ALL_BUTTON);
+        GUI_FLAGEDITOR_SET_FLAG_GROUP_MEMBERS_BUTTON = ChatColor.translateAlternateColorCodes('&', GUI_FLAGEDITOR_SET_FLAG_GROUP_MEMBERS_BUTTON);
+        GUI_FLAGEDITOR_SET_FLAG_GROUP_OWNERS_BUTTON = ChatColor.translateAlternateColorCodes('&', GUI_FLAGEDITOR_SET_FLAG_GROUP_OWNERS_BUTTON);
+        GUI_FLAGEDITOR_SET_FLAG_GROUP_NON_MEMBERS_BUTTON = ChatColor.translateAlternateColorCodes('&', GUI_FLAGEDITOR_SET_FLAG_GROUP_NON_MEMBERS_BUTTON);
+        GUI_FLAGEDITOR_SET_FLAG_GROUP_NON_OWNERS_BUTTON = ChatColor.translateAlternateColorCodes('&', GUI_FLAGEDITOR_SET_FLAG_GROUP_NON_OWNERS_BUTTON);
+        GUI_FLAGEDITOR_SET_STATEFLAG_ALLOW_BUTTON = ChatColor.translateAlternateColorCodes('&', GUI_FLAGEDITOR_SET_STATEFLAG_ALLOW_BUTTON);
+        GUI_FLAGEDITOR_SET_STATEFLAG_DENY_BUTTON = ChatColor.translateAlternateColorCodes('&', GUI_FLAGEDITOR_SET_STATEFLAG_DENY_BUTTON);
+        GUI_FLAGEDITOR_SET_BOOLEANFLAG_TRUE_BUTTON = ChatColor.translateAlternateColorCodes('&', GUI_FLAGEDITOR_SET_BOOLEANFLAG_TRUE_BUTTON);
+        GUI_FLAGEDITOR_SET_BOOLEANFLAG_FALSE_BUTTON = ChatColor.translateAlternateColorCodes('&', GUI_FLAGEDITOR_SET_BOOLEANFLAG_FALSE_BUTTON);
+        GUI_FLAGEDITOR_SET_STRINGFLAG_SET_MESSAGE_BUTTON = ChatColor.translateAlternateColorCodes('&', GUI_FLAGEDITOR_SET_STRINGFLAG_SET_MESSAGE_BUTTON);
+        GUI_FLAGEDITOR_SET_INTEGERFLAG_SET_INTEGER_BUTTON = ChatColor.translateAlternateColorCodes('&', GUI_FLAGEDITOR_SET_INTEGERFLAG_SET_INTEGER_BUTTON);
+        GUI_FLAGEDITOR_SET_DOUBLEFLAG_SET_DOUBLE_BUTTON = ChatColor.translateAlternateColorCodes('&', GUI_FLAGEDITOR_SET_DOUBLEFLAG_SET_DOUBLE_BUTTON);
+        FlAGEDITOR_FLAG_NOT_ACTIVATED = ChatColor.translateAlternateColorCodes('&', FlAGEDITOR_FLAG_NOT_ACTIVATED);
+        FLAGEDITOR_FLAG_HAS_BEEN_UPDATED = ChatColor.translateAlternateColorCodes('&', FLAGEDITOR_FLAG_HAS_BEEN_UPDATED);
+        FLAGEDITOR_FLAG_COULD_NOT_BE_MODIFIED = ChatColor.translateAlternateColorCodes('&', FLAGEDITOR_FLAG_COULD_NOT_BE_MODIFIED);
+        FlAGEDITOR_FLAG_HAS_BEEN_DELETED = ChatColor.translateAlternateColorCodes('&', FlAGEDITOR_FLAG_HAS_BEEN_DELETED);
+        FLAGEDITOR_STRINGFLAG_SET_MESSAGE_INFO = ChatColor.translateAlternateColorCodes('&', FLAGEDITOR_STRINGFLAG_SET_MESSAGE_INFO);
+        FLAGEDITOR_INTEGERFLAG_SET_NUMBER_INFO = ChatColor.translateAlternateColorCodes('&', FLAGEDITOR_INTEGERFLAG_SET_NUMBER_INFO);
+        FLAGEDITOR_DOUBLEFLAG_SET_NUMBER_INFO = ChatColor.translateAlternateColorCodes('&', FLAGEDITOR_DOUBLEFLAG_SET_NUMBER_INFO);
+        GUI_FLAGEDITOR_RESET_BUTTON = ChatColor.translateAlternateColorCodes('&', GUI_FLAGEDITOR_RESET_BUTTON);
+        GUI_FLAGEDITOR_UNKNOWNFLAG_SET_PROPERTIES_BUTTON = ChatColor.translateAlternateColorCodes('&', GUI_FLAGEDITOR_UNKNOWNFLAG_SET_PROPERTIES_BUTTON);
+        FLAGEDITOR_UNKNOWNFLAG_SET_PROPERTIES_INFO = ChatColor.translateAlternateColorCodes('&', FLAGEDITOR_UNKNOWNFLAG_SET_PROPERTIES_INFO);
+        FLAGGROUP_DOES_NOT_EXIST = ChatColor.translateAlternateColorCodes('&', FLAGGROUP_DOES_NOT_EXIST);
+        SUBREGION_FLAGGROUP_ONLY_FOR_SUBREGIONS = ChatColor.translateAlternateColorCodes('&', SUBREGION_FLAGGROUP_ONLY_FOR_SUBREGIONS);
+        REGION_INFO_FLAGGROUP = ChatColor.translateAlternateColorCodes('&', REGION_INFO_FLAGGROUP);
 
+        for(int i = 0; i < REGION_INFO_SELLREGION.size(); i++){
+            REGION_INFO_SELLREGION.set(i, ChatColor.translateAlternateColorCodes('&', REGION_INFO_SELLREGION.get(i)));
+        }
+        for(int i = 0; i < REGION_INFO_RENTREGION.size(); i++){
+            REGION_INFO_RENTREGION.set(i, ChatColor.translateAlternateColorCodes('&', REGION_INFO_RENTREGION.get(i)));
+        }
+        for(int i = 0; i < REGION_INFO_CONTRACTREGION.size(); i++){
+            REGION_INFO_CONTRACTREGION.set(i, ChatColor.translateAlternateColorCodes('&', REGION_INFO_CONTRACTREGION.get(i)));
+        }
+        for(int i = 0; i < REGION_INFO_SELLREGION_ADMIN.size(); i++){
+            REGION_INFO_SELLREGION_ADMIN.set(i, ChatColor.translateAlternateColorCodes('&', REGION_INFO_SELLREGION_ADMIN.get(i)));
+        }
+        for(int i = 0; i < REGION_INFO_RENTREGION_ADMIN.size(); i++){
+            REGION_INFO_RENTREGION_ADMIN.set(i, ChatColor.translateAlternateColorCodes('&', REGION_INFO_RENTREGION_ADMIN.get(i)));
+        }
+        for(int i = 0; i < REGION_INFO_CONTRACTREGION_ADMIN.size(); i++){
+            REGION_INFO_CONTRACTREGION_ADMIN.set(i, ChatColor.translateAlternateColorCodes('&', REGION_INFO_CONTRACTREGION_ADMIN.get(i)));
+        }
+        for(int i = 0; i < REGION_INFO_SELLREGION_SUBREGION.size(); i++){
+            REGION_INFO_SELLREGION_SUBREGION.set(i, ChatColor.translateAlternateColorCodes('&', REGION_INFO_SELLREGION_SUBREGION.get(i)));
+        }
+        for(int i = 0; i < REGION_INFO_RENTREGION_SUBREGION.size(); i++){
+            REGION_INFO_RENTREGION_SUBREGION.set(i, ChatColor.translateAlternateColorCodes('&', REGION_INFO_RENTREGION_SUBREGION.get(i)));
+        }
+        for(int i = 0; i < REGION_INFO_CONTRACTREGION_SUBREGION.size(); i++){
+            REGION_INFO_CONTRACTREGION_SUBREGION.set(i, ChatColor.translateAlternateColorCodes('&', REGION_INFO_CONTRACTREGION_SUBREGION.get(i)));
+        }
         for(int i = 0; i < GUI_ENTITYLIMIT_ITEM_LORE.size(); i++){
             GUI_ENTITYLIMIT_ITEM_LORE.set(i, ChatColor.translateAlternateColorCodes('&', GUI_ENTITYLIMIT_ITEM_LORE.get(i)));
         }
-
         for(int i = 0; i < GUI_SUBREGION_MANAGER_NO_SUBREGION_ITEM_LORE.size(); i++){
             GUI_SUBREGION_MANAGER_NO_SUBREGION_ITEM_LORE.set(i, ChatColor.translateAlternateColorCodes('&', GUI_SUBREGION_MANAGER_NO_SUBREGION_ITEM_LORE.get(i)));
         }
@@ -1036,9 +1155,6 @@ public class Messages {
         for(int i = 0; i < GUI_TAKEOVER_ITEM_LORE.size(); i++){
             GUI_TAKEOVER_ITEM_LORE.set(i, ChatColor.translateAlternateColorCodes('&', GUI_TAKEOVER_ITEM_LORE.get(i)));
         }
-        for(int i = 0; i < MEMBERLIST_INFO_LORE.size(); i++){
-            MEMBERLIST_INFO_LORE.set(i, ChatColor.translateAlternateColorCodes('&', MEMBERLIST_INFO_LORE.get(i)));
-        }
         for(int i = 0; i < GUI_EXTEND_BUTTON_LORE.size(); i++){
             GUI_EXTEND_BUTTON_LORE.set(i, ChatColor.translateAlternateColorCodes('&', GUI_EXTEND_BUTTON_LORE.get(i)));
         }
@@ -1066,8 +1182,7 @@ public class Messages {
     }
 
     private static void updateDefauts() {
-        boolean fileUpdated = false;
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.Prefix", "&b[ARM]&r");
+        boolean fileUpdated = YamlFileManager.addDefault(config,"Messages.Prefix", "&b[ARM]&r");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.ArmBasicCommandMessage", "&6AdvancedRegionMarket v%pluginversion% by Alex9849\n&6Download: &3https://bit.ly/2CfO3An\n&6Get a list with all commands with &3/arm help");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.NoPermission", "&4You do not have permission!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.NotEnoughtMoney", "&4You do not have enough money!");
@@ -1076,12 +1191,10 @@ public class Messages {
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionDoesNotExist", "&4The selected region does not exist in this (or the selected) world!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionKindNotExist", "&4Kind does not exist!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.PriceCanNotBeNegative", "&4Price can not be negative!");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionKindRegionNotExist", "&4Region does not exist");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.CommandOnlyIngame", "&4This command can only be executed ingame!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RentExtendError", "&4You can not rent this region for more than &6%maxrenttime% &4at once");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionErrorCanNotBuildHere", "&4You only allowed to break blocks you placed here!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.NoFreeRegionWithThisKind", "&7No free region with this type found :(");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.NoPermissionToSearchKind", "&4You are not allowed to search regions of this kind");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionkindDoesNotExist", "&4The selected regionkind does not exist!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.NoPermissionsToBuyThisKindOfRegion", "&4You do not have permission to buy this kind of region (You need the permission &6arm.buykind.%regionkind%&4)");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.UserNotAMemberOrOwner", "&4You are not a member or owner of this region!");
@@ -1100,10 +1213,7 @@ public class Messages {
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionRemovedFromARM", "&7The region has been removed from ARM!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionKindSet", "&aRegionkind set!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.ResetComplete", "&aReset complete!");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.ResetPerCentComplete", "&7%percent% complete...");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.Complete", "&aComplete!");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.LoadingSchematic", "&7Loading Schematic...");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.LoadingSchematicComplete", "&7Schematic loaded!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.ResetRegionCooldownError", "&7You have to wait&6 %remainingdays% &7days till you can reset your region again");
 
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.Currency", "$");
@@ -1131,7 +1241,6 @@ public class Messages {
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.ContractSoldSign2", "%regionid%/%owner%");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.ContractSoldSign3", "%price%%currency%/%extend%");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.ContractSoldSign4", "%remaining%");
-
 
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.Seconds", "s");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.Minutes", "m");
@@ -1200,8 +1309,6 @@ public class Messages {
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionIsNotARentregion", "&4Region is not a rentregion!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionIsNotAContractRegion", "&4Region is not a contractregion!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionTeleportMessage", "&7You have been teleported to %regionid%");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionKinds", "&6Regionkinds:");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.ResetRegionResetingBlocks", "&7Resetting blocks...");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionNowAviable", "&aRegion is now available!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.NoRegionAtPlayersPosition", "&7Could not find a region at your position!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionAddMemberNotOnline", "&4The selected player is not online!");
@@ -1215,17 +1322,11 @@ public class Messages {
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.AutopriceList", "&6=========[Autoprices]=========");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.SubregionHelpHeadline", "&6=====[AdvancedRegionMarket Subregion Help]=====\n&3Page %actualpage% / %maxpage%");
 
-
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.LimitInfoTop", "&6=========[Limit Info]=========");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.LimitInfoTotal", "&6Total");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.LimitInfo", "&6%regionkind%: %playerownedkind%/%limitkind%");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfo", "&6=========[Region info]=========");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoID", "&6ID: ");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoSold", "&6Sold: ");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoPrice", "&6Price: ");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoType", "&6Type: ");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoOwner", "&6Owner: ");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoMembers", "&6Members: ");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoDoBlockReset", "&6DoBlockReset: ");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoIsUserResettable", "&6UserResettable: ");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoAutoprice", "&6Autoprice: ");
@@ -1233,15 +1334,11 @@ public class Messages {
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoAutoreset", "&6Autoreset: ");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoMaxRentTime", "&6Max rent time: ");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoExtendPerClick", "&6Extend per click: ");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.RentRegionInfoRemainingTime", "&6Remaining time: ");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoTerminated", "&6Terminated: ");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoAutoExtendTime", "&6Extend time: ");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.ContractRegionInfoRemainingTime", "&6Next extend in: ");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoYes", "yes");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoNo", "no");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoYes", "&2yes");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoNo", "&4no");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoAllowedSubregions", "&6Allowed Subregions: ");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoSubregions", "&6Subregions: ");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoExpired", "&6Expired");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoExpired", "&4Expired");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionSelectedMultipleRegions", "&6There is more than one region at your position. Please select one: &4");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RentRegionExpirationWarning", "&4WARNING! This RentRegion(s) will expire soon: &c");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionDeleted", "&aRegion deleted!");
@@ -1269,8 +1366,8 @@ public class Messages {
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.SignLinkModeNoPresetSelected", "&cYou dont have a preset loaded! Please load or create a preset first! &cYou can create a preset by using the &6/arm sellpreset/rentpreset/contractpreset &ccommands!\nFor more &cinformation about presets click here:\n&6https://goo.gl/3upfAA (Gitlab Wiki)");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.SignLinkModeSignBelongsToAnotherRegion", "&4Sign belongs to another region!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.SignLinkModeSignSelected", "&aSign selected!");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.SignLinkModeMultipleWgRegionsAtPosition", "&4Could not select WorldGuard-Region! There is more then one region available!");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.SignLinkModeNoWgRegionAtPosition", "&4Could not select WorldGuard-Region! There is no region at this position!");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.SignLinkModeMultipleWgRegionsAtPosition", "&4Could not select WorldGuard-Region! There is more than one region available!");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.SignLinkModeNoWgRegionAtPosition", "&4Could not select WorldGuard-Region! There is no region at your position!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.SignLinkModeCouldNotIdentifyWorld", "&4Could not identify world! Please select the WorldGuard-Region again!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.SignLinkModeNoSignSelected", "&4You have not selected a sign");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.SignLinkModeNoWgRegionSelected", "&4You have not selected a WorldGuard-Region");
@@ -1293,52 +1390,52 @@ public class Messages {
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIMembersButton", "&6Members");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUITeleportToRegionButton", "&6Teleport to region");
 
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUITeleportToRegionButtonLore", new ArrayList<String>(Arrays.asList("Click to teleport you to",
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUITeleportToRegionButtonLore", new ArrayList<>(Arrays.asList("Click to teleport you to",
                 "your region")));
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIShowInfosButton", "&6Show infos");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIMakeOwnerButton", "&aMake owner");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIMakeOwnerButtonLore", new ArrayList<String>(Arrays.asList("Click to transfer your owner rights",
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIMakeOwnerButtonLore", new ArrayList<>(Arrays.asList("Click to transfer your owner rights",
                 "to the selected member.", "&4WARNING: &cYou will lose your owner", "&crights and become a member")));
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIRemoveMemberButton", "&4Remove");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIRemoveMemberButtonLore", new ArrayList<String>(Arrays.asList("Click to remove the selected member",
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIRemoveMemberButtonLore", new ArrayList<>(Arrays.asList("Click to remove the selected member",
                 "from your region")));
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIWarningYes", "&aYes");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIWarningNo", "&4No");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIResetRegionButton", "&4Reset region");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIResetRegionButtonLore", new ArrayList<String>(Arrays.asList("Click to reset your region",
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIResetRegionButtonLore", new ArrayList<>(Arrays.asList("Click to reset your region",
                 "&4WARNING: &cThis can not be undone! Your region", "&cwill be resetted and everything on it will", "&cbe deleted!",
                 "&cYou can only reset you region once every %days% days", "&2You and all members keep their rights on the region")));
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionTransferCompleteMessage", "&aTransfer complete!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegiontransferMemberNotOnline", "&4Member not online!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegiontransferLimitError", "&4Transfer aborted! (Region would exceed players limit)");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUICloseWindow", "&6Close window");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.TakeOverItemLore", new ArrayList<String>(Arrays.asList("&aYou are a member of this region. The owner of it was not online",
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.TakeOverItemLore", new ArrayList<>(Arrays.asList("&aYou are a member of this region. The owner of it was not online",
                 "&afor more than&7 50 &adays. You can transfer the owner rights to your", "&aaccount for free. The actual owner of it will become a member of it.",
                 "&cIf the region does not get transferred or the owner does not come online",
                 "&cin the next&7 %days% &cdays the region will be resetted and everybody on it",
                 "&cwill lose their rights. Afterwards it will go back for sale!")));
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.OwnerMemberlistInfo", "&6Adding members:");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.OwnerMemberlistInfoLore", new ArrayList<String>(Arrays.asList("&aYou can add members to your region",
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.OwnerMemberlistInfoLore", new ArrayList<>(Arrays.asList("&aYou can add members to your region",
                 "&ain order to build with them together", "&aYou can add members with:",
                 "&6/arm addmember %regionid% USERNAME", "&aMembers need to be online to add them")));
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIExtendRentRegionButton", "&1Extend region");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIExtendRentRegionButtonLore", new ArrayList<String>(Arrays.asList("&aClick to extend your region for &6%extendperclick%",
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIExtendRentRegionButtonLore", new ArrayList<>(Arrays.asList("&aClick to extend your region for &6%extendperclick%",
                 "&athis will cost you &6%price%%currency%&a!", "&aThis region will expire in &6%remaining%&a.", "&aYou can extend your region up to &6%maxrenttime%&a.")));
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIRentRegionLore", new ArrayList<String>(Arrays.asList("&aExpires in &6%remaining%")));
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIRentRegionLore", new ArrayList<>(Arrays.asList("&aExpires in &6%remaining%")));
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIUserSellButton", "&4Reset and sell Region");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIUserSellButtonLore", new ArrayList<String>(Arrays.asList("Click to sell your region",
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIUserSellButtonLore", new ArrayList<>(Arrays.asList("Click to sell your region",
                 "&4WARNING: &cThis can not be undone! Your region", "&cwill be released and all blocks on it will be", "&cresetted! You and all members of it will loose",
                 "&ctheir rights on it.", "&cYou will get &6%paybackmoney% %currency% &cback")));
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIUserSellWarning", "&4&lSell your region?");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUILimitButton", "&6My limits");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.MemberlistInfo", "&6How to become a Member:");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.MemberlistInfoLore", new ArrayList<String>(Arrays.asList("&aYou can be added as a member to",
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.MemberlistInfoLore", new ArrayList<>(Arrays.asList("&aYou can be added as a member to",
                 "&athe region of someone else in order", "&ato build with him together", "&aJust ask a region owner to add you with:",
                 "&6/arm addmember REGIONID USERNAME", "&aYou need to be online for this")));
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIContractItem", "&6Manage contract");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIContractItemLore", new ArrayList<String>(Arrays.asList("&aStatus: %status%", "&aIf active the next extend is in:",
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIContractItemLore", new ArrayList<>(Arrays.asList("&aStatus: %status%", "&aIf active the next extend is in:",
                 "&6%remaining%")));
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIContractItemRegionLore", new ArrayList<String>(Arrays.asList("&aStatus: %status%", "&aIf active the next extend is in:",
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIContractItemRegionLore", new ArrayList<>(Arrays.asList("&aStatus: %status%", "&aIf active the next extend is in:",
                 "&6%remaining%")));
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.SellregionName", "Sellregion");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.ContractregionName","Contractregion");
@@ -1351,7 +1448,7 @@ public class Messages {
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIRegionfinderTeleportToRegionButton","&6Teleport to region!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIRegionfinderTeleportToSignButton","&6Teleport to buy sign!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUINextPageButton","&6Next page");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIPrevPageButton","&Prev page");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIPrevPageButton","&6Prev page");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.Enabled","&aenabled");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.Disabled","&cdisabled");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.Sold","&csold");
@@ -1361,18 +1458,18 @@ public class Messages {
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.UnsellRegionButtonLore", new ArrayList<>(Arrays.asList("&4Click to unsell your subregion and", "&4kick the players of it")));
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.UnsellRegionWarningName", "&4&lUnsell region?");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUISubregionManagerNoSubregionItem", "&6Info");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIHotelButtonLore", new ArrayList<String>(Arrays.asList("&6The hotel function allows you to prevent players", "&6from breaking blocks they do not have placed", "&6Status: %hotelfunctionstatus%", "&6Click to enable/disable")));
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUISubregionInfoSell", new ArrayList<String>(Arrays.asList("&6Selltype: %selltype%", "&6Status: %soldstatus%", "&6Price: %price%", "&6Price per M2: %priceperm2%", "&6Dimensions: %dimensions%")));
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUISubregionInfoRent", new ArrayList<String>(Arrays.asList("&6Selltype: %selltype%", "&6Status: %soldstatus%", "&6Price: %price%", "&6Price per M2 (per week): %priceperm2perweek%", "&6Extend per click: %extendperclick%", "&6Max. extended time: %maxrenttime%", "&6Dimensions: %dimensions%")));
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUISubregionInfoContract", new ArrayList<String>(Arrays.asList("&6Selltype: %selltype%", "&6Status: %soldstatus%", "&6Price: %price%", "&6Price per M2 (per week): %priceperm2perweek%", "&6Automatic extend time: %extend%", "&6Dimensions: %dimensions%")));
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIRegionfinderInfoSell", new ArrayList<String>(Arrays.asList("&6Price: %price%", "&6Price per M2: %priceperm2%", "&6Dimensions: %dimensions%", "&6World: %world%")));
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIRegionfinderInfoRent", new ArrayList<String>(Arrays.asList("&6Price: %price%" ,"&6Price per M2 (per week): %priceperm2perweek%", "&6Extend per click: %extendperclick%","&6Max. extended time: %maxrenttime%", "&6Dimensions: %dimensions%", "&6World: %world%")));
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIRegionfinderInfoContract", new ArrayList<String>(Arrays.asList("&6Price: %price%", "&6Price per M2 (per week): %priceperm2perweek%", "&6Automatic extend time: %extend%","&6Dimensions: %dimensions%", "&6World: %world%")));
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.SubregionCreationCreateSignInfo", new ArrayList<String>(Arrays.asList("&aYour selection has been saved! You can now create a sign to sell the region.", "&aCreate a Sell-Region:", "&6First line: &b[sub-sell]", "&6Last line: &bprice", "", "&aCreate a Rent-Region:", "&6First line: &b[sub-rent]",
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIHotelButtonLore", new ArrayList<>(Arrays.asList("&6The hotel function allows you to prevent players", "&6from breaking blocks they do not have placed", "&6Status: %hotelfunctionstatus%", "&6Click to enable/disable")));
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUISubregionInfoSell", new ArrayList<>(Arrays.asList("&6Selltype: %selltype%", "&6Status: %soldstatus%", "&6Price: %price%", "&6Price per M2: %priceperm2%", "&6Dimensions: %dimensions%")));
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUISubregionInfoRent", new ArrayList<>(Arrays.asList("&6Selltype: %selltype%", "&6Status: %soldstatus%", "&6Price: %price%", "&6Price per M2 (per week): %priceperm2perweek%", "&6Extend per click: %extendperclick%", "&6Max. extended time: %maxrenttime%", "&6Dimensions: %dimensions%")));
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUISubregionInfoContract", new ArrayList<>(Arrays.asList("&6Selltype: %selltype%", "&6Status: %soldstatus%", "&6Price: %price%", "&6Price per M2 (per week): %priceperm2perweek%", "&6Automatic extend time: %extend%", "&6Dimensions: %dimensions%")));
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIRegionfinderInfoSell", new ArrayList<>(Arrays.asList("&6Price: %price%", "&6Price per M2: %priceperm2%", "&6Dimensions: %dimensions%", "&6World: %world%")));
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIRegionfinderInfoRent", new ArrayList<>(Arrays.asList("&6Price: %price%" ,"&6Price per M2 (per week): %priceperm2perweek%", "&6Extend per click: %extendperclick%","&6Max. extended time: %maxrenttime%", "&6Dimensions: %dimensions%", "&6World: %world%")));
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIRegionfinderInfoContract", new ArrayList<>(Arrays.asList("&6Price: %price%", "&6Price per M2 (per week): %priceperm2perweek%", "&6Automatic extend time: %extend%","&6Dimensions: %dimensions%", "&6World: %world%")));
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.SubregionCreationCreateSignInfo", new ArrayList<>(Arrays.asList("&aYour selection has been saved! You can now create a sign to sell the region.", "&aCreate a Sell-Region:", "&6First line: &b[sub-sell]", "&6Last line: &bprice", "", "&aCreate a Rent-Region:", "&6First line: &b[sub-rent]",
                 "&6Last line: &bPricePerPeriod&6;&bExtendPerClick&6;&bMaxExtendTime", "&6example for ExtendPerClick/MaxExtendTime: 5d (5 days)", "", "&aCreate a Contract-Region:", "&6First line: &b[sub-contract]", "&6Last line: &bPricePerPeriod&6;&bExtendTime", "&6example for ExtendTime: 12h (12 hours)", "&4We would strongly recommend to not place the sign within the subregion!")));
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.SubregionCreationSelectAreaInfo", new ArrayList<String>(Arrays.asList("&aYou got a tool in your inventory (feather) to select 2 points of your region that will mark the corners of your new subregion.", "&aLeft click to select pos1", "&aRight click to select pos2", "&aType \"&6/arm subregion create\" &aif you are done")));
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.SubregionCreationSelectAreaInfo", new ArrayList<>(Arrays.asList("&aYou got a tool in your inventory (feather) to select 2 points of your region that will mark the corners of your new subregion.", "&aLeft click to select pos1", "&aRight click to select pos2", "&aType \"&6/arm subregion create\" &aif you are done")));
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.SubregionToolAlreadyOwned", "&4You already own a Subregion Tool. Please use that instead of a new one!");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUISubregionManagerNoSubregionItemLore", new ArrayList<String>(Arrays.asList("&aYou do not have any subregions on your region.", "&aYou can create a new subregion, that you",  "&acan sell to other players by typing", "&6/arm subregion tool &aand following displayed the steps")));
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUISubregionManagerNoSubregionItemLore", new ArrayList<>(Arrays.asList("&aYou do not have any subregions on your region.", "&aYou can create a new subregion, that you",  "&acan sell to other players by typing", "&6/arm subregion tool &aand following displayed the steps")));
 
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.EntityLimitHelpHeadline", "&6=====[AdvancedRegionMarket EntityLimit Help ]=====\n&3Page %actualpage% / %maxpage%");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.EntityLimitGroupNotExist", "&4EntityLimitGroup does not exist!");
@@ -1391,12 +1488,14 @@ public class Messages {
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.EntityLimitGroupInfoGroupname", "&6Groupname: ");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.EntityLimitGroupInfoPattern", "&6%entitytype%: &r%softlimitentities% %entityextensioninfo%");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.EntityLimitGroupListHeadline", "&6EntityLimitGroups:");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.EntityLimitGroupCouldNotspawnEntity", "&4Could not spawn entity on region %region%! The not spawned entity would exeed the regions " +
+        "entitylimit for more information type &6/arm entitylimit check %region%&4! \nEverybody on region %region% recieved this message! If you are not a member of this region, you can ignore this message.");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoEntityLimit", "&6EntityLimitGroup: ");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.SubregionEntityLimitOnlyForSubregions", "&4SubregionEntityLimitGroup only for subregions");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.MassactionSplitter", "&6all regions with regionkind &a%regionkind%");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.SubregionEntityLimitError", "&4Could not change EntiyLimitGroup for the region &6%regionid%&4! Region is a Subregion!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIEntityLimitItemButton", "&6EntityLimits");
-        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIEntityLimitItemLore", new ArrayList<String>(Arrays.asList("&6Click to display the entity-limits", "&6for this region in chat", "%entityinfopattern%", "", "You can expand your entity-limit with:", "&6/arm entitylimit buyextra %regionid% [ENTITYTYPE/total]")));
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIEntityLimitItemLore", new ArrayList<>(Arrays.asList("&6Click to display the entity-limits", "&6for this region in chat", "%entityinfopattern%", "", "You can expand your entity-limit with:", "&6/arm entitylimit buyextra %regionid% [ENTITYTYPE/total]")));
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIEntityLimitInfoPattern", "&6%entitytype%: &a(&r%actualentities%&a/&r%softlimitentities%&a) %entityextensioninfo%");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.EntityLimitCheckExtensionInfo", "\n&6&o--> Limit extendable up to &r%hardlimitentities% &6entities for &r%priceperextraentity% %currency%&6/entity");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIEntityLimitInfoExtensionInfo", "&6&oMax. &r%hardlimitentities% &6for &r%priceperextraentity% %currency%&6/entity");
@@ -1408,8 +1507,6 @@ public class Messages {
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.EntityLimitGroupExtraEntitiesHardlimitReached", "&4Can not buy another entity-expansion! Hardlimit has been reached!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.EntityLimitGroupExtraEntitiesSetSubregionError", "&4Can not change entitylimit! Region is a Subregion");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.EntityLimitGroupExtraEntitiesBuySubregionError", "&4Can not expand entitylimit! Region is a Subregion");
-
-
 
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionKindCreated", "&aRegionKind created!");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionKindAlreadyExists", "&4RegionKind already exists!");
@@ -1429,6 +1526,144 @@ public class Messages {
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionKindInfoLore", "&6Lore:");
         fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionKindHelpHeadline", "&6=====[AdvancedRegionMarket RegionKind Help ]=====\n&3Page %actualpage% / %maxpage%");
         fileUpdated |= YamlFileManager.addDefault(config, "Messages.PlayerNotFound", "&4Could not find selected player!");
+
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIFlageditorButton", "&6FlagEditor");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIFlageditorMenuName", "&1FlagEditor (%region%)");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIFlageditorDeleteFlagButton", "&4Delete flag");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIFlageditorSetFlagGroupAllButton", "&9Set for everyone");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIFlageditorSetFlagGroupMembersButton", "&9Set for members and owners");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIFlageditorSetFlagGroupOwnersButton", "&9Set for owners");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIFlageditorSetFlagGroupNonMembersButton", "&9Set for non members and non owners");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIFlageditorSetFlagGroupNonOwnersButton", "&9Set for non owners");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIFlageditorSetStateflagAllowButton", "&2Allow");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIFlageditorSetStateflagDenyButton", "&4Deny");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIFlageditorSetBooleanflagTrueButton", "&2Yes");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIFlageditorSetBooleanflagFalseButton", "&4No");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIFlageditorSetStringflagSetMessageButton", "&2Set message");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIFlageditorSetIntegerflagSetIntegerButton", "&2Set number");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIFlageditorSetDoubleflagSetDoubleButton", "&2Set number");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.FlageditorFlagNotActivated", "&4Flag not activated!");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.FlageditorFlagHasBeenUpdated", "&2Flag has been updated!");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.FlageditorFlagCouldNotBeUpdated", "Could not modify flag %flag%!");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.FlageditorFlagHasBeenDeleted", "&2Flag has been deleted!");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.FlageditorStringflagSetMessageInfo", "&9Please write down a message:");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.FlageditorIntegerflagSetMessageInfo", "&9Please write down a number that does not have decimals:");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.FlageditorDoubleflagSetMessageInfo", "&9Please write down a number:");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIFlageditorResetButton", "&4Reset all Flags to default settings");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIFlageditorUnknownFlagSetPropertiesButton", "&2Set properties");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.GUIFlageditorUnknownFlagSetPropertiesInfo", "&9Please write down your new flag properties:");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.FlaggroupDoesNotExist", "&4Flaggroup does not exist!");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.SubregionFlaggroupOnlyForSubregions", "&4Subregion flaggroup only for subregions");
+        fileUpdated |= YamlFileManager.addDefault(config,"Messages.RegionInfoFlaggroup", "&6FlagGroup: ");
+
+        fileUpdated |= YamlFileManager.addDefault(config, "Messages.RegionInfoSellregionAdmin", new ArrayList<>(Arrays.asList("&6=========[Region Info]=========",
+                "&9ID: &e%regionid% &7(Type: &r%selltype%&7)",
+                "&9Sold: &e%issold%",
+                "&9Price: &e%price%",
+                "&9Owner: &e%owner%",
+                "&9Members: &e%members%",
+                "&9Regionkind: &e%regionkinddisplay% &9FlagGroup: &e%flaggroup%",
+                "&9EntityLimitGroup: &e%entitylimitgroup% &9isHotel: &e%ishotel%",
+                "&9Autoreset: &e%isautoreset%", "&9UserResettable: &e%isuserresettable%",
+                "&9DoBlockReset: &e%isdoblockreset% &9Autoprice: &e%autoprice%",
+                "&9Allowed Subregions: &e%subregionlimit%",
+                "&9Subregions: &e%subregions%")));
+        fileUpdated |= YamlFileManager.addDefault(config, "Messages.RegionInfoRentregionAdmin", new ArrayList<>(Arrays.asList("&6=========[Region Info]=========",
+                "&9ID: &e%regionid% &7(Type: &r%selltype%&7)",
+                "&9Sold: &e%issold%",
+                "&9Price: &e%price% &7per &e%extendperclick% &7max.: &e%maxrenttime%",
+                "&9Remaining time: &e%remaining%",
+                "&9Owner: &e%owner%",
+                "&9Members: &e%members%",
+                "&9Regionkind: &e%regionkinddisplay% &9FlagGroup: &e%flaggroup%",
+                "&9EntityLimitGroup: &e%entitylimitgroup% &9isHotel: &e%ishotel%",
+                "&9Autoreset: &e%isautoreset%", "&9UserResettable: &e%isuserresettable%",
+                "&9DoBlockReset: &e%isdoblockreset% &9Autoprice: &e%autoprice%",
+                "&9Allowed Subregions: &e%subregionlimit%",
+                "&9Subregions: &e%subregions%")));
+        fileUpdated |= YamlFileManager.addDefault(config, "Messages.RegionInfoContractregionAdmin", new ArrayList<>(Arrays.asList("&6=========[Region Info]=========",
+                "&9ID: &e%regionid% &7(Type: &r%selltype%&7)",
+                "&9Sold: &e%issold%",
+                "&9Price: &e%price% &7per &e%extend% &7(auto extend)",
+                "&9Next extend in: &e%remaining%",
+                "&9Owner: &e%owner%",
+                "&9Members: &e%members%",
+                "&9Regionkind: &e%regionkinddisplay% &9FlagGroup: &e%flaggroup%",
+                "&9EntityLimitGroup: &e%entitylimitgroup% &9isHotel: &e%ishotel%",
+                "&9Autoreset: &e%isautoreset%", "&9UserResettable: &e%isuserresettable%",
+                "&9DoBlockReset: &e%isdoblockreset% &9Autoprice: &e%autoprice%",
+                "&9Allowed Subregions: &e%subregionlimit%",
+                "&9Subregions: &e%subregions%")));
+        fileUpdated |= YamlFileManager.addDefault(config, "Messages.RegionInfoSellregionUser", new ArrayList<>(Arrays.asList("&6=========[Region Info]=========",
+                "&9ID: &e%regionid% &7(Type: &r%selltype%&7)",
+                "&9Sold: &e%issold%",
+                "&9Price: &e%price%",
+                "&9Owner: &e%owner%",
+                "&9Members: &e%members%",
+                "&9Regionkind: &e%regionkinddisplay% &9FlagGroup: &e%flaggroup%",
+                "&9EntityLimitGroup: &e%entitylimitgroup% &9isHotel: &e%ishotel%",
+                "&9Autoreset: &e%isautoreset%", "&9UserResettable: &e%isuserresettable%",
+                "&9DoBlockReset: &e%isdoblockreset% &9Autoprice: &e%autoprice%",
+                "&9Allowed Subregions: &e%subregionlimit%",
+                "&9Subregions: &e%subregions%")));
+        fileUpdated |= YamlFileManager.addDefault(config, "Messages.RegionInfoRentregionUser", new ArrayList<>(Arrays.asList("&6=========[Region Info]=========",
+                "&9ID: &e%regionid% &7(Type: &r%selltype%&7)",
+                "&9Sold: &e%issold%",
+                "&9Price: &e%price% &7per &e%extendperclick% &7max.: &e%maxrenttime%",
+                "&9Remaining time: &e%remaining%",
+                "&9Owner: &e%owner%",
+                "&9Members: &e%members%",
+                "&9Regionkind: &e%regionkinddisplay% &9FlagGroup: &e%flaggroup%",
+                "&9EntityLimitGroup: &e%entitylimitgroup% &9isHotel: &e%ishotel%",
+                "&9Autoreset: &e%isautoreset%", "&9UserResettable: &e%isuserresettable%",
+                "&9DoBlockReset: &e%isdoblockreset% &9Autoprice: &e%autoprice%",
+                "&9Allowed Subregions: &e%subregionlimit%",
+                "&9Subregions: &e%subregions%")));
+        fileUpdated |= YamlFileManager.addDefault(config, "Messages.RegionInfoContractregionUser", new ArrayList<>(Arrays.asList("&6=========[Region Info]=========",
+                "&9ID: &e%regionid% &7(Type: &r%selltype%&7)",
+                "&9Sold: &e%issold%",
+                "&9Price: &e%price% &7per &e%extend% &7(auto extend)",
+                "&9Next extend in: &e%remaining%",
+                "&9Owner: &e%owner%",
+                "&9Members: &e%members%",
+                "&9Regionkind: &e%regionkinddisplay% &9FlagGroup: &e%flaggroup%",
+                "&9EntityLimitGroup: &e%entitylimitgroup% &9isHotel: &e%ishotel%",
+                "&9Autoreset: &e%isautoreset%", "&9UserResettable: &e%isuserresettable%",
+                "&9DoBlockReset: &e%isdoblockreset% &9Autoprice: &e%autoprice%",
+                "&9Allowed Subregions: &e%subregionlimit%",
+                "&9Subregions: &e%subregions%")));
+        fileUpdated |= YamlFileManager.addDefault(config, "Messages.RegionInfoSellregionSubregion", new ArrayList<>(Arrays.asList("&6=========[Region Info]=========",
+                "&9ID: &e%regionid% &7(Type: &r%selltype%&7, Subregion)",
+                "&9Sold: &e%issold%",
+                "&9Price: &e%price%",
+                "&9Owner: &e%owner%",
+                "&9Members: &e%members%",
+                "&9Regionkind: &e%regionkinddisplay% &9FlagGroup: &e%flaggroup%",
+                "&9EntityLimitGroup: &e%entitylimitgroup% &9isHotel: &e%ishotel%",
+                "&9Autoreset: &e%isautoreset%", "&9UserResettable: &e%isuserresettable%",
+                "&9DoBlockReset: &e%isdoblockreset% &9Autoprice: &e%autoprice%")));
+        fileUpdated |= YamlFileManager.addDefault(config, "Messages.RegionInfoRentregionSubregion", new ArrayList<>(Arrays.asList("&6=========[Region Info]=========",
+                "&9ID: &e%regionid% &7(Type: &r%selltype%&7, Subregion)",
+                "&9Sold: &e%issold%",
+                "&9Price: &e%price% &7per &e%extendperclick% &7max.: &e%maxrenttime%",
+                "&9Remaining time: &e%remaining%",
+                "&9Owner: &e%owner%",
+                "&9Members: &e%members%",
+                "&9Regionkind: &e%regionkinddisplay% &9FlagGroup: &e%flaggroup%",
+                "&9EntityLimitGroup: &e%entitylimitgroup% &9isHotel: &e%ishotel%",
+                "&9Autoreset: &e%isautoreset%", "&9UserResettable: &e%isuserresettable%",
+                "&9DoBlockReset: &e%isdoblockreset% &9Autoprice: &e%autoprice%")));
+        fileUpdated |= YamlFileManager.addDefault(config, "Messages.RegionInfoContractregionSubregion", new ArrayList<>(Arrays.asList("&6=========[Region Info]=========",
+                "&9ID: &e%regionid% &7(Type: &r%selltype%&7, Subregion)",
+                "&9Sold: &e%issold%",
+                "&9Price: &e%price% &7per &e%extend% &7(auto extend)",
+                "&9Next extend in: &e%remaining%",
+                "&9Owner: &e%owner%",
+                "&9Members: &e%members%",
+                "&9Regionkind: &e%regionkinddisplay% &9FlagGroup: &e%flaggroup%",
+                "&9EntityLimitGroup: &e%entitylimitgroup% &9isHotel: &e%ishotel%",
+                "&9Autoreset: &e%isautoreset%", "&9UserResettable: &e%isuserresettable%",
+                "&9DoBlockReset: &e%isdoblockreset% &9Autoprice: &e%autoprice%")));
 
         if(fileUpdated) {
             config.options().copyDefaults(true);

@@ -1,8 +1,8 @@
 package net.alex9849.arm.commands;
 
-import net.alex9849.arm.handler.CommandHandler;
 import net.alex9849.arm.Messages;
 import net.alex9849.arm.Permission;
+import net.alex9849.arm.handler.CommandHandler;
 import net.alex9849.arm.presets.presets.PresetType;
 import net.alex9849.exceptions.CmdSyntaxException;
 import net.alex9849.exceptions.InputException;
@@ -45,6 +45,7 @@ public class RentPresetCommand extends SellPresetCommand {
         commands.add(new net.alex9849.arm.presets.commands.UserResettableCommand(PresetType.RENTPRESET));
         commands.add(new net.alex9849.arm.presets.commands.SetAutoPriceCommand(PresetType.RENTPRESET));
         commands.add(new net.alex9849.arm.presets.commands.EntityLimitCommand(PresetType.RENTPRESET));
+        commands.add(new net.alex9849.arm.presets.commands.FlaggroupCommand(PresetType.RENTPRESET));
         this.commandHandler.addCommands(commands);
     }
 

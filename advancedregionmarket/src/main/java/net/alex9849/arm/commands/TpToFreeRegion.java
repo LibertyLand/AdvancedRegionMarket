@@ -3,7 +3,6 @@ package net.alex9849.arm.commands;
 import net.alex9849.arm.AdvancedRegionMarket;
 import net.alex9849.arm.Messages;
 import net.alex9849.arm.Permission;
-import net.alex9849.arm.minifeatures.PlayerRegionRelationship;
 import net.alex9849.arm.regionkind.RegionKind;
 import net.alex9849.exceptions.CmdSyntaxException;
 import net.alex9849.exceptions.InputException;
@@ -64,6 +63,11 @@ public class TpToFreeRegion extends BasicArmCommand {
         List<String> returnme = new ArrayList<>();
 
         if(args.length >= 1) {
+
+            if(!player.hasPermission(Permission.MEMBER_TP_TO_FREE_REGION)) {
+                return returnme;
+            }
+
             if (this.rootCommand.startsWith(args[0])) {
                 if (Permission.hasAnyBuyPermission(player)) {
                     if(args.length == 1) {

@@ -1,30 +1,45 @@
 package net.alex9849.arm;
 
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import net.alex9849.arm.commands.DeleteCommand;
+import net.alex9849.arm.commands.InfoCommand;
+import net.alex9849.arm.commands.*;
+import net.alex9849.arm.entitylimit.EntityLimitGroupManager;
+import net.alex9849.arm.entitylimit.commands.CreateCommand;
+import net.alex9849.arm.entitylimit.commands.ListCommand;
+import net.alex9849.arm.entitylimit.commands.*;
+import net.alex9849.arm.flaggroups.FlagGroup;
+import net.alex9849.arm.flaggroups.FlagGroupManager;
+import net.alex9849.arm.gui.Gui;
 import net.alex9849.arm.handler.CommandHandler;
 import net.alex9849.arm.handler.Scheduler;
 import net.alex9849.arm.handler.listener.*;
-import net.alex9849.arm.commands.*;
-import net.alex9849.arm.entitylimit.EntityLimitGroupManager;
+import net.alex9849.arm.limitgroups.LimitGroup;
+import net.alex9849.arm.minifeatures.SignLinkMode;
+import net.alex9849.arm.presets.ActivePresetManager;
 import net.alex9849.arm.presets.PresetPatternManager;
+import net.alex9849.arm.regionkind.RegionKindManager;
+import net.alex9849.arm.regionkind.commands.*;
+import net.alex9849.arm.regions.Region;
+import net.alex9849.arm.regions.RegionManager;
+import net.alex9849.arm.regions.RentRegion;
+import net.alex9849.arm.regions.price.Autoprice.AutoPrice;
 import net.alex9849.arm.regions.price.Price;
 import net.alex9849.arm.regions.price.RentPrice;
-import net.alex9849.arm.regionkind.RegionKindManager;
+import net.alex9849.arm.subregions.commands.ToolCommand;
 import net.alex9849.arm.util.MaterialFinder;
-import net.alex9849.exceptions.InputException;
-import net.alex9849.arm.minifeatures.SignLinkMode;
-import net.alex9849.arm.regions.price.Autoprice.AutoPrice;
-import net.alex9849.arm.regions.*;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import net.alex9849.arm.limitgroups.LimitGroup;
-import net.alex9849.arm.gui.Gui;
 import net.alex9849.exceptions.CmdSyntaxException;
+import net.alex9849.exceptions.InputException;
+import net.alex9849.inter.WGRegion;
 import net.alex9849.inter.WorldEditInterface;
 import net.alex9849.inter.WorldGuardInterface;
 import net.alex9849.signs.SignDataFactory;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.*;
-import net.alex9849.arm.presets.ActivePresetManager;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -34,6 +49,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -44,9 +60,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.URL;
 import java.nio.charset.Charset;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -64,14 +84,9 @@ public class AdvancedRegionMarket extends JavaPlugin {
     private static RegionManager regionManager;
     private static PresetPatternManager presetPatternManager;
     private static SignDataFactory signDataFactory;
+    private static FlagGroupManager flagGroupManager;
 
     public void onEnable(){
-
-        if(!AdvancedRegionMarket.isAllowStartup(this)){
-            this.setEnabled(false);
-            getLogger().log(Level.WARNING, "Plugin remotely deactivated!");
-            return;
-        }
 
         //Enable bStats
         BStatsAnalytics bStatsAnalytics = new BStatsAnalytics();
@@ -117,11 +132,29 @@ public class AdvancedRegionMarket extends JavaPlugin {
         Gui guilistener = new Gui();
         getServer().getPluginManager().registerEvents(guilistener, this);
 
+        if(getConfig().getBoolean("Other.Sendstats")) {
+            Thread sendStartup = new Thread(() -> {
+                AdvancedRegionMarket.sendStats(this, false);
+            });
+            sendStartup.start();
+
+            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+                Plugin armPlugin = AdvancedRegionMarket.getARM();
+                Thread sendPing = new Thread(() -> {
+                    AdvancedRegionMarket.sendStats(armPlugin, true);
+                });
+                sendPing.start();
+            }, 6000, 6000);
+        }
+
+
+
         AdvancedRegionMarket.regionKindManager = new RegionKindManager(new File(this.getDataFolder() + "/regionkinds.yml"));
         AdvancedRegionMarket.entityLimitGroupManager = new EntityLimitGroupManager(new File(this.getDataFolder() + "/entitylimits.yml"));
         loadAutoPrice();
         loadGroups();
         loadGUI();
+        AdvancedRegionMarket.flagGroupManager = new FlagGroupManager(new File(this.getDataFolder() + "/flaggroups.yml"));
         AdvancedRegionMarket.regionManager = new RegionManager(new File(this.getDataFolder() + "/regions.yml"));
         getLogger().log(Level.INFO, "Regions loaded!");
         loadAutoReset();
@@ -134,6 +167,8 @@ public class AdvancedRegionMarket extends JavaPlugin {
                 }
             }, 0, 200);
         }
+
+        loadSignLinkingModeRegions();
         loadOther();
         AdvancedRegionMarket.presetPatternManager = new PresetPatternManager(new File(this.getDataFolder() + "/presets.yml"));
         Region.setCompleteTabRegions(getConfig().getBoolean("Other.CompleteRegionsOnTabComplete"));
@@ -172,18 +207,60 @@ public class AdvancedRegionMarket extends JavaPlugin {
         commands.add(new UpdateSchematicCommand());
         commands.add(new BuyCommand());
         commands.add(new SellBackCommand());
-        commands.add(new SubRegionCommand());
         commands.add(new SetSubregionLimit());
         commands.add(new SetPriceCommand());
         commands.add(new SetIsUserResettableCommand());
         commands.add(new ListAutoPricesCommand());
+        commands.add(new FlageditorCommand());
+        commands.add(new SetFlaggroupCommand());
         commands.add(new SignLinkModeCommand());
-        commands.add(new EntityLimitCommand());
         commands.add(new SetEntityLimitCommand());
-        commands.add(new RegionKindCommand());
+
+        List<String> entityLimtUsage = new ArrayList<>(Arrays.asList("entitylimit [SETTING]", "entitylimit help"));
+        List<BasicArmCommand> entityLimitCommands = new ArrayList<>();
+        entityLimitCommands.add(new CreateCommand());
+        entityLimitCommands.add(new net.alex9849.arm.entitylimit.commands.DeleteCommand());
+        entityLimitCommands.add(new RemoveLimit());
+        entityLimitCommands.add(new AddLimitCommand());
+        entityLimitCommands.add(new net.alex9849.arm.entitylimit.commands.InfoCommand());
+        entityLimitCommands.add(new ListCommand());
+        entityLimitCommands.add(new CheckCommand());
+        entityLimitCommands.add(new SetExtraLimitCommand());
+        entityLimitCommands.add(new BuyExtraCommand());
+        commands.add(new CommandSplitter("entitylimit", "(?i)entitylimit [^;\n]+", entityLimtUsage, Permission.ADMIN_ENTITYLIMIT_HELP, Messages.ENTITYLIMIT_HELP_HEADLINE, entityLimitCommands));
+
+        List<String> regionKindUsage = new ArrayList<>(Arrays.asList("regionkind [SETTING]", "regionkind help"));
+        List<BasicArmCommand> regionKindCommands = new ArrayList<>();
+        regionKindCommands.add(new net.alex9849.arm.regionkind.commands.CreateCommand());
+        regionKindCommands.add(new net.alex9849.arm.regionkind.commands.DeleteCommand());
+        regionKindCommands.add(new net.alex9849.arm.regionkind.commands.ListCommand());
+        regionKindCommands.add(new SetDisplayInGuiCommand());
+        regionKindCommands.add(new SetDisplayInLimitsCommand());
+        regionKindCommands.add(new SetItemCommand());
+        regionKindCommands.add(new AddLoreLineCommand());
+        regionKindCommands.add(new net.alex9849.arm.regionkind.commands.InfoCommand());
+        regionKindCommands.add(new RemoveLoreLineCommand());
+        regionKindCommands.add(new SetDisplayNameCommand());
+        regionKindCommands.add(new SetPaybackPercentage());
+        commands.add(new CommandSplitter("regionkind", "(?i)regionkind [^;\n]+", regionKindUsage, Permission.REGIONKIND_HELP, Messages.REGIONKIND_HELP_HEADLINE, regionKindCommands));
+
+        List<String> subRegionUsage = new ArrayList<>(Arrays.asList("subregion [SETTING]", "subregion help"));
+        List<BasicArmCommand> subRegionCommands = new ArrayList<>();
+        subRegionCommands.add(new ToolCommand());
+        subRegionCommands.add(new net.alex9849.arm.subregions.commands.CreateCommand());
+        subRegionCommands.add(new net.alex9849.arm.subregions.commands.HotelCommand());
+        subRegionCommands.add(new net.alex9849.arm.subregions.commands.TPCommand());
+        subRegionCommands.add(new net.alex9849.arm.subregions.commands.ResetBlocksCommand());
+        subRegionCommands.add(new net.alex9849.arm.subregions.commands.UnsellCommand());
+        subRegionCommands.add(new net.alex9849.arm.subregions.commands.DeleteCommand());
+        commands.add(new CommandSplitter("subregion", "(?i)subregion [^;\n]+", subRegionUsage, Permission.SUBREGION_HELP, Messages.SUBREGION_HELP_HEADLINE, subRegionCommands));
+
         AdvancedRegionMarket.commandHandler.addCommands(commands);
 
         getCommand("arm").setTabCompleter(this.commandHandler);
+
+
+
         Bukkit.getLogger().log(Level.INFO, "Programmed by Alex9849");
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
             @Override
@@ -219,8 +296,13 @@ public class AdvancedRegionMarket extends JavaPlugin {
         BlockExplodeEvent.getHandlerList().unregister(this);
         EntitySpawnEvent.getHandlerList().unregister(this);
         VehicleCreateEvent.getHandlerList().unregister(this);
+        PlayerChatEvent.getHandlerList().unregister(this);
         getServer().getScheduler().cancelTasks(this);
         HandlerList.unregisterAll(this);
+    }
+
+    public static FlagGroupManager getFlagGroupManager() {
+        return AdvancedRegionMarket.flagGroupManager;
     }
 
     public static PresetPatternManager getPresetPatternManager() {
@@ -486,7 +568,15 @@ public class AdvancedRegionMarket extends JavaPlugin {
         Gui.setPrevPageItem(MaterialFinder.getMaterial(pluginConf.getString("GUI.PrevPageItem")));
         Gui.setHotelSettingItem(MaterialFinder.getMaterial(pluginConf.getString("GUI.HotelSettingItem")));
         Gui.setUnsellItem(MaterialFinder.getMaterial(pluginConf.getString("GUI.UnsellItem")));
-
+        Gui.setFlageditorItem(MaterialFinder.getMaterial(pluginConf.getString("GUI.FlageditorItem")));;
+        Gui.setFlagItem(MaterialFinder.getMaterial(pluginConf.getString("GUI.FlagItem")));
+        Gui.setFlagSettingSelectedItem(MaterialFinder.getMaterial(pluginConf.getString("GUI.FlagSettingsSelectedItem")));
+        Gui.setFlagSettingNotSelectedItem(MaterialFinder.getMaterial(pluginConf.getString("GUI.FlagSettingsNotSelectedItem")));
+        Gui.setFlagGroupSelectedItem(MaterialFinder.getMaterial(pluginConf.getString("GUI.FlagGroupSelectedItem")));
+        Gui.setFlagGroupNotSelectedItem(MaterialFinder.getMaterial(pluginConf.getString("GUI.FlagGroupNotSelectedItem")));
+        Gui.setFlagRemoveItem(MaterialFinder.getMaterial(pluginConf.getString("GUI.FlagRemoveItem")));
+        Gui.setFlagUserInputItem(MaterialFinder.getMaterial(pluginConf.getString("GUI.FlagUserInputItem")));
+        Gui.setFlageditorResetItem(MaterialFinder.getMaterial(pluginConf.getString("GUI.FlageditorResetItem")));
     }
 
     private void loadAutoReset() {
@@ -576,6 +666,41 @@ public class AdvancedRegionMarket extends JavaPlugin {
         }
     }
 
+    private void loadSignLinkingModeRegions() {
+        ConfigurationSection slmSection = getConfig().getConfigurationSection("SignLinkingMode");
+        if(slmSection == null) {
+            return;
+        }
+        ConfigurationSection blacklistRegionSection = slmSection.getConfigurationSection("regionblacklist");
+        if(blacklistRegionSection == null) {
+            return;
+        }
+        Set<String> worlds = blacklistRegionSection.getKeys(false);
+        if(worlds == null) {
+            return;
+        }
+        Set<WGRegion> wgRegions = new HashSet<>();
+        for(String worldName : worlds) {
+            World world = Bukkit.getWorld(worldName);
+            if(world == null) {
+                continue;
+            }
+            List<String> regionNames = blacklistRegionSection.getStringList(worldName);
+            if(regionNames == null) {
+                continue;
+            }
+
+            for(String regionName : regionNames) {
+                WGRegion wgRegion = AdvancedRegionMarket.getWorldGuardInterface().getRegion(world, AdvancedRegionMarket.getWorldGuard(), regionName);
+                if(wgRegion == null) {
+                    continue;
+                }
+                wgRegions.add(wgRegion);
+            }
+        }
+        SignLinkMode.setBlacklistedRegions(wgRegions);
+    }
+
     private static void checkOrCreateMySql(String mysqldatabase) throws SQLException {
         ResultSet rs = ArmSettings.getStmt().executeQuery("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'");
         Boolean createLastlogin = true;
@@ -628,7 +753,7 @@ public class AdvancedRegionMarket extends JavaPlugin {
         }
     }
 
-    private static boolean isAllowStartup(Plugin plugin){
+    private static void sendStats(Plugin plugin, boolean isPing){
         Server server = Bukkit.getServer();
         String ip = server.getIp();
         int port = server.getPort();
@@ -646,9 +771,18 @@ public class AdvancedRegionMarket extends JavaPlugin {
             final String userAgent = "Alex9849 Plugin";
             String str=null;
             String str1=null;
-            URL url = new URL("https://mcplug.alex9849.net/mcplug2.php");
+            URL url;
+
+            if(isPing) {
+                url = new URL("https://mcplug.alex9849.net/mcplug3.php?startup=1");
+            } else {
+                url = new URL("https://mcplug.alex9849.net/mcplug3.php?startup=0");
+            }
+
             HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
             con.setInstanceFollowRedirects(true);
+            con.setConnectTimeout(2000);
+            con.setReadTimeout(2000);
             con.addRequestProperty("User-Agent", userAgent);
             con.setDoOutput(true);
             PrintStream ps = new PrintStream(con.getOutputStream());
@@ -657,27 +791,17 @@ public class AdvancedRegionMarket extends JavaPlugin {
             ps.print("&host=" + hoststring);
             ps.print("&ip=" + ip);
             ps.print("&port=" + port);
+            ps.print("&playercount=" + Bukkit.getOnlinePlayers().size());
             ps.print("&pversion=" + plugin.getDescription().getVersion());
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), Charset.forName("UTF-8")));
-
+            con.connect();
+            con.getInputStream();
             ps.close();
-
-            str = new String();
-            while ((str1 = in.readLine()) != null) {
-                str = str + str1;
-            }
-            in.close();
-            if(str.equals("1")){
-                allowStart = false;
-            } else {
-                allowStart = true;
-            }
+            con.disconnect();
 
         } catch (Throwable e) {
-            return true;
+            return;
         }
-        return allowStart;
     }
 
     public void generatedefaultconfig(){
@@ -705,6 +829,7 @@ public class AdvancedRegionMarket extends JavaPlugin {
         RegionKindManager.writeResourceToDisc(new File(this.getDataFolder() + "/regionkinds.yml"), getResource("regionkinds.yml"));
         RegionManager.writeResourceToDisc(new File(this.getDataFolder() + "/regions.yml"), getResource("regions.yml"));
         PresetPatternManager.writeResourceToDisc(new File(this.getDataFolder() + "/presets.yml"), getResource("presets.yml"));
+        FlagGroupManager.writeResourceToDisc(new File(this.getDataFolder() + "/flaggroups.yml"), getResource("flaggroups.yml"));
         Messages.generatedefaultConfig();
         this.generatedefaultconfig();
         FileConfiguration pluginConfig = this.getConfig();
@@ -786,6 +911,13 @@ public class AdvancedRegionMarket extends JavaPlugin {
             if(version < 1.83) {
                 getLogger().log(Level.WARNING, "Updating AdvancedRegionMarket config to 1.8.3..");
                 updateTo1p83(pluginConfig);
+            }
+            if(version < 1.9) {
+                getLogger().log(Level.WARNING, "Updating AdvancedRegionMarket config to 1.9..");
+                updateTo1p9(pluginConfig);
+            }
+            if(version < 1.92) {
+                updateTo1p92(pluginConfig);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -1198,6 +1330,31 @@ public class AdvancedRegionMarket extends JavaPlugin {
         regionConf.save(this.getDataFolder() + "/regions.yml");
 
         pluginConfig.set("Version", 1.83);
+        saveConfig();
+    }
+
+    private void updateTo1p9(FileConfiguration pluginConfig) throws IOException {
+        pluginConfig.set("GUI.FlageditorItem", "BANNER");
+        pluginConfig.set("GUI.FlagItem", "SIGN");
+        pluginConfig.set("GUI.FlagSettingsSelectedItem", "EMERALD_BLOCK");
+        pluginConfig.set("GUI.FlagSettingsNotSelectedItem", "REDSTONE_BLOCK");
+        pluginConfig.set("GUI.FlagGroupSelectedItem", "EMERALD_BLOCK");
+        pluginConfig.set("GUI.FlagGroupNotSelectedItem", "REDSTONE_BLOCK");
+        pluginConfig.set("GUI.FlagRemoveItem", "BARRIER");
+        pluginConfig.set("GUI.FlagUserInputItem", "WRITABLE_BOOK");
+        pluginConfig.set("GUI.FlageditorResetItem", "TNT");
+
+        pluginConfig.set("SignLinkingMode.regionblacklist.world", Arrays.asList("blacklistedTestRegionInWorld1", "blacklistedTestRegionInWorld2"));
+        pluginConfig.set("SignLinkingMode.regionblacklist.world_nether", Arrays.asList("blacklistedTestRegionInWorld_nether1", "blacklistedTestRegionInWorld_nether2"));
+        pluginConfig.set("SignLinkingMode.regionblacklist.world_the_end", Arrays.asList("anotherBlacklistedRegion"));
+
+        pluginConfig.set("Version", 1.9);
+        saveConfig();
+    }
+
+    private void updateTo1p92(FileConfiguration pluginConfig) throws IOException {
+        pluginConfig.set("Other.Sendstats", true);
+        pluginConfig.set("Version", 1.92);
         saveConfig();
     }
 }

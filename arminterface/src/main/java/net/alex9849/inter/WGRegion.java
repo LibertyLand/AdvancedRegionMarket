@@ -1,5 +1,6 @@
 package net.alex9849.inter;
 
+import com.sk89q.worldguard.protection.flags.Flag;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.util.Vector;
 
@@ -50,4 +51,12 @@ public abstract class WGRegion {
     public abstract int getVolume();
 
     public abstract List<Vector> getPoints();
+
+    public abstract  <T extends Flag<V>, V> void setFlag(Flag<V> flag, V value);
+
+    public abstract void deleteFlags(Flag... flags);
+
+    public abstract void deleteAllFlags();
+
+    public abstract Object getFlagSetting(Flag flag);
 }

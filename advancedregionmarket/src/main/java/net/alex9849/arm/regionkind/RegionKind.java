@@ -7,7 +7,6 @@ import net.alex9849.arm.util.MaterialFinder;
 import net.alex9849.arm.util.Saveable;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -125,13 +124,13 @@ public class RegionKind implements Saveable {
     }
 
     public String getConvertedMessage(String message) {
-        message = message.replace("%regionkinddisplay%", this.getDisplayName());
-        message = message.replace("%regionkind%", this.getName());
-        message = message.replace("%currency%", Messages.CURRENCY);
-        message = message.replace("%paypackpercentage%", this.getPaybackPercentage() + "");
-        message = message.replace("%regionkinditem%", this.getMaterial().toString());
-        message = message.replace("%regionkinddisplayinlimits%", Messages.convertYesNo(this.isDisplayInLimits()));
-        message = message.replace("%regionkinddisplayingui%", Messages.convertYesNo(this.isDisplayInGUI()));
+        if(message.contains("%regionkinddisplay%")) message = message.replace("%regionkinddisplay%", this.getDisplayName());
+        if(message.contains("%regionkind%")) message = message.replace("%regionkind%", this.getName());
+        if(message.contains("%currency%")) message = message.replace("%currency%", Messages.CURRENCY);
+        if(message.contains("%paypackpercentage%")) message = message.replace("%paypackpercentage%", this.getPaybackPercentage() + "");
+        if(message.contains("%regionkinditem%")) message = message.replace("%regionkinditem%", this.getMaterial().toString());
+        if(message.contains("%regionkinddisplayinlimits%")) message = message.replace("%regionkinddisplayinlimits%", Messages.convertYesNo(this.isDisplayInLimits()));
+        if(message.contains("%regionkinddisplayingui%")) message = message.replace("%regionkinddisplayingui%", Messages.convertYesNo(this.isDisplayInGUI()));
         return message;
     }
 
