@@ -1,7 +1,6 @@
 package net.alex9849.arm.handler.listener;
 
 import net.alex9849.arm.AdvancedRegionMarket;
-import net.alex9849.arm.ArmSettings;
 import net.alex9849.arm.gui.Gui;
 import net.alex9849.arm.presets.ActivePresetManager;
 import net.alex9849.arm.regions.Region;
@@ -15,46 +14,43 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlayerJoinQuitEvent implements Listener {
 
-    @EventHandler
-    public void setLastLoginAndOpenOvertake(PlayerJoinEvent event) {
-        if(ArmSettings.isEnableAutoReset() || ArmSettings.isEnableTakeOver()){
-            try{
-                ResultSet rs = ArmSettings.getStmt().executeQuery("SELECT * FROM `" + ArmSettings.getSqlPrefix() + "lastlogin` WHERE `uuid` = '" + event.getPlayer().getUniqueId().toString() + "'");
-
-                if(rs.next()){
-                    ArmSettings.getStmt().executeUpdate("UPDATE `" + ArmSettings.getSqlPrefix() + "lastlogin` SET `lastlogin` = CURRENT_TIMESTAMP WHERE `uuid` = '" + event.getPlayer().getUniqueId().toString() + "'");
-                } else {
-                    ArmSettings.getStmt().executeUpdate("INSERT INTO `" + ArmSettings.getSqlPrefix() + "lastlogin` (`uuid`, `lastlogin`) VALUES ('" + event.getPlayer().getUniqueId().toString() + "', CURRENT_TIMESTAMP)");
-                }
-
-            } catch (SQLException e) {
-                AdvancedRegionMarket.reconnectSQL();
-            } catch (NullPointerException e) {
-                AdvancedRegionMarket.reconnectSQL();
+    public static void doTakeOverCheck(Player player) {
+        List<Region> regions = AdvancedRegionMarket.getInstance().getRegionManager().getRegionsByMember(player.getUniqueId());
+        List<Region> takeoverableRegions = new ArrayList<>();
+        for (Region region : regions) {
+            if (region.isTakeOverReady()) {
+                takeoverableRegions.add(region);
             }
         }
 
-        if(ArmSettings.isEnableTakeOver()){
-            Plugin plugin = Bukkit.getPluginManager().getPlugin("AdvancedRegionMarket");
-            Player player = event.getPlayer();
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                @Override
-                public void run() {
-                    PlayerJoinQuitEvent.doOvertakeCheck(player);
-                }
-            }, 40L);
+        if (takeoverableRegions.size() > 0) {
+            Gui.openOvertakeGUI(player, takeoverableRegions);
+        }
+    }
+
+    @EventHandler
+    public void setLastLoginAndOpenOvertake(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        List<Region> regions = AdvancedRegionMarket.getInstance().getRegionManager().getRegionsByOwner(player.getUniqueId());
+        Plugin plugin = AdvancedRegionMarket.getInstance();
+
+        for (Region region : regions) {
+            region.setLastLogin();
         }
 
-        if(RentRegion.isSendExpirationWarning()) {
-            Plugin plugin = Bukkit.getPluginManager().getPlugin("AdvancedRegionMarket");
-            Player player = event.getPlayer();
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                PlayerJoinQuitEvent.doTakeOverCheck(player);
+            }
+        }, 40L);
+
+        if (RentRegion.isSendExpirationWarning()) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                 @Override
                 public void run() {
@@ -69,44 +65,6 @@ public class PlayerJoinQuitEvent implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         ActivePresetManager.deletePreset(event.getPlayer());
         SubRegionCreator.removeSubRegioncreator(event.getPlayer());
-    }
-
-    public static void doOvertakeCheck(Player player) {
-        GregorianCalendar comparedate = new GregorianCalendar();
-        comparedate.add(Calendar.DAY_OF_MONTH, (-1 * ArmSettings.getTakeoverAfter()));
-        Date convertdate = new Date();
-        convertdate.setTime(comparedate.getTimeInMillis());
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String compareTime = sdf.format(convertdate);
-
-        if(AdvancedRegionMarket.getRegionManager() == null) {
-            return;
-        }
-
-        try {
-            ResultSet rs = ArmSettings.getStmt().executeQuery("SELECT * FROM `" + ArmSettings.getSqlPrefix() + "lastlogin` WHERE `lastlogin` < '" + compareTime + "'");
-
-            List<Region> overtake = new LinkedList<>();
-            while (rs.next()){
-                List<Region> regions = AdvancedRegionMarket.getRegionManager().getRegionsByOwner(UUID.fromString(rs.getString("uuid")));
-
-                for(int i = 0; i < regions.size(); i++){
-                    if(regions.get(i).getAutoreset()){
-                        if(regions.get(i).getRegion().hasMember(player.getUniqueId())){
-                            overtake.add(regions.get(i));
-                        }
-                    }
-                }
-            }
-            if(overtake.size() != 0){
-                Gui.openOvertakeGUI(player, overtake);
-            }
-
-        } catch (SQLException e) {
-            AdvancedRegionMarket.reconnectSQL();
-        } catch (NullPointerException e) {
-            AdvancedRegionMarket.reconnectSQL();
-        }
     }
 
 }

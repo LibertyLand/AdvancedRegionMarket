@@ -5,6 +5,8 @@ import net.alex9849.arm.ArmSettings;
 import net.alex9849.arm.Messages;
 import net.alex9849.arm.Permission;
 import net.alex9849.arm.entitylimit.EntityLimitGroup;
+import net.alex9849.arm.exceptions.FeatureDisabledException;
+import net.alex9849.arm.exceptions.InputException;
 import net.alex9849.arm.flaggroups.FlagGroup;
 import net.alex9849.arm.regionkind.RegionKind;
 import net.alex9849.arm.regions.ContractRegion;
@@ -14,8 +16,6 @@ import net.alex9849.arm.regions.SellRegion;
 import net.alex9849.arm.regions.price.ContractPrice;
 import net.alex9849.arm.regions.price.Price;
 import net.alex9849.arm.regions.price.RentPrice;
-import net.alex9849.exceptions.ArmInternalException;
-import net.alex9849.exceptions.InputException;
 import net.alex9849.signs.SignData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,6 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -42,11 +43,12 @@ public class SubSignCreationListener implements Listener {
     @EventHandler
     public void signChangeEvent(SignChangeEvent event) {
         try {
-            if(event.getPlayer().getUniqueId() != this.player.getUniqueId()) {
+            if (event.getPlayer().getUniqueId() != this.player.getUniqueId()) {
                 return;
             }
-            if(event.getLine(0).equalsIgnoreCase("[Sub-Sell]")) {
-                if(!event.getPlayer().hasPermission(Permission.SUBREGION_CREATE_SELL)) {
+            ArmSettings pluginsSettings = AdvancedRegionMarket.getInstance().getPluginSettings();
+            if (event.getLine(0).equalsIgnoreCase("[Sub-Sell]")) {
+                if (!event.getPlayer().hasPermission(Permission.SUBREGION_CREATE_SELL)) {
                     throw new InputException(event.getPlayer(), Messages.NO_PERMISSION);
                 }
 
@@ -59,29 +61,40 @@ public class SubSignCreationListener implements Listener {
                     throw new InputException(event.getPlayer(), "Use a number as price in line 4");
                 }
                 List<SignData> signList = new ArrayList<>();
-                SignData signData = AdvancedRegionMarket.getSignDataFactory().generateSignData(event.getBlock().getLocation());
-                if(signData == null) {
+                SignData signData = AdvancedRegionMarket.getInstance().getSignDataFactory().generateSignData(event.getBlock().getLocation());
+                if (signData == null) {
                     throw new InputException(event.getPlayer(), "Could not import sign!");
                 }
                 signList.add(signData);
                 Price subregPrice = new Price(price);
-                SellRegion sellRegion = new SellRegion(this.subRegionCreator.getSubRegion(), this.subRegionCreator.getParentRegion().getRegionworld(), signList, subregPrice, false, ArmSettings.isSubregionAutoReset(), false, ArmSettings.isSubregionBlockReset(), RegionKind.SUBREGION, FlagGroup.SUBREGION, null, 1, ArmSettings.isAllowSubRegionUserReset(), new ArrayList<Region>(), 0, EntityLimitGroup.SUBREGION, new HashMap<>(), 0);
+                SellRegion sellRegion = new SellRegion(this.subRegionCreator.getSubRegion(),
+                        this.subRegionCreator.getParentRegion().getRegionworld(), signList, subregPrice, false,
+                        pluginsSettings.isSubregionInactivityReset(), false,
+                        pluginsSettings.isSubregionAutoRestore(), RegionKind.SUBREGION, FlagGroup.SUBREGION,
+                        null, 1, new GregorianCalendar().getTimeInMillis(),
+                        pluginsSettings.isAllowSubRegionUserRestore(), new ArrayList<Region>(), 0,
+                        EntityLimitGroup.SUBREGION, new HashMap<>(), 0,
+                        pluginsSettings.getMaxSubRegionMembers(), pluginsSettings.getPaybackPercentage());
                 this.subRegionCreator.saveWorldGuardRegion();
                 event.setCancelled(true);
                 this.subRegionCreator.getParentRegion().addSubRegion(sellRegion);
                 sellRegion.createSchematic();
-                sellRegion.applyFlagGroup(FlagGroup.ResetMode.COMPLETE);
+                try {
+                    sellRegion.applyFlagGroup(FlagGroup.ResetMode.COMPLETE, false);
+                } catch (FeatureDisabledException e) {
+                    //Ignore
+                }
                 this.subRegionCreator.remove();
                 event.getPlayer().sendMessage(Messages.PREFIX + Messages.REGION_CREATED_AND_SAVED);
-            } else if(event.getLine(0).equalsIgnoreCase("[Sub-Rent]")) {
-                if(!event.getPlayer().hasPermission(Permission.SUBREGION_CREATE_RENT)) {
+            } else if (event.getLine(0).equalsIgnoreCase("[Sub-Rent]")) {
+                if (!event.getPlayer().hasPermission(Permission.SUBREGION_CREATE_RENT)) {
                     throw new InputException(event.getPlayer(), Messages.NO_PERMISSION);
                 }
                 double price = 0;
                 long maxRentTime = 0;
                 long extendPerClick = 0;
 
-                try{
+                try {
                     String[] priceline = event.getLine(3).split("(;|:)", 3);
                     String pricestring = priceline[0];
                     String extendPerClickString = priceline[1];
@@ -101,29 +114,40 @@ public class SubSignCreationListener implements Listener {
                 }
 
                 List<SignData> signList = new ArrayList<>();
-                SignData signData = AdvancedRegionMarket.getSignDataFactory().generateSignData(event.getBlock().getLocation());
-                if(signData == null) {
+                SignData signData = AdvancedRegionMarket.getInstance().getSignDataFactory().generateSignData(event.getBlock().getLocation());
+                if (signData == null) {
                     throw new InputException(event.getPlayer(), "Could not import sign!");
                 }
                 signList.add(signData);
                 RentPrice rentPrice = new RentPrice(price, extendPerClick, maxRentTime);
-                RentRegion rentRegion = new RentRegion(this.subRegionCreator.getSubRegion(), this.subRegionCreator.getParentRegion().getRegionworld(), signList, rentPrice, false, ArmSettings.isSubregionAutoReset(), false, ArmSettings.isSubregionBlockReset(), RegionKind.SUBREGION, FlagGroup.SUBREGION, null, 1, ArmSettings.isAllowSubRegionUserReset(), 0, new ArrayList<Region>(), 0, EntityLimitGroup.SUBREGION, new HashMap<>(), 0);
+                RentRegion rentRegion = new RentRegion(this.subRegionCreator.getSubRegion(),
+                        this.subRegionCreator.getParentRegion().getRegionworld(), signList, rentPrice, false,
+                        pluginsSettings.isSubregionInactivityReset(), false,
+                        pluginsSettings.isSubregionAutoRestore(), RegionKind.SUBREGION, FlagGroup.SUBREGION,
+                        null, 1, new GregorianCalendar().getTimeInMillis(),
+                        pluginsSettings.isAllowSubRegionUserRestore(), 0, new ArrayList<Region>(),
+                        0, EntityLimitGroup.SUBREGION, new HashMap<>(), 0,
+                        pluginsSettings.getMaxSubRegionMembers(), pluginsSettings.getPaybackPercentage());
                 this.subRegionCreator.saveWorldGuardRegion();
                 event.setCancelled(true);
                 this.subRegionCreator.getParentRegion().addSubRegion(rentRegion);
                 rentRegion.createSchematic();
-                rentRegion.applyFlagGroup(FlagGroup.ResetMode.COMPLETE);
+                try {
+                    rentRegion.applyFlagGroup(FlagGroup.ResetMode.COMPLETE, false);
+                } catch (FeatureDisabledException e) {
+                    //Ignore
+                }
                 this.subRegionCreator.remove();
                 event.getPlayer().sendMessage(Messages.PREFIX + Messages.REGION_CREATED_AND_SAVED);
-            } else if(event.getLine(0).equalsIgnoreCase("[Sub-Contract]")) {
-                if(!event.getPlayer().hasPermission(Permission.SUBREGION_CREATE_CONTRACT)) {
+            } else if (event.getLine(0).equalsIgnoreCase("[Sub-Contract]")) {
+                if (!event.getPlayer().hasPermission(Permission.SUBREGION_CREATE_CONTRACT)) {
                     throw new InputException(event.getPlayer(), Messages.NO_PERMISSION);
                 }
 
                 double price = 0;
                 long extendtime = 0;
 
-                try{
+                try {
                     String[] priceline = event.getLine(3).split("(;|:)", 2);
                     String pricestring = priceline[0];
                     String extendtimeString = priceline[1];
@@ -140,26 +164,34 @@ public class SubSignCreationListener implements Listener {
                     return;
                 }
                 List<SignData> signList = new ArrayList<>();
-                SignData signData = AdvancedRegionMarket.getSignDataFactory().generateSignData(event.getBlock().getLocation());
-                if(signData == null) {
+                SignData signData = AdvancedRegionMarket.getInstance().getSignDataFactory().generateSignData(event.getBlock().getLocation());
+                if (signData == null) {
                     throw new InputException(event.getPlayer(), "Could not import sign!");
                 }
                 signList.add(signData);
                 ContractPrice contractPrice = new ContractPrice(price, extendtime);
-                ContractRegion contractRegion = new ContractRegion(this.subRegionCreator.getSubRegion(), this.subRegionCreator.getParentRegion().getRegionworld(), signList, contractPrice, false, ArmSettings.isSubregionAutoReset(), false, ArmSettings.isSubregionBlockReset(), RegionKind.SUBREGION, FlagGroup.SUBREGION, null, 1, ArmSettings.isAllowSubRegionUserReset(), 0, false, new ArrayList<Region>(), 0, EntityLimitGroup.SUBREGION, new HashMap<>(), 0);
+                ContractRegion contractRegion = new ContractRegion(this.subRegionCreator.getSubRegion(),
+                        this.subRegionCreator.getParentRegion().getRegionworld(), signList, contractPrice, false,
+                        pluginsSettings.isSubregionInactivityReset(), false, pluginsSettings.isSubregionAutoRestore(),
+                        RegionKind.SUBREGION, FlagGroup.SUBREGION, null, 1,
+                        new GregorianCalendar().getTimeInMillis(), pluginsSettings.isAllowSubRegionUserRestore(),
+                        0, false, new ArrayList<Region>(), 0,
+                        EntityLimitGroup.SUBREGION, new HashMap<>(), 0, pluginsSettings.getMaxSubRegionMembers(),
+                        pluginsSettings.getPaybackPercentage());
                 this.subRegionCreator.saveWorldGuardRegion();
                 event.setCancelled(true);
                 this.subRegionCreator.getParentRegion().addSubRegion(contractRegion);
                 contractRegion.createSchematic();
-                contractRegion.applyFlagGroup(FlagGroup.ResetMode.COMPLETE);
+                try {
+                    contractRegion.applyFlagGroup(FlagGroup.ResetMode.COMPLETE, false);
+                } catch (FeatureDisabledException e) {
+                    //Ignore
+                }
                 this.subRegionCreator.remove();
                 event.getPlayer().sendMessage(Messages.PREFIX + Messages.REGION_CREATED_AND_SAVED);
             }
         } catch (InputException e) {
             e.sendMessages(Messages.PREFIX);
-        } catch (ArmInternalException e) {
-            e.logMessage();
-            e.printStackTrace();
         }
     }
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -12,18 +12,21 @@
         <module>arminterface</module>
         <module>advancedregionmarket</module>
         <module>we6adapter</module>
-        <module>wg6adapter</module>
         <module>wg7adapter</module>
         <module>we7adapter</module>
-        <module>we7faweadapter</module>
         <module>we6faweadapter</module>
-        <module>wg7adapter-beta01</module>
-        <module>we7adapter-beta01</module>
         <module>mc1-12adapter</module>
         <module>mc1-13adapter</module>
         <module>mc1-14adapter</module>
-        <module>armimporter</module>
+        <module>wg6_1adapter</module>
+        <module>wg6_2adapter</module>
     </modules>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
 
     <repositories>
@@ -32,8 +35,8 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
-            <id>sk89q-snapshots</id>
-            <url>http://maven.sk89q.com/artifactory/repo</url>
+            <id>enginehub</id>
+            <url>https://maven.enginehub.org/repo</url>
             <releases>
                 <enabled>true</enabled> <!-- releases enabled: this specific repository also hosts release versions -->
             </releases>
@@ -50,29 +53,50 @@
             <id>fawe-repo</id>
             <url>http://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/</url>
         </repository>
+        <!--Vault repository-->
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
         <repository>
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
         <repository>
             <id>maven-central</id>
-            <url>http://central.maven.org/maven2</url>
-        </repository>
-        <repository>
-            <id>advanced-region-market</id>
-            <url>https://gitlab.com/api/v4/projects/10068588/packages/maven/</url>
+            <url>https://repo1.maven.org/maven2/</url>
         </repository>
     </repositories>
 
- <distributionManagement>
-   <repository>
-     <id>gitlab-maven</id>
-     <url>https://gitlab.com/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
-   </repository>
-   <snapshotRepository>
-     <id>gitlab-maven</id>
-     <url>https://gitlab.com/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
-   </snapshotRepository>
- </distributionManagement>
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.1.1</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <failOnError>false</failOnError>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <finalName>${project.name}-${project.version}</finalName>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

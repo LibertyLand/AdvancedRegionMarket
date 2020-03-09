@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>armparent</artifactId>
@@ -9,14 +9,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
-    <version>1.9.2</version>
+    <version>3.0</version>
 
     <artifactId>advancedregionmarket</artifactId>
-
-    <properties>
-        <maven.compiler.source>6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
-    </properties>
 
     <build>
         <!-- Uses the properties in this file for plugin.yml and config.yml -->
@@ -27,7 +22,10 @@
                 <includes>
                     <include>plugin.yml</include>
                     <include>config.yml</include>
-                    <include>messages.yml</include>
+                    <include>messages_en.yml</include>
+                    <include>messages_de.yml</include>
+                    <include>messages_fr.yml</include>
+                    <include>messages_ru.yml</include>
                     <include>regions.yml</include>
                     <include>presets.yml</include>
                     <include>entitylimits.yml</include>
@@ -45,15 +43,6 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
-                </configuration>
-            </plugin>
-            <!-- Sets the custom JARfile name (Project name without spaces is good) -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <finalName>${project.name}</finalName>
                 </configuration>
             </plugin>
             <plugin>
@@ -88,14 +77,14 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.14-R0.1-SNAPSHOT</version>
+            <version>1.15.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!--Bukkit API-->
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.14-R0.1-SNAPSHOT</version>
+            <version>1.15.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!--Worldedit API-->
@@ -114,11 +103,10 @@
         </dependency>
         <!--Vault API-->
         <dependency>
-            <groupId>net.milkbowl.vault</groupId>
+            <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
-            <version>1.5</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../lib/plugins/Vault/Vault.jar</systemPath>
+            <version>1.7</version>
+            <scope>provided</scope>
         </dependency>
         <!--FaWe API-->
         <dependency>
@@ -137,7 +125,14 @@
         </dependency>
         <dependency>
             <groupId>net.alex9849</groupId>
-            <artifactId>wg6adapter</artifactId>
+            <artifactId>wg6_1adapter</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.alex9849</groupId>
+            <artifactId>wg6_2adapter</artifactId>
             <version>1.0</version>
             <type>jar</type>
             <scope>compile</scope>
@@ -145,20 +140,6 @@
         <dependency>
             <groupId>net.alex9849</groupId>
             <artifactId>wg7adapter</artifactId>
-            <version>1.0</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.alex9849</groupId>
-            <artifactId>wg7adapter-beta01</artifactId>
-            <version>1.0</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.alex9849</groupId>
-            <artifactId>we7adapter-beta01</artifactId>
             <version>1.0</version>
             <type>jar</type>
             <scope>compile</scope>
@@ -173,13 +154,6 @@
         <dependency>
             <groupId>net.alex9849</groupId>
             <artifactId>we6adapter</artifactId>
-            <version>1.0</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.alex9849</groupId>
-            <artifactId>we7faweadapter</artifactId>
             <version>1.0</version>
             <type>jar</type>
             <scope>compile</scope>
@@ -218,6 +192,11 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.ahocorasick</groupId>
+            <artifactId>ahocorasick</artifactId>
+            <version>0.4.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
-
 </project>

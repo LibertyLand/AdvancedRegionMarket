@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>armparent</artifactId>
@@ -12,11 +12,6 @@
     <artifactId>wg7adapter</artifactId>
     <packaging>jar</packaging>
     <version>1.0</version>
-
-    <properties>
-        <maven.compiler.source>6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
-    </properties>
 
     <dependencies>
         <!--Bukkit API-->
@@ -30,17 +25,15 @@
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
-            <scope>system</scope>
-            <version>any</version>
-            <systemPath>${project.basedir}/../lib/plugins/worldedit/worldedit-bukkit-7.0.0-beta-03.jar</systemPath>
+            <scope>provided</scope>
+            <version>7.1.0</version>
         </dependency>
         <!--Worldguard API-->
         <dependency>
-            <groupId>com.sk89q</groupId>
-            <artifactId>worldguard</artifactId>
-            <scope>system</scope>
-            <version>any</version>
-            <systemPath>${project.basedir}/../lib/plugins/worldguard/worldguard-7.0.0-beta-02.jar</systemPath>
+            <groupId>com.sk89q.worldguard</groupId>
+            <artifactId>worldguard-bukkit</artifactId>
+            <scope>provided</scope>
+            <version>7.0.2</version>
         </dependency>
         <!--My interfaces-->
         <dependency>

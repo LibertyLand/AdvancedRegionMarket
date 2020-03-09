@@ -9,7 +9,7 @@ Messages:
   PriceCanNotBeNegative: '&4Цена не может быть отрицательной!'
   RegionKindRegionNotExist: '&4Регион не существует'
   CommandOnlyIngame: '&4Эта команда может быть выполнена только в игре!'
-  RentExtendError: '&4Вы не можете арендовать этот регион более чем на &6%maxrenttime%
+  RentExtendError: '&4Вы не можете арендовать этот регион более чем на &6%maxrenttime-short%
    &4сразу'
   RegionErrorCanNotBuildHere: '&4Вам разрешено разбивать только те блоки, которые
    вы разместили!'
@@ -24,7 +24,7 @@ Messages:
   SchematicNotFoundErrorUser: '&4Похоже, что схема вашего региона %regionid% не была
    создана. Пожалуйста, свяжитесь с администратором!'
   SchematicNotFoundErrorAdmin: '&4Не удалось найти схему для %regionid%'
-  RentExtendMessage: '&aРегион продлен на &6%extendperclick%&a (%price% %currency%. Новое оставшееся время: &6%remaining%'
+  RentExtendMessage: '&aРегион продлен на &6%extendtime-short%&a (%price% %currency%. Новое оставшееся время: &6%remainingtime-countdown-short%'
   Buymessage: '&aРегион успешно куплен!'
   RegionAddedToARM: '&7Табличка продажи создана, а регион был добавлен в ARM!'
   SignRemovedFromRegion: '&7Табличка продажи удалена! %remaining% осталось до того,
@@ -38,7 +38,7 @@ Messages:
   Complete: '&aВыполнено!'
   LoadingSchematic: '&7Загрузка схемы...'
   LoadingSchematicComplete: '&7Схема загружена!'
-  ResetRegionCooldownError: '&7Необходимо подождать&6 %remainingdays% &7дней, для
+  ResetRegionCooldownError: '&7Необходимо подождать&6 %remaininguserresetcooldown-countdown-short% &7дней, для
    сброса своего региона'
   Currency: $
   SellSign1: '&4Продается'
@@ -51,20 +51,20 @@ Messages:
   SoldSign4: '%regionid%'
   RentSign1: '&4В аренду'
   RentSign2: '%regionid%'
-  RentSign3: '%currency%%price%/%extendperclick%'
-  RentSign4: 'Max.: %maxrenttime%'
+  RentSign3: '%currency%%price%/%extendtime-short%'
+  RentSign4: 'Max.: %maxrenttime-short%'
   RentedSign1: '&2Арендован'
   RentedSign2: '%regionid%/%owner%'
-  RentedSign3: '%currency%%price%/%extendperclick%'
-  RentedSign4: '%remaining%'
+  RentedSign3: '%currency%%price%/%extendtime-short%'
+  RentedSign4: '%remainingtime-countdown-short%'
   ContractSign1: '&4КОнтракт'
   ContractSign2: '&2доступен'
   ContractSign3: '%regionid%'
-  ContractSign4: '%currency%%price%/%extend%'
+  ContractSign4: '%currency%%price%/%extendtime-short%'
   ContractSoldSign1: '&2Исполняется'
   ContractSoldSign2: '%regionid%/%owner%'
-  ContractSoldSign3: '%currency%%price%/%extend%'
-  ContractSoldSign4: '%remaining%'
+  ContractSoldSign3: '%currency%%price%/%extendtime-short%'
+  ContractSoldSign4: '%remainingtime-countdown-short%'
   Seconds: с
   Minutes: м
   Hours: ч
@@ -76,11 +76,11 @@ Messages:
   TeleporterNoSaveLocation: '&4Не удалось найти место установки телепорта'
   TeleporterDontMove: '&6Телепортация начнется через &c%time% секунды&6. Не двигайтесь!'
   TeleporterTeleportationAborded: '&4Телепортация прервана!'
-  ContractRegionExtended: '&aВаш контрактный регион %regionid% продлен на %extend%. (%currency%%price%.)'
+  ContractRegionExtended: '&aВаш контрактный регион %regionid% продлен на %extendtime-short%. (%currency%%price%.)'
   ContractRegionChangeTerminated: '&6Контракт &a%regionid% &6был установлен на %statuslong%'
-  ContractRegionStatusActiveLong: '&aАктивен!&6 Следующее продление в %remaining%'
+  ContractRegionStatusActiveLong: '&aАктивен!&6 Следующее продление в %remainingtime-countdown-short%'
   ContractRegionStatusActive: '&aАктивен'
-  ContractRegionStatusTerminatedLong: '&4Отменено!&6 Будет сброшено в %remaining%'
+  ContractRegionStatusTerminatedLong: '&4Отменено!&6 Будет сброшено в %remainingtime-countdown-short%'
   ContractRegionStatusTerminated: '&4Отменено'
   PresetRemoved: '&aПресет удален!'
   PresetSet: '&aПресет установлен!'
@@ -116,8 +116,8 @@ Messages:
    свои права. Вы получите &6%paybackmoney% %currency%'
   SubregionAutoResetError: '&4Регион является субрегионом. Вы можете изменить настройку
    автоматического сброса для всех субрегионов в config.yml!'
-  SubregionDoBlockResetError: '&4Регион является субрегионом. Вы можете изменить настройку
-   doBlockReset для всех субрегионов в config.yml!'
+  SubregionAutoRestoreError: '&4Регион является субрегионом. Вы можете изменить настройку
+   autoRestore для всех субрегионов в config.yml!'
   SubregionIsUserResettableError: '&4Регион является субрегионом. Вы можете изменить
    настройку isUserResettable для всех субрегионов в config.yml!'
   SubregionRegionkindError: '&4Регион является субрегионом. Вы можете редактировать
@@ -127,8 +127,8 @@ Messages:
    не может быть изменено'
   PosCloudNotBeSetMarkOutsideRegion: '&4Положение не может быть установлено за пределами
    региона'
-  SubRegionAlreadyAtThisPosition: Ваш выбор перекрывается с субрегионом, который уже
-    создан
+  SubRegionAlreadyAtThisPosition: 'Ваш выбор перекрывается с субрегионом, который уже
+    создан'
   SubRegionLimitReached: '&4Вы можете создавать максимально &6%subregionlimit% &4субрегионов'
   SelectionInvalid: '&4Выбор неверен! Нужно выбрать 2 позиции! (Левый/Правый щелчок).
    Введите "&6/arm subregion tool&4", чтобы получить инструмент выделения'
@@ -178,8 +178,8 @@ Messages:
   RegionInfoTerminated: '&6Отменено:&e '
   RegionInfoAutoExtendTime: '&6Время продления:&e '
   ContractRegionInfoRemainingTime: '&6След. продление в:&e '
-  RegionInfoYes: да
-  RegionInfoNo: нет
+  RegionInfoYes: 'да'
+  RegionInfoNo: 'нет'
   RegionInfoAllowedSubregions: '&6Лимит субрегионы:&e '
   RegionInfoSubregions: '&6Субрегионы:&e '
   RegionInfoMultipleRegions: '&6На вашей позиции более одного региона. Пожалуйста,
@@ -198,9 +198,9 @@ Messages:
    потому что он продан. Вы можете попросить владельца или администратора освободить
    его'
   RegionNotASubregion: '&4Регион не субрегион!'
-  RentRegion: Регион в аренду
-  SellRegion: Регион на продажу
-  ContractRegion: Регион по контракту
+  RentRegion: 'Регион в аренду'
+  SellRegion: 'Регион на продажу'
+  ContractRegion: 'Регион по контракту'
   RegionStats: '&6=========[Статистика]========='
   RegionStatsPattern: '&8Используемые регионы (%regionkind%&8):'
   SelltypeNotExist: '&4Выбранный тип продажи не существует!'
@@ -212,7 +212,7 @@ Messages:
   SignLinkModeNoPresetSelected: |-
     &cУ вас нет загруженного пресета! Пожалуйста, сначала загрузите или создайте пресет! &cВы можете создать пресет с помощью команд &6/arm sellpreset/rentpreset/contractpreset &c!
     Информация о пресетах здесь:
-    &6https://goo.gl/3upfAA (Gitlab Wiki)
+    &6https://bit.ly/2HURK0v (Github Wiki)
   SignLinkModeSignBelongsToAnotherRegion: '&4Табличка принадлежит другому региону!'
   SignLinkModeSignSelected: '&aТабличка выбрана!'
   SignLinkModeMultipleWgRegionsAtPosition: '&4Не удалось выбрать WG-регион! Доступно
@@ -240,40 +240,33 @@ Messages:
   GUIMembersButton: '&6Участники'
   GUITeleportToRegionButton: '&6Телепорт в регион'
   GUITeleportToRegionButtonLore:
-  - Нажмите, для телепорта
-  - в свой регион
+  - 'Нажмите, для телепорта'
+  - 'в свой регион'
   GUIShowInfosButton: '&6Показать инфо'
   GUIMakeOwnerButton: '&aСоздать владельца'
   GUIMakeOwnerButtonLore:
-  - Нажмите, чтобы передать права владельца
-  - выбранному участнику.
+  - 'Нажмите, чтобы передать права владельца'
+  - 'выбранному участнику.'
   - '&4ПРЕДУПРЕЖДЕНИЕ: &cВы потеряете права'
   - '&cвладельца и станете участником'
   GUIRemoveMemberButton: '&4Удалить'
   GUIRemoveMemberButtonLore:
-  - Нажмите, чтобы удалить участника
-  - из вашего региона
+  - 'Нажмите, чтобы удалить участника'
+  - 'из вашего региона'
   GUIWarningYes: '&aДа'
   GUIWarningNo: '&4Нет'
   GUIResetRegionButton: '&4Сбросить регион'
   GUIResetRegionButtonLore:
-  - Нажмите, чтобы сбросить регион
+  - 'Нажмите, чтобы сбросить регион'
   - '&4ПРЕДУПРЕЖДЕНИЕ: &cНевозможно будет отменить!'
   - '&cВаш регион будет сброшен и'
   - '&cвсе на нем будет удалено!'
-  - '&cСбросить свой регион можно только один раз в %days% д.'
+  - '&cСбросить свой регион можно только один раз в %userresetcooldown% д.'
   - '&2Вы и все участники сохраняете свои права в регионе'
   RegionTransferCompleteMessage: '&aПередача завершена!'
   RegiontransferMemberNotOnline: '&4Участник офлайн!'
   RegiontransferLimitError: '&4Передача прервана! (Регион превысит лимит игроков)'
   GUICloseWindow: '&6Закрыть окно'
-  TakeOverItemLore:
-  - '&aВы участник этого региона. Владелец не был'
-  - '&aв сети более&7 50 &aдней. Вы можете стать'
-  - '&aвладельцем, а владелец станет участником.'
-  - '&aЕсли этого не произойдет и владелец не подключится в'
-  - '&aтечение&7 %days% &cдней, регион будет сброшен и участники'
-  - '&aудалены. После этого он вернется к продаже!'
   OwnerMemberlistInfo: '&6Добавление участников:'
   OwnerMemberlistInfoLore:
   - '&aВы можете добавить участников в свой'
@@ -283,15 +276,15 @@ Messages:
   - '&aУчастники должны быть онлайн'
   GUIExtendRentRegionButton: '&1Продлить регион'
   GUIExtendRentRegionButtonLore:
-  - '&aНажмите, чтобы продлить свой регион &6%extendperclick%'
+  - '&aНажмите, чтобы продлить свой регион &6%extendtime-short%'
   - '&aэто будет стоить вам &6%price%%currency%&a!'
-  - '&aСрок действия региона истекает &6%remaining%&a.'
-  - '&aПродлить регион можно до &6%maxrenttime%&a.'
+  - '&aСрок действия региона истекает &6%remainingtime-countdown-short%&a.'
+  - '&aПродлить регион можно до &6%maxrenttime-short%&a.'
   GUIRentRegionLore:
-  - '&aИстекает в &6%remaining%'
+  - '&aИстекает в &6%remainingtime-countdown-short%'
   GUIUserSellButton: '&4Сбросить и продать регион'
   GUIUserSellButtonLore:
-  - Нажмите, чтобы продать свой регион
+  - 'Нажмите, чтобы продать свой регион'
   - '&4ВНИМАНИЕ: &cНевозможно будет отменить! Ваш регион'
   - '&cбудет освобожден и все блоки на нем будут'
   - '&cсброшены! Вы и все его участники потеряете'
@@ -310,19 +303,19 @@ Messages:
   GUIContractItemLore:
   - '&aСтатус: %status%'
   - '&aЕсли активен, продление находится в:'
-  - '&6%remaining%'
+  - '&6%remainingtime-countdown-short%'
   GUIContractItemRegionLore:
   - '&aСтатус: %status%'
   - '&aЕсли активен, продление находится в:'
-  - '&6%remaining%'
-  SellregionName: Регион на продажу
-  ContractregionName: Регион по контракту
-  RentregionName: Регион в аренду
+  - '&6%remainingtime-countdown-short%'
+  SellregionName: 'Регион на продажу'
+  ContractregionName: 'Регион по контракту'
+  RentregionName: 'Регион в аренду'
   GUISubregionsButton: '&6Субрегион'
   GUISubregionListMenuName: '&1Субрегионы'
   GUIHotelButton: '&6Функция-Гостиница'
   GUIDeleteRegionButton: '&4Удалить регион'
-  GUITeleportToSignOrRegionButton: Телепорт к табличке или в регион?
+  GUITeleportToSignOrRegionButton: 'Телепорт к табличке или в регион?'
   GUIRegionfinderTeleportToRegionButton: '&6Телепорт в регион!'
   GUIRegionfinderTeleportToSignButton: '&6Телепорт к табличке'
   GUINextPageButton: '&6Следущая страница'
@@ -354,15 +347,15 @@ Messages:
   - '&6Статус: %soldstatus%'
   - '&6Цена: %price%'
   - '&6PPM (в нед.): %priceperm2perweek%'
-  - '&6Проление за клик: %extendperclick%'
-  - '&6Max. продление: %maxrenttime%'
+  - '&6Проление за клик: %extendtime-short%'
+  - '&6Max. продление: %maxrenttime-short%'
   - '&6Размеры: %dimensions%'
   GUISubregionInfoContract:
   - '&6Тип: %selltype%'
   - '&6Статус: %soldstatus%'
   - '&6Цена: %price%'
   - '&6PPM (в нед.): %priceperm2perweek%'
-  - '&6Время автопродления: %extend%'
+  - '&6Время автопродления: %extendtime-short%'
   - '&6Размеры: %dimensions%'
   GUIRegionfinderInfoSell:
   - '&6Цена:&e %price%'
@@ -372,14 +365,14 @@ Messages:
   GUIRegionfinderInfoRent:
   - '&6Цена: %price%'
   - '&6PPM (в нед.): %priceperm2perweek%'
-  - '&6EPR: %extendperclick%'
-  - '&6Max. продление: %maxrenttime%'
+  - '&6EPR: %extendtime-short%'
+  - '&6Max. продление: %maxrenttime-short%'
   - '&6Размеры: %dimensions%'
   - '&6Мир: %world%'
   GUIRegionfinderInfoContract:
   - '&6Цена: %price%'
   - '&6PPM (в нед.): %priceperm2perweek%'
-  - '&6Время автопродления: %extend%'
+  - '&6Время автопродления: %extendtime-short%'
   - '&6Размеры: %dimensions%'
   - '&6МИр: %world%'
   SubregionCreationCreateSignInfo:

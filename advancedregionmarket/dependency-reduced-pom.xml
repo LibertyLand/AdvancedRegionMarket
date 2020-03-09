@@ -7,7 +7,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>advancedregionmarket</artifactId>
-  <version>1.9.2</version>
+  <version>3.0</version>
   <build>
     <resources>
       <resource>
@@ -16,7 +16,10 @@
         <includes>
           <include>plugin.yml</include>
           <include>config.yml</include>
-          <include>messages.yml</include>
+          <include>messages_en.yml</include>
+          <include>messages_de.yml</include>
+          <include>messages_fr.yml</include>
+          <include>messages_ru.yml</include>
           <include>regions.yml</include>
           <include>presets.yml</include>
           <include>entitylimits.yml</include>
@@ -32,13 +35,6 @@
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-          <finalName>${project.name}</finalName>
         </configuration>
       </plugin>
       <plugin>
@@ -68,7 +64,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.14-R0.1-SNAPSHOT</version>
+      <version>1.15.1-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -96,7 +92,7 @@
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit</artifactId>
-      <version>1.14-R0.1-SNAPSHOT</version>
+      <version>1.15.1-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -162,22 +158,17 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>com.github.MilkBowl</groupId>
+      <artifactId>VaultAPI</artifactId>
+      <version>1.7</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>com.boydti</groupId>
       <artifactId>fawe-api</artifactId>
       <version>latest</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>net.milkbowl.vault</groupId>
-      <artifactId>VaultAPI</artifactId>
-      <version>1.5</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/../lib/plugins/Vault/Vault.jar</systemPath>
-    </dependency>
   </dependencies>
-  <properties>
-    <maven.compiler.source>6</maven.compiler.source>
-    <maven.compiler.target>1.6</maven.compiler.target>
-  </properties>
 </project>
 

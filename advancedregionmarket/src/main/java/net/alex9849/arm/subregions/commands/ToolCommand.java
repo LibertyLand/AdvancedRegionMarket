@@ -3,9 +3,9 @@ package net.alex9849.arm.subregions.commands;
 import net.alex9849.arm.Messages;
 import net.alex9849.arm.Permission;
 import net.alex9849.arm.commands.BasicArmCommand;
-import net.alex9849.exceptions.InputException;
+import net.alex9849.arm.exceptions.CmdSyntaxException;
+import net.alex9849.arm.exceptions.InputException;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -18,35 +18,18 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ToolCommand extends BasicArmCommand {
-    private final String rootCommand = "tool";
-    private final String regex = "(?i)tool";
-    private final List<String> usage = new ArrayList<>(Arrays.asList("tool"));
 
-    @Override
-    public boolean matchesRegex(String command) {
-        return command.matches(this.regex);
+    public ToolCommand() {
+        super(false, "tool",
+                Arrays.asList("(?i)tool"),
+                Arrays.asList("tool"),
+                Arrays.asList(Permission.SUBREGION_TOOL));
     }
 
     @Override
-    public String getRootCommand() {
-        return this.rootCommand;
-    }
-
-    @Override
-    public List<String> getUsage() {
-        return this.usage;
-    }
-
-    @Override
-    public boolean runCommand(CommandSender sender, Command cmd, String commandsLabel, String[] args, String allargs) throws InputException {
-        if(!sender.hasPermission(Permission.SUBREGION_TOOL)) {
-            throw new InputException(sender, Messages.NO_PERMISSION);
-        }
-        if (!(sender instanceof Player)) {
-            throw new InputException(sender, Messages.COMMAND_ONLY_INGAME);
-        }
+    protected boolean runCommandLogic(CommandSender sender, String command, String commandLabel) throws InputException, CmdSyntaxException {
         Player player = (Player) sender;
-        for(String msg : Messages.SUBREGION_TOOL_INSTRUCTION) {
+        for (String msg : Messages.SUBREGION_TOOL_INSTRUCTION) {
             player.sendMessage(msg);
         }
         // Check if Tool is already in Inventory -> Prevent duplicating Feathers
@@ -66,11 +49,12 @@ public class ToolCommand extends BasicArmCommand {
 
     /**
      * Removes the Subregion-Tool from the players inventory to prevent duplicating feathers a bit
+     *
      * @param player The player which gets checked
      * @return boolean True: Feder ist vorhanden<br>False: Spieler hat keine Feder
      */
     private boolean checkFeather(Player player) {
-        for (int i=0;i<36;i++) {
+        for (int i = 0; i < 36; i++) {
             ItemStack item = player.getInventory().getItem(i);
             if (item != null && item.getItemMeta() != null && item.getItemMeta().getDisplayName().equals("Subregion Tool")) {
                 return true;
@@ -80,16 +64,7 @@ public class ToolCommand extends BasicArmCommand {
     }
 
     @Override
-    public List<String> onTabComplete(Player player, String[] args) {
-        List<String> returnme = new ArrayList<>();
-        if(player.hasPermission(Permission.SUBREGION_TOOL)) {
-            if(args.length == 1) {
-                if(this.rootCommand.startsWith(args[0])) {
-                    returnme.add(this.rootCommand);
-                }
-            }
-        }
-
-        return returnme;
+    protected List<String> onTabCompleteLogic(Player player, String[] args) {
+        return new ArrayList<>();
     }
 }

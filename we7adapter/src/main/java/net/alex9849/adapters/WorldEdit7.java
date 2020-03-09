@@ -13,10 +13,9 @@ import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.util.io.Closer;
-import net.alex9849.exceptions.SchematicNotFoundException;
+import net.alex9849.arm.exceptions.SchematicNotFoundException;
 import net.alex9849.inter.WGRegion;
 import net.alex9849.inter.WorldEditInterface;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 import java.io.*;
@@ -24,28 +23,27 @@ import java.io.*;
 public class WorldEdit7 extends WorldEditInterface {
 
     @Override
-    public void createSchematic(WGRegion region, World bukkitworld, WorldEdit we) {
-        File pluginfolder = Bukkit.getPluginManager().getPlugin("AdvancedRegionMarket").getDataFolder();
-        File rawschematicdic = new File(pluginfolder + "/schematics/" + bukkitworld.getName() + "/" + region.getId());
-        File schematicdic = new File(rawschematicdic + "." + BuiltInClipboardFormat.SPONGE_SCHEMATIC.getPrimaryFileExtension());
-        File schematicfolder = new File(pluginfolder + "/schematics/" + bukkitworld.getName());
+    public void createSchematic(WGRegion region, World bukkitworld, File saveFolder, String fileNameWithoutEnding) {
+
+        File schematicWithoutEnding = new File(saveFolder + "/" + fileNameWithoutEnding);
+        File schematicPath = new File(schematicWithoutEnding + "." + BuiltInClipboardFormat.SPONGE_SCHEMATIC.getPrimaryFileExtension());
 
         for (BuiltInClipboardFormat format : BuiltInClipboardFormat.values()) {
             for (String extension : format.getFileExtensions()) {
-                if (new File(rawschematicdic.getAbsolutePath() + "." + extension).exists()) {
-                    File delfile = new File(rawschematicdic.getAbsolutePath() + "." + extension);
+                if (new File(schematicWithoutEnding.getAbsolutePath() + "." + extension).exists()) {
+                    File delfile = new File(schematicWithoutEnding.getAbsolutePath() + "." + extension);
                     delfile.delete();
                 }
             }
         }
 
-        schematicfolder.mkdirs();
+        saveFolder.mkdirs();
 
         com.sk89q.worldedit.world.World world = new BukkitWorld(bukkitworld);
         BlockVector3 minPoint = BlockVector3.at(region.getMinPoint().getBlockX(), region.getMinPoint().getBlockY(), region.getMinPoint().getBlockZ());
         BlockVector3 maxPoint = BlockVector3.at(region.getMaxPoint().getBlockX(), region.getMaxPoint().getBlockY(), region.getMaxPoint().getBlockZ());
 
-        EditSession editSession = we.getEditSessionFactory().getEditSession(world, Integer.MAX_VALUE);
+        EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(world, Integer.MAX_VALUE);
         CuboidRegion reg = new CuboidRegion(world, minPoint, maxPoint);
         BlockArrayClipboard clip = new BlockArrayClipboard(reg);
         clip.setOrigin(minPoint);
@@ -53,18 +51,18 @@ public class WorldEdit7 extends WorldEditInterface {
         copy.setCopyingEntities(true);
         try {
             Operations.completeLegacy(copy);
-        } catch(MaxChangedBlocksException e) {
+        } catch (MaxChangedBlocksException e) {
             e.printStackTrace();
         }
         try {
             Closer closer = Closer.create();
-            schematicdic.createNewFile();
-            FileOutputStream fileOutputStream = closer.register(new FileOutputStream(schematicdic));
+            schematicPath.createNewFile();
+            FileOutputStream fileOutputStream = closer.register(new FileOutputStream(schematicPath));
             BufferedOutputStream bufferedOutputStream = closer.register(new BufferedOutputStream(fileOutputStream));
             ClipboardWriter writer = closer.register(BuiltInClipboardFormat.SPONGE_SCHEMATIC.getWriter(bufferedOutputStream));
             writer.write(clip);
             closer.close();
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return;
         }
@@ -72,21 +70,20 @@ public class WorldEdit7 extends WorldEditInterface {
     }
 
     @Override
-    public void resetBlocks(WGRegion region, World bukkitworld, WorldEdit we) throws IOException {
+    public void restoreSchematic(WGRegion region, World bukkitworld, File schematicPathWithoutFileEnding) throws SchematicNotFoundException {
 
-        File pluginfolder = Bukkit.getPluginManager().getPlugin("AdvancedRegionMarket").getDataFolder();
-        File rawschematicdic = new File(pluginfolder + "/schematics/" + bukkitworld.getName() + "/" + region.getId());
-        File file = null;
+
+        File schematicPath = null;
 
         for (BuiltInClipboardFormat format : BuiltInClipboardFormat.values()) {
             for (String extension : format.getFileExtensions()) {
-                if (new File(rawschematicdic.getAbsolutePath() + "." + extension).exists()) {
-                    file = new File(rawschematicdic.getAbsolutePath() + "." + extension);
+                if (new File(schematicPathWithoutFileEnding.getAbsolutePath() + "." + extension).exists()) {
+                    schematicPath = new File(schematicPathWithoutFileEnding.getAbsolutePath() + "." + extension);
                 }
             }
         }
 
-        if(file == null) {
+        if (schematicPath == null) {
             throw new SchematicNotFoundException(region);
         }
 
@@ -95,9 +92,9 @@ public class WorldEdit7 extends WorldEditInterface {
         Clipboard clipboard;
         try {
             Closer closer = Closer.create();
-            FileInputStream fileInputStream = closer.register(new FileInputStream(file));
+            FileInputStream fileInputStream = closer.register(new FileInputStream(schematicPath));
             BufferedInputStream bufferedInputStream = closer.register(new BufferedInputStream(fileInputStream));
-            ClipboardFormat clipboardFormat = ClipboardFormats.findByFile(file);
+            ClipboardFormat clipboardFormat = ClipboardFormats.findByFile(schematicPath);
             ClipboardReader reader = clipboardFormat.getReader(bufferedInputStream);
             clipboard = reader.read();
             Extent source = clipboard;
@@ -107,11 +104,10 @@ public class WorldEdit7 extends WorldEditInterface {
             Operations.completeLegacy(copy);
             ((EditSession) destination).flushSession();
             closer.close();
-        } catch (SchematicNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            Bukkit.getLogger().info("Could not load schematic " + file.getAbsolutePath() + " please check your WorldEdit version or regenerate the schematic file!");
-            e.printStackTrace();
+        } catch (IOException e) {
+            throw new SchematicNotFoundException(region);
+        } catch (MaxChangedBlocksException e) {
+            throw new SchematicNotFoundException(region);
         }
     }
 }

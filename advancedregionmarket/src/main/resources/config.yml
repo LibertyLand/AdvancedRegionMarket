@@ -39,26 +39,17 @@ DefaultAutoprice:
   maxRentTime: 7d
   autoPriceCalculation: per_m2
 
-# If you activate one of these functions you have to fill in the MySQL data
-AutoResetAndTakeOver:
-  # If enabled the region will be resetted and released after the
-  # owner was not online for the amount of days standing at 'autoresetAfter'.
-  # It's recommended for BUNGEECORD servers to install ARMProxy in order to
-  # update the 'last online'-table if a user joined on another server in your network
-  enableAutoReset: false
-  autoresetAfter: 60
-  # If enabled all members of a region will have the opportunity to take over a region
-  # if the owner of it was not online for the amount of days standing at 'takeoverAfter'
-  # The members will be notified via GUI.
-  # It's recommended for BUNGEECORD servers to install ARMProxy in order to
-  # update the 'last online'-table if a user joined on another server in your network
-  enableTakeOver: false
-  takeoverAfter: 50
-  mysql-server: 'localhost'
-  mysql-database: 'database'
-  mysql-password: 'password'
-  mysql-user: 'user'
-  mysql-prefix: 'arm_'
+FlagGroups:
+  # FlagGroups can be used to automatically assign flags and priorities on
+  # regions. You can also define Flags that will only be applied if the region
+  # is currently available or only if the region is sold. You could use this
+  # for example to allow all players to open doors and to use buttons if a region
+  # is not sold and only allow owners and members of a region to use these things
+  # is the region got bought. You can also allow your players to edit specific
+  # flags via "/arm flageditor [REGION]". An example for that would be a greeting
+  # greeting message if a player enters the region.
+  # You can edit the flaggroups in the file flaggroups.yml.
+  enabled: false
 
 # Limits can be assigned to players by giving them the permission arm.limit.LIMITGROUP
 # you can set limits by writing a regionkind and the limit behind it. Not existing regionkinds
@@ -94,6 +85,31 @@ Limits:
     large: 2
     shop: 2
 
+
+# InactivityExpirationGroups can be assigned to players by giving them the permission arm.inactivityexpiration.INACTIVITYEXPIRATIONGROUP
+# For example use arm.inactivityexpiration.examplegroup1 to assign the examplegroup1 defined below to a player.
+# Regions that have inactivityExpiration enabled will be reset if the owner of the region does not come online for the time
+# specified in 'resetAfter'. You can give members of the region the opportunity to become the owner the region before it gets reset.
+# You can specify the amount of time in 'takeOverAfter'.
+# If a player has multiple InactivityExpirationGroups assigned ARM automatically picks the group with the highest amount of days
+# If a player has no InactivityExpirationGroups assigned ARM will use the DefaultInactivityExpirationGroup!
+# Use arm.inactivityexpiration.unlimited to deactivate TakeOver and InactivityReset for a player
+
+InactivityExpiration:
+  examplegroup1:
+    resetAfter: '30d'
+    takeOverAfter: '20d'
+  examplegroup2:
+    resetAfter: '60d'
+    takeOverAfter: '50d'
+  examplegroup3:
+    resetAfter: 'none'
+    takeOverAfter: 'none'
+
+DefaultInactivityExpiration:
+  resetAfter: 'none'
+  takeOverAfter: 'none'
+
 RegionKinds:
   # If true players need the permission 'arm.buykind.REGIONKIND_INTERNAL_NAME' to see the regionkind in the regionfinder
   # and to be able to buy them. Replace REGIONKIND_INTERNAL_NAME with the internal name of the regionkind
@@ -125,8 +141,8 @@ PriceFormatting:
 
 Other:
   # If users have the permission 'arm.resetregionblocks' they can reset their own regions. The number
-  # behind is the cooldown when they can reset their region again (in days).
-  userResetCooldown: 7
+  # behind is the cooldown when they can reset their region again.
+  userResetCooldown: 7d
   # If set on true the user will be teleported in the middle of their region if they buy one.
   TeleportAfterSellRegionBought: true
   TeleportAfterRentRegionBought: false
@@ -139,11 +155,8 @@ Other:
   SendContractRegionExtendMessage: true
   # The updateinterval for all signs and expiration checks in seconds
   SignAndResetUpdateInterval: 2
-  # The TimeFormat, that will be shown if the remaining time if shown somewhere. Use '%countdown%' for a countdown and '%date%' for a Date in the format at 'DateTimeFormat'
-  RemainingTimeFormat: '%countdown%'
   # dd for days, MM for months, yyyy for years, hh for hours, mm for minutes
   DateTimeFormat: 'dd.MM.yyyy HH:mm'
-  ShortCountdown: false
   # If enabled ARM will suggest Regions on tab-complete! This may cause lags if you have many regions!
   # Enable it only when you just manage a few regions with ARM!
   CompleteRegionsOnTabComplete: true
@@ -156,11 +169,17 @@ Other:
   # to a sign or the the region
   AllowRegionfinderTeleportToBuySign: true
   # If true all entities will be removed if the region gets resetted
-  RemoveEntitiesOnRegionBlockReset: true
+  RemoveEntitiesOnRegionRestore: true
   # If true the plugin will send me your servers ip address and playercount every 5 minutes. This allows me to visit your server and is one
   # of my biggest motivations to continue to develop this plugin. If you disable this plugin or set Sendstats to false and do not start it
   # for 2 weeks, all data from your server will automatically be deleted.
   Sendstats: true
+  #The language of the plugin. Available languages: en, de, fr, ru
+  #You can send me your own translations of the plugin and I'll
+  #include them into the plugin. You have to remove the messages.yml
+  #and reload/restart the plugin if you want that arm regenerates the
+  #messages file in your preferred language.
+  Language: en
 
   #These commands will be executed by the player if the clicks on a sign. "buyaction" means the buyaction of the region will be executed (For example extending the region
   #or teminating the contract) you can use all region-variables in your commands.
@@ -170,17 +189,23 @@ SignClickActions:
   LeftClickNotSneakCmd: "arm info %regionid%"
   LeftClickSneakCmd: "arm flageditor %regionid%"
 
+Backups:
+  createBackupOnRegionRestore: true
+  createBackupOnRegionUnsell: true
+
 Subregions:
-  AllowSubRegionUserReset: false
-  SubregionBlockReset: false
-  SubregionAutoReset: true
+  AllowSubregionUserRestore: false
+  SubregionAutoRestore: false
+  SubregionMaxMembers: -1
+  SubregionInactivityReset: true
+  SubregionPaybackPercentage: 0
   deleteSubregionsOnParentRegionUnsell: false
-  deleteSubregionsOnParentRegionBlockReset: false
+  deleteSubregionsOnParentRegionRestore: false
   allowParentRegionOwnersBuildOnSubregions: true
 
 Reselling:
   Offers:
-# Time in seconds
+    # Time in seconds
     OfferTimeOut: 30
 
 #Here you can change the Blocks that will be shown in the GUI. You can use
@@ -224,6 +249,6 @@ GUI:
   DisplayRegionFinderButton: true
 
 #Do not change this
-Version: 1.92
+Version: ${project.version}
 # Programmed by Alex9849
 # If you like my plugin you are free to donate me via PayPal https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2Z6VVLS5SZXJS

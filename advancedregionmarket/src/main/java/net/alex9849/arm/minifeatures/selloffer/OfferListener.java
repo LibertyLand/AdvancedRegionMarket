@@ -25,7 +25,7 @@ public class OfferListener implements Listener {
 
     @EventHandler
     private void onPlayerLeave(PlayerQuitEvent event) {
-        if(event.getPlayer().getUniqueId() == buyer.getUniqueId() || event.getPlayer().getUniqueId() == seller.getUniqueId()) {
+        if (event.getPlayer().getUniqueId() == buyer.getUniqueId() || event.getPlayer().getUniqueId() == seller.getUniqueId()) {
             buyer.sendMessage(offer.getConvertedMessage(Messages.OFFER_HAS_BEEN_CANCELLED));
             offer.reject();
         }
@@ -33,7 +33,7 @@ public class OfferListener implements Listener {
 
     protected void unregister() {
         PlayerQuitEvent.getHandlerList().unregister(this);
-        if(this.isTimerActive) {
+        if (this.isTimerActive) {
             Bukkit.getScheduler().cancelTask(timertask);
             isTimerActive = false;
         }
@@ -41,7 +41,7 @@ public class OfferListener implements Listener {
 
     protected void activateCancelTimer(int ticks) {
         this.isTimerActive = true;
-        this.timertask = Bukkit.getScheduler().runTaskLater(AdvancedRegionMarket.getARM(), new Runnable() {
+        this.timertask = Bukkit.getScheduler().runTaskLater(AdvancedRegionMarket.getInstance(), new Runnable() {
             @Override
             public void run() {
                 seller.sendMessage(Messages.PREFIX + offer.getConvertedMessage(Messages.OFFER_TIMED_OUT));

@@ -2,44 +2,46 @@ package net.alex9849.arm.handler.listener;
 
 import net.alex9849.arm.AdvancedRegionMarket;
 import net.alex9849.arm.Messages;
+import net.alex9849.arm.entitylimit.EntityLimit;
 import net.alex9849.arm.regions.Region;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 
 import java.util.List;
-import java.util.UUID;
 
 public class EntitySpawnListener implements Listener {
 
     @EventHandler
     public void entitySpawnEvent(EntitySpawnEvent event) {
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
-        if(event.getEntityType() == EntityType.PLAYER) {
-            return;
-        }
-
-        if(AdvancedRegionMarket.getRegionManager() == null) {
+        if (event.getEntityType() == EntityType.PLAYER) {
             return;
         }
 
-        List<Region> regions = AdvancedRegionMarket.getRegionManager().getRegionsByLocation(event.getLocation());
+        if (AdvancedRegionMarket.getInstance().getRegionManager() == null) {
+            return;
+        }
+        EntityLimit.LimitableEntityType limitableEntityType = EntityLimit.toLimitableEntityType(event.getEntityType());
+        if (limitableEntityType == null) {
+            return;
+        }
 
-        for(Region region : regions) {
-            if(region.getEntityLimitGroup().isLimitReached(region, event.getEntityType(), region.getExtraEntityAmount(event.getEntityType()), region.getExtraTotalEntitys())) {
+        List<Region> regions = AdvancedRegionMarket.getInstance().getRegionManager().getRegionsByLocation(event.getLocation());
+
+        for (Region region : regions) {
+            if (region.getEntityLimitGroup().isLimitReached(region, event.getEntityType(), region.getExtraTotalEntitys())) {
                 event.setCancelled(true);
-                for(Player player : Bukkit.getOnlinePlayers()) {
+                for (Player player : Bukkit.getOnlinePlayers()) {
                     Location playerLoc = player.getLocation();
-                    if(region.getRegion().contains(playerLoc.getBlockX(), playerLoc.getBlockY(), playerLoc.getBlockZ())) {
+                    if (region.getRegion().contains(playerLoc.getBlockX(), playerLoc.getBlockY(), playerLoc.getBlockZ())) {
                         player.getPlayer().sendMessage(Messages.PREFIX + region.getConvertedMessage(Messages.ENTITYLIMITGROUP_COULD_NOT_SPAWN_ENTITY));
                     }
                 }
@@ -49,19 +51,30 @@ public class EntitySpawnListener implements Listener {
 
     @EventHandler
     public void vehicleSpawnEvent(VehicleCreateEvent event) {
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
 
-        if(AdvancedRegionMarket.getRegionManager() == null) {
+        if (AdvancedRegionMarket.getInstance().getRegionManager() == null) {
             return;
         }
 
-        List<Region> regions = AdvancedRegionMarket.getRegionManager().getRegionsByLocation(event.getVehicle().getLocation());
+        EntityLimit.LimitableEntityType limitableEntityType = EntityLimit.toLimitableEntityType(event.getVehicle().getType());
+        if (limitableEntityType == null) {
+            return;
+        }
 
-        for(Region region : regions) {
-            if(region.getEntityLimitGroup().isLimitReached(region, event.getVehicle().getType(), region.getExtraEntityAmount(event.getVehicle().getType()), region.getExtraTotalEntitys())) {
+        List<Region> regions = AdvancedRegionMarket.getInstance().getRegionManager().getRegionsByLocation(event.getVehicle().getLocation());
+
+        for (Region region : regions) {
+            if (region.getEntityLimitGroup().isLimitReached(region, event.getVehicle().getType(), region.getExtraTotalEntitys())) {
                 event.setCancelled(true);
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    Location playerLoc = player.getLocation();
+                    if (region.getRegion().contains(playerLoc.getBlockX(), playerLoc.getBlockY(), playerLoc.getBlockZ())) {
+                        player.getPlayer().sendMessage(Messages.PREFIX + region.getConvertedMessage(Messages.ENTITYLIMITGROUP_COULD_NOT_SPAWN_ENTITY));
+                    }
+                }
             }
         }
     }
