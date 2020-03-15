@@ -154,7 +154,7 @@ public class SignModifyListener implements Listener {
             }
 
             //Get region
-            WGRegion wgRegion = AdvancedRegionMarket.getInstance().getWorldGuardInterface().getRegion(regionWorld, AdvancedRegionMarket.getInstance().getWorldGuard(), sign.getLine(2));
+            WGRegion wgRegion = AdvancedRegionMarket.getInstance().getWorldGuardInterface().getRegion(regionWorld, sign.getLine(2));
             if (wgRegion == null) {
                 throw new InputException(sign.getPlayer(), Messages.REGION_DOES_NOT_EXIST);
             }
@@ -169,16 +169,18 @@ public class SignModifyListener implements Listener {
             if (existingArmRegion != null) {
                 existingArmRegion.addSign(signData);
                 sign.setCancelled(true);
+                existingArmRegion.updateSigns();
                 sign.getPlayer().sendMessage(Messages.PREFIX + Messages.SIGN_ADDED_TO_REGION);
                 return;
             } else {
                 List<SignData> signDataList = new ArrayList<>();
                 signDataList.add(signData);
-                Region newArmRegion = preset.generateRegion(wgRegion, regionWorld, signDataList);
-                if (price == null && preset.canPriceLineBeLetEmpty()) {
-                    sign.getPlayer().sendMessage(Messages.PREFIX + "Price not defined! Using default Autoprice!");
-                } else {
+                Region newArmRegion = preset.generateRegion(wgRegion, regionWorld, sign.getPlayer(), signDataList);
+
+                if(price != null) {
                     newArmRegion.setPrice(price);
+                } else if (!preset.canPriceLineBeLetEmpty()) {
+                    sign.getPlayer().sendMessage(Messages.PREFIX + "Price not defined! Using default Autoprice!");
                 }
                 newArmRegion.createSchematic();
                 try {
@@ -187,6 +189,7 @@ public class SignModifyListener implements Listener {
                     //Ignore
                 }
                 AdvancedRegionMarket.getInstance().getRegionManager().add(newArmRegion);
+                newArmRegion.updateSigns();
                 sign.setCancelled(true);
                 sign.getPlayer().sendMessage(Messages.PREFIX + Messages.REGION_ADDED_TO_ARM);
                 return;
@@ -264,10 +267,7 @@ public class SignModifyListener implements Listener {
         String message = Messages.SIGN_REMOVED_FROM_REGION.replace("%remaining%", region.getNumberOfSigns() + "");
         player.sendMessage(Messages.PREFIX + message);
         if(region.getNumberOfSigns() == 0) {
-            if(region.isSubregion()) {
-                region.delete(AdvancedRegionMarket.getInstance().getRegionManager());
-            }
-            AdvancedRegionMarket.getInstance().getRegionManager().remove(region);
+            region.delete(AdvancedRegionMarket.getInstance().getRegionManager());
             player.sendMessage(Messages.PREFIX + Messages.REGION_REMOVED_FROM_ARM);
         }
     }

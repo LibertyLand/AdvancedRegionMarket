@@ -4,7 +4,6 @@ import net.alex9849.arm.AdvancedRegionMarket;
 import net.alex9849.arm.Messages;
 import net.alex9849.arm.Permission;
 import net.alex9849.arm.commands.BasicArmCommand;
-import net.alex9849.arm.commands.CommandUtil;
 import net.alex9849.arm.exceptions.CmdSyntaxException;
 import net.alex9849.arm.exceptions.InputException;
 import net.alex9849.arm.regionkind.RegionKind;
@@ -36,7 +35,7 @@ public class AddLoreLineCommand extends BasicArmCommand {
         for (int i = 2; i < args.length; i++) {
             loreLine.add(args[i]);
         }
-        regionKind.getRawLore().add(CommandUtil.getStringList(loreLine, x -> x, " "));
+        regionKind.getRawLore().add(Messages.getStringList(loreLine, x -> x, " "));
         regionKind.queueSave();
 
         sender.sendMessage(Messages.PREFIX + Messages.REGIONKIND_MODIFIED);

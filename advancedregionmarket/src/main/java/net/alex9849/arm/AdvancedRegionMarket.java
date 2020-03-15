@@ -24,6 +24,7 @@ import net.alex9849.arm.minifeatures.SignLinkMode;
 import net.alex9849.arm.minifeatures.selloffer.Offer;
 import net.alex9849.arm.presets.ActivePresetManager;
 import net.alex9849.arm.presets.PresetPatternManager;
+import net.alex9849.arm.presets.commands.MaxRentTimeCommand;
 import net.alex9849.arm.presets.commands.PaybackPercentageCommand;
 import net.alex9849.arm.presets.presets.PresetType;
 import net.alex9849.arm.regionkind.RegionKindManager;
@@ -76,9 +77,7 @@ public class AdvancedRegionMarket extends JavaPlugin {
     private Boolean faWeInstalled = null;
     private Economy econ = null;
     private net.milkbowl.vault.permission.Permission vaultPerms = null;
-    private WorldGuardPlugin worldguard = null;
     private WorldGuardInterface worldGuardInterface = null;
-    private WorldEditPlugin worldedit = null;
     private WorldEditInterface worldEditInterface = null;
     private CommandHandler commandHandler = null;
     private RegionKindManager regionKindManager = null;
@@ -240,7 +239,7 @@ public class AdvancedRegionMarket extends JavaPlugin {
         this.pluginSettings.setCreateBackupOnRegionRestore(getConfig().getBoolean("Backups.createBackupOnRegionRestore"));
         this.pluginSettings.setCreateBackupOnRegionUnsell(getConfig().getBoolean("Backups.createBackupOnRegionUnsell"));
         this.pluginSettings.setMaxSubRegionMembers(getConfig().getInt("Subregions.SubregionMaxMembers"));
-        this.pluginSettings.setPaybackPercentage(getConfig().getInt("Subregions.SubregionPaybackPercentage"));
+        this.pluginSettings.setSubRegionPaybackPercentage(getConfig().getInt("Subregions.SubregionPaybackPercentage"));
         FlagGroup.setFeatureEnabled(getConfig().getBoolean("FlagGroups.enabled"));
 
         try {
@@ -264,7 +263,7 @@ public class AdvancedRegionMarket extends JavaPlugin {
         loadInactivityExpirationGroups();
         loadOther();
         this.presetPatternManager = new PresetPatternManager(new File(this.getDataFolder() + "/presets.yml"));
-        Region.setCompleteTabRegions(getConfig().getBoolean("Other.CompleteRegionsOnTabComplete"));
+        this.getRegionManager().setTabCompleteRegions(getConfig().getBoolean("Other.CompleteRegionsOnTabComplete"));
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             this.getRegionManager().doTick();
         }, 1, 1);
@@ -408,7 +407,7 @@ public class AdvancedRegionMarket extends JavaPlugin {
         List<BasicArmCommand> rentPresetCommands = new ArrayList<>();
         rentPresetCommands.add(new net.alex9849.arm.presets.commands.InactivityResetResetCommand(PresetType.RENTPRESET));
         rentPresetCommands.add(new net.alex9849.arm.presets.commands.ExtendTimeCommand(PresetType.RENTPRESET));
-        rentPresetCommands.add(new net.alex9849.arm.presets.commands.RentPresetMaxRentTimeCommand(PresetType.RENTPRESET));
+        rentPresetCommands.add(new MaxRentTimeCommand(PresetType.RENTPRESET));
         rentPresetCommands.add(new net.alex9849.arm.presets.commands.DeleteCommand(PresetType.RENTPRESET));
         rentPresetCommands.add(new net.alex9849.arm.presets.commands.AutoRestoreCommand(PresetType.RENTPRESET));
         rentPresetCommands.add(new net.alex9849.arm.presets.commands.HotelCommand(PresetType.RENTPRESET));
@@ -460,7 +459,7 @@ public class AdvancedRegionMarket extends JavaPlugin {
             @Override
             public void run() {
                 for (Region region : AdvancedRegionMarket.getInstance().getRegionManager()) {
-                    if (region.isInactivityResetEnabled() && region.isInactive()) {
+                    if (region.isInactivityReset() && region.isInactive()) {
                         try {
                             region.automaticResetRegion(Region.ActionReason.INACTIVITY, true);
                         } catch (SchematicNotFoundException e) {
@@ -480,8 +479,6 @@ public class AdvancedRegionMarket extends JavaPlugin {
         this.getFlagGroupManager().updateFile();
         this.econ = null;
         this.vaultPerms = null;
-        this.worldguard = null;
-        this.worldedit = null;
         LimitGroup.Reset();
         InactivityExpirationGroup.reset();
         AutoPrice.reset();
@@ -595,11 +592,11 @@ public class AdvancedRegionMarket extends JavaPlugin {
         if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
             return false;
         }
-        this.worldguard = (WorldGuardPlugin) plugin;
+        WorldGuardPlugin worldguard = (WorldGuardPlugin) plugin;
         String version = "notSupported";
-        if (this.worldguard.getDescription().getVersion().startsWith("6.1")) {
+        if (worldguard.getDescription().getVersion().startsWith("6.1")) {
             version = "6_1";
-        } else if (this.worldguard.getDescription().getVersion().startsWith("6.2")) {
+        } else if (worldguard.getDescription().getVersion().startsWith("6.2")) {
             version = "6_2";
         } else {
             version = "7";
@@ -624,11 +621,11 @@ public class AdvancedRegionMarket extends JavaPlugin {
         if (plugin == null || !(plugin instanceof WorldEditPlugin)) {
             return false;
         }
-        this.worldedit = (WorldEditPlugin) plugin;
+        WorldEditPlugin worldedit = (WorldEditPlugin) plugin;
         String version = "notSupported";
         Boolean hasFaWeHandler = true;
 
-        if (this.worldedit.getDescription().getVersion().startsWith("6.")) {
+        if (worldedit.getDescription().getVersion().startsWith("6.")) {
             version = "6";
         } else {
             version = "7";
@@ -656,10 +653,6 @@ public class AdvancedRegionMarket extends JavaPlugin {
 
     public CommandHandler getCommandHandler() {
         return this.commandHandler;
-    }
-
-    public WorldGuardPlugin getWorldGuard() {
-        return this.worldguard;
     }
 
     public WorldGuardInterface getWorldGuardInterface() {
@@ -804,7 +797,7 @@ public class AdvancedRegionMarket extends JavaPlugin {
             }
 
             for (String regionName : regionNames) {
-                WGRegion wgRegion = this.getWorldGuardInterface().getRegion(world, this.getWorldGuard(), regionName);
+                WGRegion wgRegion = this.getWorldGuardInterface().getRegion(world, regionName);
                 if (wgRegion == null) {
                     continue;
                 }
@@ -818,10 +811,6 @@ public class AdvancedRegionMarket extends JavaPlugin {
         return this.econ;
     }
 
-    public WorldEditPlugin getWorldedit() {
-        return this.worldedit;
-    }
-
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String commandsLabel, String[] args) {
         if (!cmd.getName().equalsIgnoreCase("arm")) {
@@ -830,7 +819,7 @@ public class AdvancedRegionMarket extends JavaPlugin {
         try {
             if (args.length >= 1) {
                 return this.commandHandler.executeCommand(sender,
-                        CommandUtil.getStringList(Arrays.asList(args), x -> x, " "), commandsLabel);
+                        Messages.getStringList(Arrays.asList(args), x -> x, " "), commandsLabel);
             } else {
                 String pluginversion = this.getDescription().getVersion();
                 sender.sendMessage(Messages.ARM_BASIC_COMMAND_MESSAGE.replace("%pluginversion%", pluginversion));

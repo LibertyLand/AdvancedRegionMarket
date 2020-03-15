@@ -16,7 +16,7 @@ import java.util.List;
 public class SaveCommand extends PresetOptionModifyCommand<String> {
 
     public SaveCommand(PresetType presetType) {
-        super("save", Arrays.asList(Permission.ADMIN_PRESET_SAVE), "[^;\n ]+",
+        super("save", Arrays.asList(Permission.ADMIN_PRESET_SAVE), false, "[^;\n ]+",
                 "[PRESETNAME]", Messages.PRESET_PLAYER_DONT_HAS_PRESET, presetType);
     }
 
@@ -30,7 +30,12 @@ public class SaveCommand extends PresetOptionModifyCommand<String> {
 
     @Override
     protected void applySetting(CommandSender sender, Preset object, String setting) throws InputException {
-        Preset savePreset = object.getCopy();
+        Preset savePreset = null;
+        try {
+            savePreset = (Preset) object.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
         savePreset.setName(setting);
         AdvancedRegionMarket.getInstance().getPresetPatternManager().add(savePreset);
     }

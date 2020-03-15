@@ -1,6 +1,7 @@
 package net.alex9849.arm.regions;
 
 import net.alex9849.arm.AdvancedRegionMarket;
+import net.alex9849.arm.ArmSettings;
 import net.alex9849.arm.Messages;
 import net.alex9849.arm.entitylimit.EntityLimit;
 import net.alex9849.arm.entitylimit.EntityLimitGroup;
@@ -35,33 +36,32 @@ import java.util.*;
 import java.util.logging.Level;
 
 public abstract class Region implements Saveable {
-    public static boolean completeTabRegions;
-    Integer m2Amount;
+    private Integer m2Amount;
     private WGRegion region;
     private World regionworld;
     private ArrayList<SignData> sellsign;
-    private HashSet<Integer> builtblocks;
     private Price price;
     private boolean sold;
-    private boolean inactivityReset;
-    private boolean isHotel;
-    private long lastreset;
-    private long lastLogin;
-    private RegionKind regionKind;
-    private Location teleportLocation;
-    private boolean isAutoRestore;
-    private List<Region> subregions;
-    private int allowedSubregions;
     private Region parentRegion;
-    private boolean isUserRestorable;
-    private FlagGroup flagGroup;
-    private EntityLimitGroup entityLimitGroup;
-    private boolean needsSave;
-    private HashMap<EntityLimit.LimitableEntityType, Integer> extraEntitys;
-    private int extraTotalEntitys;
+    private Set<Region> subregions;
+    private Location teleportLocation;
     private StringReplacer stringReplacer;
-    private int maxMembers;
-    private int paybackPercentage;
+    private boolean inactivityReset = true;
+    private boolean isHotel = false;
+    private boolean isUserRestorable = true;
+    private boolean needsSave = false;
+    private boolean isAutoRestore = true;
+    private long lastreset = 0;
+    private long lastLogin = 0;
+    private int maxMembers = -1;
+    private int paybackPercentage = 0;
+    private int extraTotalEntitys = 0;
+    private int allowedSubregions = 0;
+    private RegionKind regionKind = RegionKind.DEFAULT;
+    private FlagGroup flagGroup = FlagGroup.DEFAULT;
+    private EntityLimitGroup entityLimitGroup = EntityLimitGroup.DEFAULT;
+    private HashSet<Integer> builtblocks = new HashSet<>();
+    private HashMap<EntityLimit.LimitableEntityType, Integer> extraEntitys = new HashMap<>();
 
     {
         HashMap<String, StringCreator> variableReplacements = new HashMap<>();
@@ -72,7 +72,7 @@ public abstract class Region implements Saveable {
             return this.getRegion().getId();
         });
         variableReplacements.put("%maxmembers%", () -> {
-            return (this.getMaxMembers() < 0)? Messages.UNLIMITED : this.getMaxMembers() + "";
+            return (this.getMaxMembers() < 0) ? Messages.UNLIMITED : this.getMaxMembers() + "";
         });
         variableReplacements.put("%region%", () -> {
             return this.getRegion().getId();
@@ -128,7 +128,11 @@ public abstract class Region implements Saveable {
             return Messages.convertEnabledDisabled(this.isHotel);
         });
         variableReplacements.put("%soldstatus%", () -> {
-            return this.getSoldStringStatus();
+            if (this.isSold()) {
+                return Messages.SOLD;
+            } else {
+                return Messages.AVAILABLE;
+            }
         });
         variableReplacements.put("%issold%", () -> {
             return Messages.convertYesNo(this.isSold());
@@ -146,14 +150,14 @@ public abstract class Region implements Saveable {
             return Messages.convertYesNo(this.isAutoRestore());
         });
         variableReplacements.put("%isinactivityreset%", () -> {
-            return Messages.convertYesNo(this.isInactivityResetEnabled());
+            return Messages.convertYesNo(this.isInactivityReset());
         });
         variableReplacements.put("%lastownerlogin%", () -> {
             return TimeUtil.getDate(this.getLastLogin(), false, "",
                     AdvancedRegionMarket.getInstance().getPluginSettings().getDateTimeformat());
         });
         variableReplacements.put("%owner%", () -> {
-            if(this.getRegion().getOwners().size() > 0) {
+            if (this.getRegion().getOwners().size() > 0) {
                 return this.getOwnerName();
             }
             return "";
@@ -165,14 +169,7 @@ public abstract class Region implements Saveable {
             return Messages.convertYesNo(this.getPriceObject().isAutoPrice());
         });
         variableReplacements.put("%subregions%", () -> {
-            String subregions = "";
-            for (int i = 0; i < this.getSubregions().size() - 1; i++) {
-                subregions = subregions + this.getSubregions().get(i).getRegion().getId() + ", ";
-            }
-            if (this.getSubregions().size() != 0) {
-                subregions = subregions + this.getSubregions().get(this.getSubregions().size() - 1).getRegion().getId();
-            }
-            return subregions;
+            return Messages.getStringList(this.subregions, x -> x.getRegion().getId(), ", ");
         });
         variableReplacements.put("%members%", () -> {
             String membersInfo = "";
@@ -220,37 +217,35 @@ public abstract class Region implements Saveable {
 
     }
 
-    public Region(WGRegion region, World regionworld, List<SignData> sellsign, Price price, Boolean sold, Boolean inactivityReset,
-                  Boolean isHotel, Boolean isAutoRestore, RegionKind regionKind, FlagGroup flagGroup, Location teleportLoc, long lastreset,
-                  long lastLogin, boolean isUserRestorable, List<Region> subregions, int allowedSubregions, EntityLimitGroup entityLimitGroup,
-                  HashMap<EntityLimit.LimitableEntityType, Integer> extraEntitys, int boughtExtraTotalEntitys, int maxMembers, int paybackPercentage) {
+    /* ######################################
+    ############### Constructors ############
+    #########################################*/
+    public Region(WGRegion region, List<SignData> sellsigns, Price price, boolean sold, Region parentRegion) {
+        this(region, parentRegion.getRegionworld(), sellsigns, price, sold);
+        if (parentRegion.isSubregion()) {
+            throw new IllegalArgumentException("Subregions can't be parent regions!");
+        }
+        ArmSettings pluginsSettings = AdvancedRegionMarket.getInstance().getPluginSettings();
+        this.inactivityReset = pluginsSettings.isSubregionInactivityReset();
+        this.isAutoRestore = pluginsSettings.isSubregionAutoRestore();
+        this.regionKind = RegionKind.SUBREGION;
+        this.flagGroup = FlagGroup.SUBREGION;
+        this.isUserRestorable = pluginsSettings.isAllowSubRegionUserRestore();
+        this.entityLimitGroup = EntityLimitGroup.SUBREGION;
+        this.maxMembers = pluginsSettings.getMaxSubRegionMembers();
+        this.paybackPercentage = pluginsSettings.getSubRegionPaybackPercentage();
+        this.allowedSubregions = 0;
+        this.parentRegion = parentRegion;
+        parentRegion.addSubRegion(this);
+    }
+
+    public Region(WGRegion region, World regionworld, List<SignData> sellsigns, Price price, boolean sold) {
         this.region = region;
-        this.sellsign = new ArrayList<SignData>(sellsign);
+        this.sellsign = new ArrayList<>(sellsigns);
         this.sold = sold;
         this.price = price;
         this.regionworld = regionworld;
-        this.regionKind = regionKind;
-        this.flagGroup = flagGroup;
-        this.inactivityReset = inactivityReset;
-        this.isAutoRestore = isAutoRestore;
-        this.lastreset = lastreset;
-        this.builtblocks = new HashSet<>();
-        this.isHotel = isHotel;
-        this.lastLogin = lastLogin;
-        this.teleportLocation = teleportLoc;
-        this.subregions = subregions;
-        this.allowedSubregions = allowedSubregions;
-        this.isUserRestorable = isUserRestorable;
-        this.needsSave = false;
-        this.entityLimitGroup = entityLimitGroup;
-        this.extraEntitys = extraEntitys;
-        this.extraTotalEntitys = boughtExtraTotalEntitys;
-        this.maxMembers = maxMembers;
-        this.paybackPercentage = paybackPercentage;
-
-        for (Region subregion : subregions) {
-            subregion.setParentRegion(this);
-        }
+        this.subregions = new HashSet<>();
 
         File pluginfolder = Bukkit.getPluginManager().getPlugin("AdvancedRegionMarket").getDataFolder();
         File builtblocksdic = new File(pluginfolder + "/schematics/" + this.regionworld.getName() + "/" + region.getId() + "/builtblocks.builtblocks");
@@ -279,24 +274,16 @@ public abstract class Region implements Saveable {
         }
     }
 
-    public static void setCompleteTabRegions(Boolean bool) {
-        Region.completeTabRegions = bool;
+    /*#######################################
+    ################# Getter ################
+    ########################################*/
+
+    public RegionKind getRegionKind() {
+        return this.regionKind;
     }
 
-    protected void giveParentRegionOwnerMoney(double amount) {
-        if (this.isSubregion()) {
-            if (this.getParentRegion() != null) {
-                if (this.getParentRegion().isSold()) {
-                    List<UUID> parentRegionOwners = this.getParentRegion().getRegion().getOwners();
-                    for (UUID uuid : parentRegionOwners) {
-                        OfflinePlayer subRegionOwner = Bukkit.getOfflinePlayer(uuid);
-                        if (subRegionOwner != null) {
-                            AdvancedRegionMarket.getInstance().getEcon().depositPlayer(subRegionOwner, amount);
-                        }
-                    }
-                }
-            }
-        }
+    public boolean isSold() {
+        return sold;
     }
 
     public boolean isUserRestorable() {
@@ -307,29 +294,399 @@ public abstract class Region implements Saveable {
         return (this.parentRegion != null);
     }
 
-    public Region getParentRegion() {
-        return this.parentRegion;
+    public boolean isInactivityReset() {
+        return this.inactivityReset;
     }
 
-    private void setParentRegion(Region region) {
-        this.parentRegion = region;
+    public boolean isAutoRestore() {
+        return isAutoRestore;
     }
 
-    public int getAllowedSubregions() {
-        return this.allowedSubregions;
-    }
-
-    public void setAllowedSubregions(int allowedSubregions) {
-        this.allowedSubregions = allowedSubregions;
-        this.queueSave();
+    public boolean isHotel() {
+        return isHotel;
     }
 
     public boolean isAllowSubregions() {
         return (this.allowedSubregions > 0);
     }
 
-    public void addSubRegion(Region region) {
-        region.setParentRegion(this);
+    public boolean needsSave() {
+        if (this.needsSave) {
+            return true;
+        }
+        for (Region subregion : this.subregions) {
+            if (subregion.needsSave()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isInactive() {
+        if (!this.isInactivityReset()) {
+            return false;
+        }
+        if (!this.isSold()) {
+            return false;
+        }
+        long actualTime = new GregorianCalendar().getTimeInMillis();
+        List<UUID> owners = this.getRegion().getOwners();
+        if (owners.size() == 0) {
+            if (InactivityExpirationGroup.DEFAULT.isResetDisabled()) {
+                return false;
+            }
+            return this.getLastLogin() + InactivityExpirationGroup.DEFAULT.getResetAfterMs() < actualTime;
+        }
+        UUID ownerID = owners.get(0);
+        InactivityExpirationGroup ieGroup = PlayerInactivityGroupMapper.getBestResetAfterMs(this.getRegionworld(), ownerID);
+        if (ieGroup.isResetDisabled()) {
+            return false;
+        }
+        return (this.getLastLogin() + ieGroup.getResetAfterMs() < actualTime);
+    }
+
+    public boolean isTakeOverReady() {
+        if (!this.isInactivityReset()) {
+            return false;
+        }
+        long actualTime = new GregorianCalendar().getTimeInMillis();
+        List<UUID> owners = this.getRegion().getOwners();
+        if (owners.size() == 0) {
+            if (InactivityExpirationGroup.DEFAULT.isTakeOverDisabled()) {
+                return false;
+            }
+            return this.getLastLogin() + InactivityExpirationGroup.DEFAULT.getTakeOverAfterMs() < actualTime;
+        }
+        UUID ownerID = owners.get(0);
+        InactivityExpirationGroup ieGroup = PlayerInactivityGroupMapper.getBestTakeoverAfterMs(this.getRegionworld(), ownerID);
+        if (ieGroup.isTakeOverDisabled()) {
+            return false;
+        }
+        return (this.getLastLogin() + ieGroup.getTakeOverAfterMs() < actualTime);
+    }
+
+    public int getMaxMembers() {
+        return maxMembers;
+    }
+
+    public int getAllowedSubregions() {
+        return this.allowedSubregions;
+    }
+
+    public int getPaybackPercentage() {
+        return paybackPercentage;
+    }
+
+    public int getExtraEntityAmount(EntityLimit.LimitableEntityType entityType) {
+        Integer amount = this.extraEntitys.get(entityType);
+        if (amount == null) {
+            return 0;
+        } else {
+            return amount;
+        }
+    }
+
+    protected int getM2Amount() {
+        if (this.m2Amount == null) {
+            int hight = ((this.getRegion().getMaxPoint().getBlockY() - this.getRegion().getMinPoint().getBlockY()) + 1);
+            this.m2Amount = this.getRegion().getVolume() / hight;
+        }
+        return this.m2Amount;
+    }
+
+    public int getExtraTotalEntitys() {
+        return this.extraTotalEntitys;
+    }
+
+    public int getNumberOfSigns() {
+        return this.sellsign.size();
+    }
+
+    public long getLastLogin() {
+        return lastLogin;
+    }
+
+    public long getLastreset() {
+        return this.lastreset;
+    }
+
+    public double getPrice() {
+        return this.price.calcPrice(this.getRegion());
+    }
+
+    public double getPricePerM2() {
+        double m2 = this.getM2Amount();
+        return this.price.calcPrice(this.getRegion()) / m2;
+    }
+
+    public double getPricePerM3() {
+        double pricePerM2 = this.getPricePerM2();
+        double hight = ((this.getRegion().getMaxPoint().getBlockY() - this.getRegion().getMinPoint().getBlockY()) + 1);
+        return pricePerM2 / hight;
+    }
+
+    private String getOwnerName() {
+        List<UUID> ownerlist = this.getRegion().getOwners();
+        String ownername;
+        if (ownerlist.size() < 1) {
+            ownername = "Unknown";
+        } else {
+            OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerlist.get(0));
+            ownername = owner.getName();
+
+            if (ownername == null) {
+                ownername = "Unknown";
+            }
+        }
+        return ownername;
+    }
+
+    public String getDimensions() {
+        Vector min = this.getRegion().getMinPoint();
+        Vector max = this.getRegion().getMaxPoint();
+        int maxX = max.getBlockX();
+        int maxY = max.getBlockY();
+        int maxZ = max.getBlockZ();
+        int minX = min.getBlockX();
+        int minY = min.getBlockY();
+        int minZ = min.getBlockZ();
+        return Math.abs((maxX - minX) + 1) + "x" + (Math.abs(maxY - minY) + 1) + "x" + (Math.abs(maxZ - minZ) + 1);
+
+    }
+
+    public Location getTeleportLocation() {
+        return this.teleportLocation;
+    }
+
+    public Price getPriceObject() {
+        return this.price;
+    }
+
+    public EntityLimitGroup getEntityLimitGroup() {
+        return this.entityLimitGroup;
+    }
+
+    public FlagGroup getFlagGroup() {
+        return this.flagGroup;
+    }
+
+    public Region getParentRegion() {
+        return this.parentRegion;
+    }
+
+    public World getRegionworld() {
+        return regionworld;
+    }
+
+    public WGRegion getRegion() {
+        return region;
+    }
+
+    public Set<Region> getSubregions() {
+        return subregions;
+    }
+
+    protected List<SignData> getSellSigns() {
+        return this.sellsign;
+    }
+
+    protected HashMap<EntityLimit.LimitableEntityType, Integer> getExtraEntitys() {
+        return this.extraEntitys;
+    }
+
+    /*#############################
+    ########### Setter ############
+    #############################*/
+
+    public void queueSave() {
+        UpdateRegionEvent updateRegionEvent = new UpdateRegionEvent(this);
+        Bukkit.getServer().getPluginManager().callEvent(updateRegionEvent);
+        if (!updateRegionEvent.isCancelled()) {
+            this.needsSave = true;
+        }
+    }
+
+    public void setSaved() {
+        this.needsSave = false;
+        for (Region subregion : this.subregions) {
+            subregion.setSaved();
+        }
+    }
+
+    public void setLastLogin() {
+        this.setLastLogin(new GregorianCalendar().getTimeInMillis());
+    }
+
+    public void setUserRestorable(boolean bool) {
+        if (this.isSubregion())
+            throw new IllegalArgumentException("Can't change this option for a Subregion!");
+        this.isUserRestorable = bool;
+        this.queueSave();
+    }
+
+    public void setAutoRestore(boolean bool) {
+        if (this.isSubregion())
+            throw new IllegalArgumentException("Can't change this option for a Subregion!");
+        this.isAutoRestore = bool;
+        this.queueSave();
+    }
+
+    public void setSold(boolean sold) {
+        boolean isSold = this.isSold();
+        this.sold = sold;
+        if (!isSold && sold || isSold && !sold) {
+            if (sold) {
+                this.setLastLogin();
+            }
+            try {
+                this.getFlagGroup().applyToRegion(this, FlagGroup.ResetMode.COMPLETE, false);
+            } catch (FeatureDisabledException e) {
+                //Ignore exception
+            }
+        }
+        this.queueSave();
+    }
+
+    public void setHotel(boolean bool) {
+        this.isHotel = bool;
+        this.queueSave();
+    }
+
+    public void setInactivityReset(boolean state) {
+        if (this.isSubregion())
+            throw new IllegalArgumentException("Can't change this option for a Subregion!");
+        this.inactivityReset = state;
+        this.queueSave();
+    }
+
+    public void setAllowedSubregions(int allowedSubregions) {
+        if (this.isSubregion())
+            throw new IllegalArgumentException("Can't change this option for a Subregion!");
+        this.allowedSubregions = allowedSubregions;
+        this.queueSave();
+    }
+
+    public void setPaybackPercentage(int paybackPercentage) {
+        if (this.isSubregion())
+            throw new IllegalArgumentException("Can't change this option for a Subregion!");
+        this.paybackPercentage = paybackPercentage;
+        this.queueSave();
+    }
+
+    public void setMaxMembers(int maxMembers) {
+        if (this.isSubregion())
+            throw new IllegalArgumentException("Can't change this option for a Subregion!");
+        if (maxMembers < -1) {
+            this.maxMembers = 0;
+        } else {
+            this.maxMembers = maxMembers;
+        }
+        this.queueSave();
+    }
+
+    public void setLastReset(long lastReset) {
+        this.lastreset = lastReset;
+        this.queueSave();
+    }
+
+    public void setLastLogin(long lastLogin) {
+        this.lastLogin = lastLogin;
+        this.queueSave();
+    }
+
+    public void setRegionKind(RegionKind regionKind) {
+        if (this.isSubregion())
+            throw new IllegalArgumentException("Can't change this option for a Subregion!");
+        this.regionKind = regionKind;
+        this.queueSave();
+    }
+
+    /**
+     * Sets the region to sold and sets a players a an owner
+     *
+     * @param player The player that should own the region
+     */
+    public void setSold(OfflinePlayer player) {
+        this.setOwner(player);
+        this.setSold(true);
+        this.queueSave();
+        this.updateSigns();
+    }
+
+    public void setOwner(OfflinePlayer oPlayer) {
+        this.getRegion().setOwner(oPlayer);
+        this.setLastLogin();
+    }
+
+    public void setEntityLimitGroup(EntityLimitGroup entityLimitGroup) {
+        if (this.isSubregion())
+            throw new IllegalArgumentException("Can't change this option for a Subregion!");
+        this.entityLimitGroup = entityLimitGroup;
+        this.queueSave();
+    }
+
+    public void setFlagGroup(FlagGroup flagGroup) {
+        if (this.isSubregion())
+            throw new IllegalArgumentException("Can't change this option for a Subregion!");
+        this.flagGroup = flagGroup;
+        this.queueSave();
+    }
+
+    public void setTeleportLocation(Location loc) {
+        if (this.isSubregion())
+            throw new IllegalArgumentException("Can't change this option for a Subregion!");
+        this.teleportLocation = loc;
+        this.queueSave();
+    }
+
+    public void setPrice(Price price) {
+        this.price = price;
+        this.queueSave();
+    }
+
+    public void setExtraTotalEntitys(int extraTotalEntitys) {
+        if (this.isSubregion())
+            throw new IllegalArgumentException("Can't change this option for a Subregion!");
+        if (extraTotalEntitys < 0) {
+            this.extraTotalEntitys = 0;
+        } else {
+            this.extraTotalEntitys = extraTotalEntitys;
+        }
+
+        this.queueSave();
+    }
+
+    public void setExtraEntityAmount(EntityLimit.LimitableEntityType entityType, int amount) {
+        if (this.isSubregion())
+            throw new IllegalArgumentException("Can't change this option for a Subregion!");
+        this.extraEntitys.remove(entityType);
+        if (amount > 0) {
+            this.extraEntitys.put(entityType, amount);
+        }
+        this.queueSave();
+    }
+
+    /*##################################
+    ####### Abstract Methods ###########
+    ##################################*/
+
+    public abstract double getPricePerM2PerWeek();
+
+    public abstract double getPricePerM3PerWeek();
+
+    protected abstract void updateSignText(SignData signData);
+
+    public abstract void buy(Player player) throws NoPermissionException, OutOfLimitExeption, NotEnoughMoneyException, AlreadySoldException, MaxRentTimeExceededException;
+
+    public abstract double getPaybackMoney();
+
+    public abstract SellType getSellType();
+
+    /*##################################
+    ######### Other Methods ############
+    ##################################*/
+
+    private void addSubRegion(Region region) {
         this.subregions.add(region);
         this.queueSave();
     }
@@ -342,11 +699,14 @@ public abstract class Region implements Saveable {
             i--;
         }
 
-        if(this.isSubregion()) {
-            AdvancedRegionMarket.getInstance().getWorldGuardInterface().removeFromRegionManager(this.getRegion(), this.getRegionworld(), AdvancedRegionMarket.getInstance().getWorldGuard());
+        if (this.isSubregion()) {
+            AdvancedRegionMarket.getInstance().getWorldGuardInterface().removeFromRegionManager(this.getRegion(), this.getRegionworld());
             this.getParentRegion().getSubregions().remove(this);
             this.getParentRegion().queueSave();
         } else {
+            for(Region subregion : this.getSubregions()) {
+                subregion.delete(regionManager);
+            }
             regionManager.remove(this);
         }
     }
@@ -376,13 +736,20 @@ public abstract class Region implements Saveable {
         }
     }
 
-    public EntityLimitGroup getEntityLimitGroup() {
-        return this.entityLimitGroup;
-    }
-
-    public void setEntityLimitGroup(EntityLimitGroup entityLimitGroup) {
-        this.entityLimitGroup = entityLimitGroup;
-        this.queueSave();
+    protected void giveParentRegionOwnerMoney(double amount) {
+        if (this.isSubregion()) {
+            if (this.getParentRegion() != null) {
+                if (this.getParentRegion().isSold()) {
+                    List<UUID> parentRegionOwners = this.getParentRegion().getRegion().getOwners();
+                    for (UUID uuid : parentRegionOwners) {
+                        OfflinePlayer subRegionOwner = Bukkit.getOfflinePlayer(uuid);
+                        if (subRegionOwner != null) {
+                            AdvancedRegionMarket.getInstance().getEcon().depositPlayer(subRegionOwner, amount);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public void addSign(SignData signData) {
@@ -410,19 +777,6 @@ public abstract class Region implements Saveable {
         return false;
     }
 
-    public int getPaybackPercentage() {
-        return paybackPercentage;
-    }
-
-    public void setPaybackPercentage(int paybackPercentage) {
-        this.paybackPercentage = paybackPercentage;
-        this.queueSave();
-    }
-
-    public WGRegion getRegion() {
-        return region;
-    }
-
     public void applyFlagGroup(FlagGroup.ResetMode resetMode, boolean forceApply) throws FeatureDisabledException {
         this.flagGroup.applyToRegion(this, resetMode, forceApply);
     }
@@ -439,19 +793,6 @@ public abstract class Region implements Saveable {
         }
     }
 
-    public World getRegionworld() {
-        return regionworld;
-    }
-
-    public double getPrice() {
-        return this.price.calcPrice(this.getRegion());
-    }
-
-    public void setPrice(Price price) {
-        this.price = price;
-        this.queueSave();
-    }
-
     public boolean hasSign(Sign sign) {
         for (int i = 0; i < this.sellsign.size(); i++) {
             if (this.sellsign.get(i).getLocation().getWorld().getName().equalsIgnoreCase(sign.getWorld().getName())) {
@@ -464,7 +805,7 @@ public abstract class Region implements Saveable {
     }
 
     private String getTakeoverCountdown(boolean date, boolean writeOut, boolean returnOnlyHighestUnit) {
-        if (!this.isInactivityResetEnabled()) {
+        if (!this.isInactivityReset()) {
             return Messages.INFO_DEACTIVATED;
         }
         if (!this.isSold()) {
@@ -481,7 +822,7 @@ public abstract class Region implements Saveable {
         } else if (ieGroup.isTakeOverDisabled()) {
             return Messages.INFO_DEACTIVATED;
         } else {
-            if(date) {
+            if (date) {
                 return TimeUtil.getDate(ieGroup.getTakeOverAfterMs() + this.getLastLogin(), true,
                         Messages.INFO_NOW, AdvancedRegionMarket.getInstance().getPluginSettings().getDateTimeformat());
             } else {
@@ -492,7 +833,7 @@ public abstract class Region implements Saveable {
     }
 
     private String getInactivityResetCountdown(boolean date, boolean writeOut, boolean returnOnlyHighestUnit) {
-        if (!this.isInactivityResetEnabled()) {
+        if (!this.isInactivityReset()) {
             return Messages.INFO_DEACTIVATED;
         }
         if (!this.isSold()) {
@@ -509,7 +850,7 @@ public abstract class Region implements Saveable {
         } else if (ieGroup.isResetDisabled()) {
             return Messages.INFO_DEACTIVATED;
         } else {
-            if(date) {
+            if (date) {
                 return TimeUtil.getDate(ieGroup.getResetAfterMs() + this.getLastLogin(), true,
                         Messages.INFO_NOW, AdvancedRegionMarket.getInstance().getPluginSettings().getDateTimeformat());
             } else {
@@ -519,80 +860,21 @@ public abstract class Region implements Saveable {
         }
     }
 
-    public int getNumberOfSigns() {
-        return this.sellsign.size();
-    }
-
-    public boolean setKind(RegionKind kind) {
-        if (kind == null) {
-            return false;
-        }
-        this.regionKind = kind;
-        this.queueSave();
-        return true;
-    }
-
-    public void setUserRestorable(boolean bool) {
-        this.isUserRestorable = bool;
-        this.queueSave();
-    }
-
-    public RegionKind getRegionKind() {
-        return this.regionKind;
-    }
-
-    public void setRegionKind(RegionKind regionKind) {
-        this.regionKind = regionKind;
-        this.queueSave();
-    }
-
-    public boolean isSold() {
-        return sold;
-    }
-
-    /**
-     * Sets the region to sold and sets a players a an owner
-     *
-     * @param player The player that should own the region
-     */
-    public void setSold(OfflinePlayer player) {
-        this.getRegion().setOwner(player);
-        this.setSold(true);
-        this.queueSave();
-        this.updateSigns();
-    }
-
-    public void setSold(boolean sold) {
-        boolean isSold = this.isSold();
-        this.sold = sold;
-        if (!isSold && sold || isSold && !sold) {
-            if (sold) {
-                this.setLastLogin();
-            }
-            try {
-                this.getFlagGroup().applyToRegion(this, FlagGroup.ResetMode.COMPLETE, false);
-            } catch (FeatureDisabledException e) {
-                //Ignore exception
-            }
-        }
-        this.queueSave();
-    }
-
     public void createBackup() {
         String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSS").format(new Date());
-        File schematicFolder = new File(AdvancedRegionMarket.getInstance().getDataFolder()+ "/schematics");
+        File schematicFolder = new File(AdvancedRegionMarket.getInstance().getDataFolder() + "/schematics");
         File regionsSchematicFolder = new File(schematicFolder + "/" + this.getRegionworld().getName() + "/" + this.getRegion().getId() + "/Backups");
         AdvancedRegionMarket.getInstance().getWorldEditInterface().createSchematic(this.getRegion(), this.getRegionworld(), regionsSchematicFolder, fileName);
     }
 
     public void loadBackup(String name) throws SchematicNotFoundException {
-        File schematicFolder = new File(AdvancedRegionMarket.getInstance().getDataFolder()+ "/schematics");
+        File schematicFolder = new File(AdvancedRegionMarket.getInstance().getDataFolder() + "/schematics");
         File regionsSchematicPathWithoutFileEnding = new File(schematicFolder + "/" + this.getRegionworld().getName() + "/" + this.getRegion().getId() + "/Backups/" + name);
         AdvancedRegionMarket.getInstance().getWorldEditInterface().restoreSchematic(this.getRegion(), this.getRegionworld(), regionsSchematicPathWithoutFileEnding);
     }
 
     public void createSchematic() {
-        File schematicFolder = new File(AdvancedRegionMarket.getInstance().getDataFolder()+ "/schematics");
+        File schematicFolder = new File(AdvancedRegionMarket.getInstance().getDataFolder() + "/schematics");
         File regionsSchematicFolder = new File(schematicFolder + "/" + this.getRegionworld().getName() + "/" + this.getRegion().getId());
         AdvancedRegionMarket.getInstance().getWorldEditInterface().createSchematic(this.getRegion(), this.getRegionworld(), regionsSchematicFolder, "schematic");
     }
@@ -605,7 +887,7 @@ public abstract class Region implements Saveable {
             return;
         }
 
-        if(AdvancedRegionMarket.getInstance().getPluginSettings().isCreateBackupOnRegionRestore() && !preventBackup) {
+        if (AdvancedRegionMarket.getInstance().getPluginSettings().isCreateBackupOnRegionRestore() && !preventBackup) {
             this.createBackup();
         }
 
@@ -613,19 +895,17 @@ public abstract class Region implements Saveable {
             this.killEntitys();
         }
 
-        File schematicFolder = new File(AdvancedRegionMarket.getInstance().getDataFolder()+ "/schematics");
+        File schematicFolder = new File(AdvancedRegionMarket.getInstance().getDataFolder() + "/schematics");
         File regionsSchematicPathWithoutFileEnding = new File(schematicFolder + "/" + this.getRegionworld().getName() + "/" + this.getRegion().getId() + "/schematic");
 
         AdvancedRegionMarket.getInstance().getWorldEditInterface().restoreSchematic(this.getRegion(), this.getRegionworld(), regionsSchematicPathWithoutFileEnding);
 
         if (AdvancedRegionMarket.getInstance().getPluginSettings().isDeleteSubregionsOnParentRegionBlockReset()) {
-            for (int i = 0; i < this.getSubregions().size(); i++) {
-                Region subRegion = this.getSubregions().get(i);
-                //Just an extra check to make shure that the region really is a subregion
-                if(subRegion.isSubregion()) {
-                    this.getSubregions().get(i).delete(null);
-                    i--;
-                }
+            Iterator<Region> subRegions = this.subregions.iterator();
+            while (subRegions.hasNext()) {
+                Region subRegion = subRegions.next();
+                subRegions.remove();
+                subRegion.delete(null);
             }
         }
         this.resetBuiltBlocks();
@@ -673,24 +953,6 @@ public abstract class Region implements Saveable {
         this.updateSigns();
     }
 
-    public void setInactivityReset(Boolean state) {
-        this.inactivityReset = state;
-        this.queueSave();
-    }
-
-    public Material getLogo() {
-        return this.getRegionKind().getMaterial();
-    }
-
-    public Location getTeleportLocation() {
-        return this.teleportLocation;
-    }
-
-    public void setTeleportLocation(Location loc) {
-        this.teleportLocation = loc;
-        this.queueSave();
-    }
-
     public void teleport(Player player, boolean teleportToSign) throws NoSaveLocationException {
         if (teleportToSign) {
             for (SignData signData : this.sellsign) {
@@ -702,19 +964,6 @@ public abstract class Region implements Saveable {
         } else {
             Teleporter.teleport(player, this);
         }
-    }
-
-    public String getDimensions() {
-        Vector min = this.getRegion().getMinPoint();
-        Vector max = this.getRegion().getMaxPoint();
-        int maxX = max.getBlockX();
-        int maxY = max.getBlockY();
-        int maxZ = max.getBlockZ();
-        int minX = min.getBlockX();
-        int minY = min.getBlockY();
-        int minZ = min.getBlockZ();
-        return Math.abs((maxX - minX) + 1) + "x" + (Math.abs(maxY - minY) + 1) + "x" + (Math.abs(maxZ - minZ) + 1);
-
     }
 
     public void userRestore(Player player) {
@@ -736,12 +985,6 @@ public abstract class Region implements Saveable {
         }
     }
 
-    protected abstract void updateSignText(SignData signData);
-
-    public abstract void buy(Player player) throws NoPermissionException, OutOfLimitExeption, NotEnoughMoneyException, AlreadySoldException, MaxRentTimeExceededException;
-
-    public abstract double getPaybackMoney();
-
     public void userSell(Player player) throws SchematicNotFoundException {
         List<UUID> owners = this.getRegion().getOwners();
         double amount = this.getPaybackMoney();
@@ -755,20 +998,6 @@ public abstract class Region implements Saveable {
         this.automaticResetRegion(ActionReason.USER_SELL, true);
     }
 
-    public void setOwner(OfflinePlayer oPlayer) {
-        this.getRegion().setOwner(oPlayer);
-        this.setLastLogin();
-    }
-
-    public void setLastLogin() {
-        this.lastLogin = new GregorianCalendar().getTimeInMillis();
-        this.queueSave();
-    }
-
-    public long getLastLogin() {
-        return lastLogin;
-    }
-
     public void resetRegion(ActionReason actionReason, boolean logToConsole) throws SchematicNotFoundException {
         this.unsell(actionReason, logToConsole, false);
         this.extraEntitys.clear();
@@ -778,20 +1007,11 @@ public abstract class Region implements Saveable {
         return;
     }
 
-    public FlagGroup getFlagGroup() {
-        return this.flagGroup;
-    }
-
-    public void setFlagGroup(FlagGroup flagGroup) {
-        this.flagGroup = flagGroup;
-        this.queueSave();
-    }
-
     /**
      * @param actionReason An ActionReason
      * @param logToConsole If true, this will be logged to the console with the give ActionReason
      * @throws SchematicNotFoundException if the schematic file of the region could not be found. Nevertheless
-     * if the execption gets thrown the region will be unsold
+     *                                    if the execption gets thrown the region will be unsold
      */
     public void automaticResetRegion(ActionReason actionReason, boolean logToConsole) throws SchematicNotFoundException {
         this.unsell(actionReason, logToConsole, false);
@@ -807,15 +1027,6 @@ public abstract class Region implements Saveable {
         this.queueSave();
     }
 
-    public boolean isHotel() {
-        return isHotel;
-    }
-
-    public void setHotel(Boolean bool) {
-        this.isHotel = bool;
-        this.queueSave();
-    }
-
     public boolean allowBlockBreak(Location breakloc) {
         if (this.isHotel) {
             return this.builtblocks.contains(breakloc.hashCode());
@@ -823,14 +1034,14 @@ public abstract class Region implements Saveable {
         return true;
     }
 
-    public void unsell(ActionReason actionReason, boolean logToConsole, boolean preventBackup) {
+    public void unsell(ActionReason actionReason, boolean logToConsole, boolean preventBackupCreation) {
         UnsellRegionEvent unsellRegionEvent = new UnsellRegionEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(unsellRegionEvent);
         if (unsellRegionEvent.isCancelled()) {
             return;
         }
 
-        if(AdvancedRegionMarket.getInstance().getPluginSettings().isCreateBackupOnRegionUnsell() && !preventBackup) {
+        if (AdvancedRegionMarket.getInstance().getPluginSettings().isCreateBackupOnRegionUnsell() && !preventBackupCreation) {
             this.createBackup();
         }
 
@@ -840,13 +1051,11 @@ public abstract class Region implements Saveable {
         this.lastreset = 1;
 
         if (AdvancedRegionMarket.getInstance().getPluginSettings().isDeleteSubregionsOnParentRegionUnsell()) {
-            for (int i = 0; i < this.getSubregions().size(); i++) {
-                Region subRegion = this.getSubregions().get(i);
-                //Just an extra check to make shure that the region really is a subregion
-                if(subRegion.isSubregion()) {
-                    this.getSubregions().get(i).delete(null);
-                    i--;
-                }
+            Iterator<Region> subRegions = this.subregions.iterator();
+            while (subRegions.hasNext()) {
+                Region subRegion = subRegions.next();
+                subRegions.remove();
+                subRegion.delete(null);
             }
         }
 
@@ -859,151 +1068,11 @@ public abstract class Region implements Saveable {
         this.queueSave();
     }
 
-    public boolean isAutoRestore() {
-        return isAutoRestore;
-    }
-
-    public void setAutoRestore(Boolean bool) {
-        this.isAutoRestore = bool;
-        this.queueSave();
-    }
-
-    public List<Region> getSubregions() {
-        return subregions;
-    }
-
-    protected List<SignData> getSellSigns() {
-        return this.sellsign;
-    }
-
-    public long getLastreset() {
-        return this.lastreset;
-    }
-
-    public boolean isInactivityResetEnabled() {
-        return this.inactivityReset;
-    }
-
-    private String getOwnerName() {
-        List<UUID> ownerlist = this.getRegion().getOwners();
-        String ownername;
-        if (ownerlist.size() < 1) {
-            ownername = "Unknown";
-        } else {
-            OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerlist.get(0));
-            ownername = owner.getName();
-
-            if (ownername == null) {
-                ownername = "Unknown";
-            }
-        }
-        return ownername;
-    }
-
-    public abstract double getPricePerM2PerWeek();
-
-    public abstract double getPricePerM3PerWeek();
-
-    public double getPricePerM2() {
-        double m2 = this.getM2Amount();
-        return this.price.calcPrice(this.getRegion()) / m2;
-    }
-
-    public double getPricePerM3() {
-        double pricePerM2 = this.getPricePerM2();
-        double hight = ((this.getRegion().getMaxPoint().getBlockY() - this.getRegion().getMinPoint().getBlockY()) + 1);
-        return pricePerM2 / hight;
-    }
-
-    private String getSoldStringStatus() {
-        if (this.isSold()) {
-            return Messages.SOLD;
-        } else {
-            return Messages.AVAILABLE;
-        }
-    }
-
-    public Price getPriceObject() {
-        return this.price;
-    }
-
-    public abstract SellType getSellType();
-
     public String getConvertedMessage(String message) {
         message = this.stringReplacer.replace(message).toString();
         message = this.getRegionKind().getConvertedMessage(message).toString();
         message = this.getEntityLimitGroup().getConvertedMessage(message).toString();
         return this.getFlagGroup().getConvertedMessage(message).toString();
-    }
-
-    public void queueSave() {
-        UpdateRegionEvent updateRegionEvent = new UpdateRegionEvent(this);
-        Bukkit.getServer().getPluginManager().callEvent(updateRegionEvent);
-        if (!updateRegionEvent.isCancelled()) {
-            this.needsSave = true;
-        }
-    }
-
-    public void setSaved() {
-        this.needsSave = false;
-        for (Region subregion : this.subregions) {
-            subregion.setSaved();
-        }
-    }
-
-    public boolean needsSave() {
-        if (this.needsSave) {
-            return true;
-        }
-        for (Region subregion : this.subregions) {
-            if (subregion.needsSave()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean isInactive() {
-        if (!this.isInactivityResetEnabled()) {
-            return false;
-        }
-        if (!this.isSold()) {
-            return false;
-        }
-        long actualTime = new GregorianCalendar().getTimeInMillis();
-        List<UUID> owners = this.getRegion().getOwners();
-        if (owners.size() == 0) {
-            if (InactivityExpirationGroup.DEFAULT.isResetDisabled()) {
-                return false;
-            }
-            return this.getLastLogin() + InactivityExpirationGroup.DEFAULT.getResetAfterMs() < actualTime;
-        }
-        UUID ownerID = owners.get(0);
-        InactivityExpirationGroup ieGroup = PlayerInactivityGroupMapper.getBestResetAfterMs(this.getRegionworld(), ownerID);
-        if (ieGroup.isResetDisabled()) {
-            return false;
-        }
-        return (this.getLastLogin() + ieGroup.getResetAfterMs() < actualTime);
-    }
-
-    public boolean isTakeOverReady() {
-        if (!this.isInactivityResetEnabled()) {
-            return false;
-        }
-        long actualTime = new GregorianCalendar().getTimeInMillis();
-        List<UUID> owners = this.getRegion().getOwners();
-        if (owners.size() == 0) {
-            if (InactivityExpirationGroup.DEFAULT.isTakeOverDisabled()) {
-                return false;
-            }
-            return this.getLastLogin() + InactivityExpirationGroup.DEFAULT.getTakeOverAfterMs() < actualTime;
-        }
-        UUID ownerID = owners.get(0);
-        InactivityExpirationGroup ieGroup = PlayerInactivityGroupMapper.getBestTakeoverAfterMs(this.getRegionworld(), ownerID);
-        if (ieGroup.isTakeOverDisabled()) {
-            return false;
-        }
-        return (this.getLastLogin() + ieGroup.getTakeOverAfterMs() < actualTime);
     }
 
     public List<Entity> getInsideEntities(boolean includePlayers) {
@@ -1099,62 +1168,6 @@ public abstract class Region implements Saveable {
         return result;
     }
 
-    public int getExtraEntityAmount(EntityLimit.LimitableEntityType entityType) {
-        Integer amount = this.extraEntitys.get(entityType);
-        if (amount == null) {
-            return 0;
-        } else {
-            return amount;
-        }
-    }
-
-    protected int getM2Amount() {
-        if (this.m2Amount == null) {
-            int hight = ((this.getRegion().getMaxPoint().getBlockY() - this.getRegion().getMinPoint().getBlockY()) + 1);
-            this.m2Amount = this.getRegion().getVolume() / hight;
-        }
-        return this.m2Amount;
-    }
-
-    public int getExtraTotalEntitys() {
-        return this.extraTotalEntitys;
-    }
-
-    public void setExtraTotalEntitys(int extraTotalEntitys) {
-        if (extraTotalEntitys < 0) {
-            this.extraTotalEntitys = 0;
-        } else {
-            this.extraTotalEntitys = extraTotalEntitys;
-        }
-
-        this.queueSave();
-    }
-
-    public void setExtraEntityAmount(EntityLimit.LimitableEntityType entityType, int amount) {
-        this.extraEntitys.remove(entityType);
-        if (amount > 0) {
-            this.extraEntitys.put(entityType, amount);
-        }
-        this.queueSave();
-    }
-
-    protected HashMap<EntityLimit.LimitableEntityType, Integer> getExtraEntitys() {
-        return this.extraEntitys;
-    }
-
-    public int getMaxMembers() {
-        return maxMembers;
-    }
-
-    public void setMaxMembers(int maxMembers) {
-        if(maxMembers < -1) {
-            this.maxMembers = 0;
-        } else {
-            this.maxMembers = maxMembers;
-        }
-        this.queueSave();
-    }
-
     public ConfigurationSection toConfigurationSection() {
         YamlConfiguration yamlConfiguration = new YamlConfiguration();
         yamlConfiguration.set("sold", this.isSold());
@@ -1179,7 +1192,7 @@ public abstract class Region implements Saveable {
         if (!this.isSubregion()) {
             yamlConfiguration.set("kind", this.getRegionKind().getName());
             yamlConfiguration.set("flagGroup", this.flagGroup.getName());
-            yamlConfiguration.set("inactivityReset", this.isInactivityResetEnabled());
+            yamlConfiguration.set("inactivityReset", this.isInactivityReset());
             yamlConfiguration.set("entityLimitGroup", this.getEntityLimitGroup().getName());
             yamlConfiguration.set("autorestore", this.isAutoRestore());
             yamlConfiguration.set("allowedSubregions", this.getAllowedSubregions());

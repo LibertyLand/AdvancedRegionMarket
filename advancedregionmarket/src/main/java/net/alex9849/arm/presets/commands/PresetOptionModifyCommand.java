@@ -1,7 +1,6 @@
 package net.alex9849.arm.presets.commands;
 
 import net.alex9849.arm.Messages;
-import net.alex9849.arm.commands.CommandUtil;
 import net.alex9849.arm.commands.OptionModifyCommand;
 import net.alex9849.arm.exceptions.InputException;
 import net.alex9849.arm.presets.ActivePresetManager;
@@ -18,9 +17,9 @@ import java.util.List;
 public abstract class PresetOptionModifyCommand<SettingsObj> extends OptionModifyCommand<Preset, SettingsObj> {
     private PresetType presetType;
 
-    public PresetOptionModifyCommand(String rootCommand, List<String> permissions, String optionRegex,
+    public PresetOptionModifyCommand(String rootCommand, List<String> permissions, boolean allowNullValueSetting, String optionRegex,
                                      String optionDescription, String settingNotFoundMsg, PresetType presetType) {
-        super(false, true, rootCommand,
+        super(false, !allowNullValueSetting, rootCommand,
                 Arrays.asList("(?i)" + rootCommand + " " + optionRegex),
                 Arrays.asList(rootCommand + " " + optionDescription),
                 permissions, "", settingNotFoundMsg);
@@ -57,7 +56,7 @@ public abstract class PresetOptionModifyCommand<SettingsObj> extends OptionModif
         for(int i = 1; i < args.length; i++) {
             settingsArgs.add(args[i]);
         }
-        return getSettingsFromString(sender, CommandUtil.getStringList(settingsArgs, x -> x, " "));
+        return getSettingsFromString(sender, Messages.getStringList(settingsArgs, x -> x, " "));
     }
 
     protected abstract SettingsObj getSettingsFromString(CommandSender sender, String setting) throws InputException;
@@ -81,7 +80,7 @@ public abstract class PresetOptionModifyCommand<SettingsObj> extends OptionModif
         for(int i = 1; i < args.length; i++) {
             settingsArgs.add(args[i]);
         }
-        return tabCompleteSettingsObject(player, CommandUtil.getStringList(settingsArgs, x -> x, " "));
+        return tabCompleteSettingsObject(player, Messages.getStringList(settingsArgs, x -> x, " "));
     }
 
     protected abstract List<String> tabCompleteSettingsObject(Player player, String settings);
