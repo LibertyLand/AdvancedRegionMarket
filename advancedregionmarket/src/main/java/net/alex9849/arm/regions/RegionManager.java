@@ -162,6 +162,7 @@ public class RegionManager extends YamlFileManager<Region> {
         boolean inactivityReset = regionSection.getBoolean("inactivityReset");
         String regiontype = regionSection.getString("regiontype");
         String entityLimitGroupString = regionSection.getString("entityLimitGroup");
+        String landlordString = regionSection.getString("landlord");
         boolean isHotel = regionSection.getBoolean("isHotel");
         boolean autorestore = regionSection.getBoolean("autorestore");
         long lastreset = regionSection.getLong("lastreset");
@@ -176,6 +177,10 @@ public class RegionManager extends YamlFileManager<Region> {
         Location teleportLoc = parseTpLocation(teleportLocString);
         RegionKind regionKind = AdvancedRegionMarket.getInstance().getRegionKindManager().getRegionKind(kind);
         FlagGroup flagGroup = AdvancedRegionMarket.getInstance().getFlagGroupManager().getFlagGroup(flagGroupString);
+        UUID landlord = null;
+        if(landlordString != null) {
+            landlord = UUID.fromString(landlordString);
+        }
         if (flagGroup == null) {
             flagGroup = FlagGroup.DEFAULT;
         }
@@ -195,13 +200,22 @@ public class RegionManager extends YamlFileManager<Region> {
                 if (AutoPrice.getAutoprice(autoPriceString) != null) {
                     rentPrice = new RentPrice(AutoPrice.getAutoprice(autoPriceString));
                 } else {
+                    AdvancedRegionMarket.getInstance().getLogger().log(Level.WARNING, "Could not find Autoprice '"
+                            + autoPriceString + "' for region + '" + wgRegion.getId() + "'! Using Default Autoprice!");
                     rentPrice = new RentPrice(AutoPrice.DEFAULT);
                 }
             } else {
                 double price = regionSection.getDouble("price");
                 long maxRentTime = regionSection.getLong("maxRentTime");
                 long extendTime = regionSection.getLong("extendTime");
-                rentPrice = new RentPrice(price, extendTime, maxRentTime);
+                try {
+                    rentPrice = new RentPrice(price, extendTime, maxRentTime);
+                } catch (IllegalArgumentException e) {
+                    AdvancedRegionMarket.getInstance().getLogger().log(Level.WARNING, "'RentPrice for region '"
+                            + wgRegion.getId() + "' has an extendTime of maxRentTime smaller than 1 second! Replacing it with "
+                            + "if an extendTime and maxRentTime of one second!");
+                    rentPrice = new RentPrice(price, 1000, 1000);
+                }
             }
             long payedtill = regionSection.getLong("payedTill");
             RentRegion rentRegion = new RentRegion(wgRegion, regionWorld, regionsigns, rentPrice, sold);
@@ -215,12 +229,21 @@ public class RegionManager extends YamlFileManager<Region> {
                 if (AutoPrice.getAutoprice(autoPriceString) != null) {
                     contractPrice = new ContractPrice(AutoPrice.getAutoprice(autoPriceString));
                 } else {
+                    AdvancedRegionMarket.getInstance().getLogger().log(Level.WARNING, "Could not find Autoprice '"
+                            + autoPriceString + "' for region + '" + wgRegion.getId() + "'! Using Default Autoprice!");
                     contractPrice = new ContractPrice(AutoPrice.DEFAULT);
                 }
             } else {
                 double price = regionSection.getDouble("price");
                 long extendTime = regionSection.getLong("extendTime");
-                contractPrice = new ContractPrice(price, extendTime);
+                try {
+                    contractPrice = new ContractPrice(price, extendTime);
+                } catch (IllegalArgumentException e) {
+                    AdvancedRegionMarket.getInstance().getLogger().log(Level.WARNING, "ContractPrice for region '"
+                            + wgRegion.getId() + "' has an extendTime smaller than 1 second! Replacing it with "
+                            + "if an extendTime of one second!");
+                    contractPrice = new ContractPrice(price, 1000);
+                }
             }
             long payedtill = regionSection.getLong("payedTill");
             Boolean terminated = regionSection.getBoolean("terminated");
@@ -234,6 +257,8 @@ public class RegionManager extends YamlFileManager<Region> {
                 if (AutoPrice.getAutoprice(autoPriceString) != null) {
                     sellPrice = new Price(AutoPrice.getAutoprice(autoPriceString));
                 } else {
+                    AdvancedRegionMarket.getInstance().getLogger().log(Level.WARNING, "Could not find Autoprice '"
+                            + autoPriceString + "' for region + '" + wgRegion.getId() + "'! Using Default Autoprice!");
                     sellPrice = new Price(AutoPrice.DEFAULT);
                 }
             } else {
@@ -245,12 +270,10 @@ public class RegionManager extends YamlFileManager<Region> {
 
         if (regionSection.getConfigurationSection("subregions") != null) {
             List<String> subregionsection = new ArrayList<>(regionSection.getConfigurationSection("subregions").getKeys(false));
-            if (subregionsection != null) {
-                for (String subregionName : subregionsection) {
-                    WGRegion subWGRegion = AdvancedRegionMarket.getInstance().getWorldGuardInterface().getRegion(regionWorld, subregionName);
-                    if (subWGRegion != null) {
-                        parseSubRegion(regionSection.getConfigurationSection("subregions." + subregionName), subWGRegion, region);
-                    }
+            for (String subregionName : subregionsection) {
+                WGRegion subWGRegion = AdvancedRegionMarket.getInstance().getWorldGuardInterface().getRegion(regionWorld, subregionName);
+                if (subWGRegion != null) {
+                    parseSubRegion(regionSection.getConfigurationSection("subregions." + subregionName), subWGRegion, region);
                 }
             }
         }
@@ -267,6 +290,7 @@ public class RegionManager extends YamlFileManager<Region> {
         region.setPaybackPercentage(paybackPercentage);
         region.setAllowedSubregions(allowedSubregions);
         region.setExtraTotalEntitys(boughtExtraTotalEntitys);
+        region.setLandlord(landlord);
         for(Map.Entry<EntityLimit.LimitableEntityType, Integer> entry : parseBoughtExtraEntitys(boughtExtraEntitys).entrySet()) {
             region.setExtraEntityAmount(entry.getKey(), entry.getValue());
         }
@@ -436,50 +460,50 @@ public class RegionManager extends YamlFileManager<Region> {
     private boolean updateDefaults(ConfigurationSection section) {
         boolean fileupdated = false;
 
-        fileupdated |= this.addDefault(section, "sold", false);
-        fileupdated |= this.addDefault(section, "kind", "default");
-        fileupdated |= this.addDefault(section, "inactivityReset", true);
-        fileupdated |= this.addDefault(section, "lastreset", 1);
-        fileupdated |= this.addDefault(section, "isHotel", false);
-        fileupdated |= this.addDefault(section, "paybackPercentage", 50);
-        fileupdated |= this.addDefault(section, "entityLimitGroup", "default");
-        fileupdated |= this.addDefault(section, "autorestore", true);
-        fileupdated |= this.addDefault(section, "allowedSubregions", 0);
-        fileupdated |= this.addDefault(section, "lastLogin", new GregorianCalendar().getTimeInMillis());
-        fileupdated |= this.addDefault(section, "userrestorable", true);
-        fileupdated |= this.addDefault(section, "maxMembers", -1);
-        fileupdated |= this.addDefault(section, "boughtExtraTotalEntitys", 0);
-        fileupdated |= this.addDefault(section, "boughtExtraEntitys", new ArrayList<String>());
-        fileupdated |= this.addDefault(section, "regiontype", "sellregion");
-        fileupdated |= this.addDefault(section, "flagGroup", "default");
+        fileupdated |= addDefault(section, "sold", false);
+        fileupdated |= addDefault(section, "kind", "default");
+        fileupdated |= addDefault(section, "inactivityReset", true);
+        fileupdated |= addDefault(section, "lastreset", 1);
+        fileupdated |= addDefault(section, "isHotel", false);
+        fileupdated |= addDefault(section, "paybackPercentage", 50);
+        fileupdated |= addDefault(section, "entityLimitGroup", "default");
+        fileupdated |= addDefault(section, "autorestore", true);
+        fileupdated |= addDefault(section, "allowedSubregions", 0);
+        fileupdated |= addDefault(section, "lastLogin", new GregorianCalendar().getTimeInMillis());
+        fileupdated |= addDefault(section, "userrestorable", true);
+        fileupdated |= addDefault(section, "maxMembers", -1);
+        fileupdated |= addDefault(section, "boughtExtraTotalEntitys", 0);
+        fileupdated |= addDefault(section, "boughtExtraEntitys", new ArrayList<String>());
+        fileupdated |= addDefault(section, "regiontype", "sellregion");
+        fileupdated |= addDefault(section, "flagGroup", "default");
         if (section.getString("regiontype").equalsIgnoreCase("rentregion")) {
-            fileupdated |= this.addDefault(section, "payedTill", 0);
-            fileupdated |= this.addDefault(section, "maxRentTime", 1000);
-            fileupdated |= this.addDefault(section, "extendTime", 1000);
+            fileupdated |= addDefault(section, "payedTill", 0);
+            fileupdated |= addDefault(section, "maxRentTime", 1000);
+            fileupdated |= addDefault(section, "extendTime", 1000);
         }
         if (section.getString("regiontype").equalsIgnoreCase("contractregion")) {
-            fileupdated |= this.addDefault(section, "payedTill", 0);
-            fileupdated |= this.addDefault(section, "extendTime", 1000);
-            fileupdated |= this.addDefault(section, "terminated", false);
+            fileupdated |= addDefault(section, "payedTill", 0);
+            fileupdated |= addDefault(section, "extendTime", 1000);
+            fileupdated |= addDefault(section, "terminated", false);
         }
         if (section.get("subregions") != null) {
             List<String> subregions = new ArrayList<String>(section.getConfigurationSection("subregions").getKeys(false));
             if (subregions != null) {
                 for (String subregionID : subregions) {
-                    fileupdated |= this.addDefault(section, "subregions." + subregionID + ".price", 0);
-                    fileupdated |= this.addDefault(section, "subregions." + subregionID + ".sold", false);
-                    fileupdated |= this.addDefault(section, "subregions." + subregionID + ".isHotel", false);
-                    fileupdated |= this.addDefault(section, "subregions." + subregionID + ".lastreset", 1);
-                    fileupdated |= this.addDefault(section, "subregions." + subregionID + ".regiontype", "sellregion");
+                    fileupdated |= addDefault(section, "subregions." + subregionID + ".price", 0);
+                    fileupdated |= addDefault(section, "subregions." + subregionID + ".sold", false);
+                    fileupdated |= addDefault(section, "subregions." + subregionID + ".isHotel", false);
+                    fileupdated |= addDefault(section, "subregions." + subregionID + ".lastreset", 1);
+                    fileupdated |= addDefault(section, "subregions." + subregionID + ".regiontype", "sellregion");
                     if (section.getString("subregions." + subregionID + ".regiontype").equalsIgnoreCase("contractregion")) {
-                        fileupdated |= this.addDefault(section, "subregions." + subregionID + ".payedTill", 0);
-                        fileupdated |= this.addDefault(section, "subregions." + subregionID + ".extendTime", 1000);
-                        fileupdated |= this.addDefault(section, "subregions." + subregionID + ".terminated", false);
+                        fileupdated |= addDefault(section, "subregions." + subregionID + ".payedTill", 0);
+                        fileupdated |= addDefault(section, "subregions." + subregionID + ".extendTime", 1000);
+                        fileupdated |= addDefault(section, "subregions." + subregionID + ".terminated", false);
                     }
                     if (section.getString("subregions." + subregionID + ".regiontype").equalsIgnoreCase("rentregion")) {
-                        fileupdated |= this.addDefault(section, "subregions." + subregionID + ".payedTill", 0);
-                        fileupdated |= this.addDefault(section, "subregions." + subregionID + ".maxRentTime", 1000);
-                        fileupdated |= this.addDefault(section, "subregions." + subregionID + ".extendTime", 1000);
+                        fileupdated |= addDefault(section, "subregions." + subregionID + ".payedTill", 0);
+                        fileupdated |= addDefault(section, "subregions." + subregionID + ".maxRentTime", 1000);
+                        fileupdated |= addDefault(section, "subregions." + subregionID + ".extendTime", 1000);
                     }
                 }
             }
@@ -801,17 +825,17 @@ public class RegionManager extends YamlFileManager<Region> {
         this.tabCompleteRegions = tabCompleteRegions;
     }
 
-    public void teleportToFreeRegion(RegionKind type, Player player) throws InputException {
+    public Region teleportToFreeRegion(RegionKind type, Player player) throws InputException {
         for (Region region : this) {
 
             if ((!region.isSold()) && (region.getRegionKind() == type)) {
                 try {
-                    String message = region.getConvertedMessage(Messages.REGION_TELEPORT_MESSAGE);
+                    String message = region.replaceVariables(Messages.REGION_TELEPORT_MESSAGE);
                     Teleporter.teleport(player, region, Messages.PREFIX + message, true);
                 } catch (NoSaveLocationException e) {
                     continue;
                 }
-                return;
+                return region;
             }
         }
         throw new InputException(player, Messages.NO_FREE_REGION_WITH_THIS_KIND);

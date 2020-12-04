@@ -47,13 +47,13 @@ public class DeleteCommand extends BasicArmCommand {
         }
 
         if (region.isSold() && (!player.hasPermission(Permission.SUBREGION_DELETE_SOLD))) {
-            throw new InputException(player, Messages.NOT_ALLOWED_TO_REMOVE_SUB_REGION_SOLD);
+            throw new InputException(player, Messages.NOT_ALLOWED_TO_REMOVE_SUBREGION_SOLD);
         }
         if ((!region.isSold()) && (!player.hasPermission(Permission.SUBREGION_DELETE_AVAILABLE))) {
-            throw new InputException(player, Messages.NOT_ALLOWED_TO_REMOVE_SUB_REGION_AVAILABLE);
+            throw new InputException(player, Messages.NOT_ALLOWED_TO_REMOVE_SUBREGION_AVAILABLE);
         }
 
-        region.delete(AdvancedRegionMarket.getInstance().getRegionManager());
+        region.delete();
         player.sendMessage(Messages.PREFIX + Messages.REGION_DELETED);
         return true;
     }

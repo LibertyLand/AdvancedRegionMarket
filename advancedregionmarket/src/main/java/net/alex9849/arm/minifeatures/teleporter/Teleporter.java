@@ -125,7 +125,7 @@ public class Teleporter {
                 abort = !inRegionOneTime;
             }
 
-            throw new NoSaveLocationException(region.getConvertedMessage(Messages.TELEPORTER_NO_SAVE_LOCATION_FOUND));
+            throw new NoSaveLocationException(region.replaceVariables(Messages.TELEPORTER_NO_SAVE_LOCATION_FOUND));
 
         } else {
             teleport(player, region.getTeleportLocation(), message, useCountdown);
@@ -195,11 +195,8 @@ public class Teleporter {
         if (!((loc.getBlock().getType() == Material.AIR) || MaterialFinder.getSignMaterials().contains(loc.getBlock().getType()) || (loc.getBlock().getType() == MaterialFinder.getWallTorch()))) {
             return false;
         }
-        if ((locM1.getBlock().getType() == Material.AIR) || (locM1.getBlock().getType() == Material.LAVA) || (locM1.getBlock().getType() == MaterialFinder.getMagmaBlock())
-                || MaterialFinder.getSignMaterials().contains(locM1.getBlock().getType()) || (locM1.getBlock().getType() == MaterialFinder.getWallTorch())) {
-            return false;
-        }
-        return true;
+        return (locM1.getBlock().getType() != Material.AIR) && (locM1.getBlock().getType() != Material.LAVA) && (locM1.getBlock().getType() != MaterialFinder.getMagmaBlock())
+                && !MaterialFinder.getSignMaterials().contains(locM1.getBlock().getType()) && (locM1.getBlock().getType() != MaterialFinder.getWallTorch());
     }
 
     public static void scheduleTeleport(Player player, Location loc, String message, int ticks) {

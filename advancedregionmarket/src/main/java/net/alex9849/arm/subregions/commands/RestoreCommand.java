@@ -45,14 +45,14 @@ public class RestoreCommand extends BasicArmCommand {
         }
 
         if (!region.isUserRestorable()) {
-            throw new InputException(sender, Messages.REGION_NOT_RESETTABLE);
+            throw new InputException(sender, Messages.REGION_NOT_RESTORABLE);
         }
         try {
             region.restoreRegion(Region.ActionReason.MANUALLY_BY_PARENT_REGION_OWNER, true, false);
             sender.sendMessage(Messages.PREFIX + Messages.COMPLETE);
         } catch (SchematicNotFoundException e) {
             AdvancedRegionMarket.getInstance().getLogger()
-                    .log(Level.WARNING, region.getConvertedMessage(Messages.COULD_NOT_FIND_OR_LOAD_SCHEMATIC_LOG));
+                    .log(Level.WARNING, region.replaceVariables(Messages.COULD_NOT_FIND_OR_LOAD_SCHEMATIC_LOG));
             player.sendMessage(Messages.PREFIX + Messages.SCHEMATIC_NOT_FOUND_ERROR_USER.replace("%regionid%", e.getRegion().getId()));
         }
         return true;

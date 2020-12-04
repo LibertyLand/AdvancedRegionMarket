@@ -21,14 +21,14 @@ public class PresetPatternManager extends YamlFileManager<Preset> {
     }
 
     private static Preset generatePresetObject(ConfigurationSection section, String name, PresetType presetType) {
-        Boolean isHotel = section.getObject("isHotel", Boolean.class);
-        Boolean autorestore = section.getObject("autorestore", Boolean.class);
-        Boolean inactivityReset = section.getObject("inactivityReset", Boolean.class);
-        Boolean userrestorable = section.getObject("userrestorable", Boolean.class);
-        Integer paybackPercentage = section.getObject("paybackPercentage", Integer.class);
-        Integer allowedSubregions = section.getObject("allowedSubregions", Integer.class);
-        Integer maxMembers = section.getObject("maxMembers", Integer.class);
-        Double price = section.getObject("price", Double.class);
+        Boolean isHotel = (Boolean) section.get("isHotel");
+        Boolean autorestore = (Boolean) section.get("autorestore");
+        Boolean inactivityReset = (Boolean) section.get("inactivityReset");
+        Boolean userrestorable = (Boolean) section.get("userrestorable");
+        Integer paybackPercentage = (Integer) section.get("paybackPercentage");
+        Integer allowedSubregions = (Integer) section.get("allowedSubregions");
+        Integer maxMembers = (Integer) section.get("maxMembers");
+        Double price = (Double) section.get("price");
         String regionKindString = section.getString("regionKind");
         String flagGroupString = section.getString("flaggroup");
         String entityLimitGroupString = section.getString("entityLimitGroup");
@@ -44,25 +44,31 @@ public class PresetPatternManager extends YamlFileManager<Preset> {
             regionKind = AdvancedRegionMarket.getInstance().getRegionKindManager().getRegionKind(regionKindString);
         }
         FlagGroup flagGroup = null;
-        if (flagGroupString == null) {
+        if (flagGroupString != null) {
             flagGroup = AdvancedRegionMarket.getInstance().getFlagGroupManager().getFlagGroup(flagGroupString);
         }
         EntityLimitGroup entityLimitGroup = null;
-        if (entityLimitGroupString == null) {
+        if (entityLimitGroupString != null) {
             entityLimitGroup = AdvancedRegionMarket.getInstance().getEntityLimitGroupManager().getEntityLimitGroup(entityLimitGroupString);
         }
 
-        Preset preset = null;
-        if (presetType == PresetType.SELLPRESET) {
-            preset = new SellPreset();
+        Preset preset = new SellPreset();
 
-        } else if(presetType == PresetType.CONTRACTPRESET || presetType == PresetType.RENTPRESET) {
-            Long extendTime = section.getLong("extendTime");
+        if(presetType == PresetType.CONTRACTPRESET || presetType == PresetType.RENTPRESET) {
+            long cfgExtendTime = section.getLong("extendTime");
+            Long extendTime = null;
+            if(cfgExtendTime >= 1000) {
+                extendTime = cfgExtendTime;
+            }
             CountdownPreset countdownPreset;
             if (presetType == PresetType.CONTRACTPRESET) {
                 countdownPreset = new ContractPreset();
             } else {
-                long maxRentTime = section.getLong("maxRentTime");
+                long cfgMaxRentTime = section.getLong("maxRentTime");
+                Long maxRentTime = null;
+                if(cfgMaxRentTime >= 1000) {
+                    maxRentTime = cfgMaxRentTime;
+                }
                 RentPreset rentPreset = new RentPreset();
                 rentPreset.setMaxRentTime(maxRentTime);
                 countdownPreset = rentPreset;

@@ -20,12 +20,12 @@ public abstract class RegionOptionModifyCommand<SettingsObj> extends OptionModif
     private String regex_massaction;
     private String optionName;
 
-    public RegionOptionModifyCommand(String rootCommand, List<String> permissions, String optionName, String optionRegex,
-                                     String optionDescriptipn, boolean allowSubregions, String subregionModifyErrorMessage) {
-        super(false, true, rootCommand,
+    public RegionOptionModifyCommand(String rootCommand, List<String> permissions, boolean forbidNullSetting, String optionName, String optionRegex,
+                                     String optionDescriptipn, boolean allowSubregions, String subregionModifyErrorMessage, String settingNotFoundMsg) {
+        super(false, forbidNullSetting, rootCommand,
                 Arrays.asList("(?i)" + rootCommand + " [^;\n ]+ " + optionRegex, "(?i)" + rootCommand + " rk:[^;\n ]+ " + optionRegex),
                 Arrays.asList(rootCommand + " [REGION] " + optionDescriptipn, rootCommand + " rk:[REGIONKIND] " + optionDescriptipn),
-                permissions, "", "");
+                permissions, "", settingNotFoundMsg);
 
         this.allowSubregions = allowSubregions;
         this.subregionModifyErrorMessage = subregionModifyErrorMessage;
@@ -60,7 +60,7 @@ public abstract class RegionOptionModifyCommand<SettingsObj> extends OptionModif
             if (!this.allowSubregions && selectedRegionkind == RegionKind.SUBREGION) {
                 throw new InputException(sender, this.subregionModifyErrorMessage);
             }
-            String selectedName = selectedRegionkind.getConvertedMessage(Messages.MASSACTION_SPLITTER);
+            String selectedName = selectedRegionkind.replaceVariables(Messages.MASSACTION_SPLITTER);
             return new Tuple<>(selectedName, AdvancedRegionMarket.getInstance().getRegionManager().getRegionsByRegionKind(selectedRegionkind));
         } else {
             Region selectedRegion = AdvancedRegionMarket.getInstance().getRegionManager().getRegionbyNameAndWorldCommands(args[1], player.getWorld().getName());

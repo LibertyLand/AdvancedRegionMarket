@@ -6,12 +6,14 @@ import net.alex9849.arm.regions.RentRegion;
 import net.alex9849.arm.regions.price.Autoprice.AutoPrice;
 import net.alex9849.arm.regions.price.RentPrice;
 import net.alex9849.arm.util.TimeUtil;
+import net.alex9849.arm.util.stringreplacer.StringCreator;
 import net.alex9849.inter.WGRegion;
 import net.alex9849.signs.SignData;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class RentPreset extends CountdownPreset {
@@ -25,6 +27,13 @@ public class RentPreset extends CountdownPreset {
         }
     }
 
+    @Override
+    public void sendPresetInfo(CommandSender sender) {
+        for(String msg : Messages.PRESET_INFO_RENTREGION) {
+            sender.sendMessage(this.replaceVariables(msg));
+        }
+    }
+
     public Long getMaxRentTime() {
         return this.maxRentTime;
     }
@@ -34,21 +43,15 @@ public class RentPreset extends CountdownPreset {
     }
 
     public void setMaxRentTime(Long time) {
+        if(time == null) {
+            this.maxRentTime = null;
+            return;
+        }
+        if (time < 1000) {
+            throw new IllegalArgumentException("MaxRentTime needs to be at least one second!");
+        }
         this.maxRentTime = time;
-        if(time != null) {
-            this.setAutoPrice(null);
-        }
-    }
-
-
-    @Override
-    public void getAdditionalInfo(CommandSender sender) {
-        super.getAdditionalInfo(sender);
-        String maxrenttime = "not defined";
-        if (this.maxRentTime != null) {
-            maxrenttime = TimeUtil.timeInMsToString(this.getMaxRentTime(), false, false);
-        }
-        sender.sendMessage(Messages.REGION_INFO_MAX_RENT_TIME + maxrenttime);
+        this.setAutoPrice(null);
     }
 
     @Override
@@ -69,9 +72,18 @@ public class RentPreset extends CountdownPreset {
     @Override
     public void applyToRegion(Region region) {
         super.applyToRegion(region);
-        if (this.getPrice() != null && this.getExtendTime() != null && this.getMaxRentTime() != null) {
-            region.setPrice(new RentPrice(this.getPrice(), this.getExtendTime(), this.getMaxRentTime()));
+        if (this.getPrice() != null && this.getExtendTime() != null
+                && this.getMaxRentTime() != null && region instanceof RentRegion) {
+            ((RentRegion) region).setRentPrice(new RentPrice(this.getPrice(), this.getExtendTime(), this.getMaxRentTime()));
         }
+    }
+
+    @Override
+    public HashMap<String, StringCreator> getVariableReplacements() {
+        HashMap<String, StringCreator> variableReplacements = super.getVariableReplacements();
+        variableReplacements.put("%maxrenttime%", () -> Messages.getStringValue(this.getMaxRentTime(), x ->
+                TimeUtil.timeInMsToString(x, false, false), Messages.NOT_DEFINED));
+        return variableReplacements;
     }
 
     @Override

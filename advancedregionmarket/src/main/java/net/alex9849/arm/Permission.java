@@ -47,6 +47,7 @@ public class Permission {
     public static final String ADMIN_PRESET_RESET = "arm.admin.preset.reset";
     public static final String ADMIN_PRESET_HELP = "arm.admin.preset.help";
     public static final String ADMIN_PRESET_LOAD = "arm.admin.preset.load";
+    public static final String ADMIN_PRESET_APPLY = "arm.admin.preset.apply";
     public static final String ADMIN_PRESET_DELETE = "arm.admin.preset.delete";
     public static final String ADMIN_PRESET_SAVE = "arm.admin.preset.save";
     public static final String ADMIN_PRESET_LIST = "arm.admin.preset.list";
@@ -62,6 +63,7 @@ public class Permission {
     public static final String ADMIN_SET_IS_USERRESTORABLE = "arm.admin.setisuserrestorable";
     public static final String ADMIN_LISTAUTOPRICES = "arm.admin.listautoprices";
     public static final String ADMIN_SET_PRICE = "arm.admin.setprice";
+    public static final String ADMIN_SET_LANDLORD = "arm.admin.setlandlord";
     public static final String ADMIN_SIGN_LINK_MODE = "arm.admin.signlinkmode";
     public static final String ADMIN_FLAGEDITOR = "arm.admin.flageditor";
     public static final String ADMIN_SET_FLAGGROUP = "arm.admin.setflaggroup";
@@ -103,8 +105,18 @@ public class Permission {
     public static final String REGIONKIND_INFO = "arm.admin.regionkind.info";
     public static final String REGIONKIND_HELP = "arm.admin.regionkind.help";
 
+    public static final String REGIONKINDGROUP_CREATE = "arm.admin.regionkindgroup.create";
+    public static final String REGIONKINDGROUP_DELETE = "arm.admin.regionkindgroup.delete";
+    public static final String REGIONKINDGROUP_SET_DISPLAY_IN_LIMITS = "arm.admin.regionkindgroup.setdisplayinlimits";
+    public static final String REGIONKINDGROUP_SET_DISPLAYNAME = "arm.admin.regionkindgroup.setdisplayname";
+    public static final String REGIONKINDGROUP_LIST = "arm.admin.regionkindgroup.list";
+    public static final String REGIONKINDGROUP_INFO = "arm.admin.regionkindgroup.info";
+    public static final String REGIONKINDGROUP_HELP = "arm.admin.regionkindgroup.help";
+    public static final String REGIONKINDGROUP_ADDREGIONKIND = "arm.admin.regionkindgroup.addregionkind";
+    public static final String REGIONKINDGROUP_REMOVEREGIONKIND = "arm.admin.regionkindgroup.removeregionkind";
+
     public static final String MEMBER_RESTORE = "arm.member.restore";
-    public static final String MEMBER_SELLBACK = "arm.member.sellregion";
+    public static final String MEMBER_SELLBACK = "arm.member.sellback";
     public static final String MEMBER_INFO = "arm.member.info";
     public static final String MEMBER_ADDMEMBER = "arm.member.addmember";
     public static final String MEMBER_REMOVEMEMBER = "arm.member.removemember";
@@ -117,15 +129,17 @@ public class Permission {
     public static final String MEMBER_PROMOTE = "arm.member.promote";
     public static final String MEMBER_BUY = "arm.member.buy";
     public static final String MEMBER_REGIONFINDER = "arm.member.regionfinder";
+    public static final String MEMBER_REGIONFINDER_TP_TO_REGION = "arm.member.regionfinder.tptoregion";
+    public static final String MEMBER_REGIONFINDER_TP_TO_SIGN = "arm.member.regionfinder.tptosign";
     public static final String MEMBER_ENTITYLIMIT_INFO = "arm.member.entitylimit.info";
     public static final String MEMBER_ENTITYLIMIT_CHECK = "arm.member.entitylimit.check";
     public static final String MEMBER_ENTITYLIMIT_BUY_EXTRA = "arm.member.entitylimit.buyextra";
+
     //TODO ADD TO WIKI
     public static final String MEMBER_TP_TO_FREE_REGION = "arm.member.tptofreeregion";
     public static final String MEMBER_FLAGEDITOR = "arm.member.flageditor";
 
     public static final String ARM_HELP = "arm.help";
-    public static final String ARM_BUYKIND = "arm.buykind.";
     public static final String ARM_LIMIT = "arm.limit.";
     public static final String ARM_INACTIVITY_EXPIRATION = "arm.inactivityexpiration.";
 

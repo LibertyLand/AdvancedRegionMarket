@@ -7,7 +7,10 @@ import net.alex9849.arm.exceptions.CmdSyntaxException;
 import net.alex9849.arm.exceptions.InputException;
 import net.alex9849.arm.minifeatures.PlayerRegionRelationship;
 import net.alex9849.arm.regionkind.RegionKind;
+import net.alex9849.arm.regions.ContractRegion;
 import net.alex9849.arm.regions.Region;
+import net.alex9849.arm.regions.RentRegion;
+import net.alex9849.arm.regions.SellRegion;
 import net.alex9849.arm.regions.price.Autoprice.AutoPrice;
 import net.alex9849.arm.regions.price.RentPrice;
 import org.bukkit.ChatColor;
@@ -49,7 +52,7 @@ public class SetPriceCommand extends BasicArmCommand {
                 throw new InputException(sender, Messages.REGIONKIND_DOES_NOT_EXIST);
             }
             selectedregions = AdvancedRegionMarket.getInstance().getRegionManager().getRegionsByRegionKind(selectedRegionkind);
-            selectedName = selectedRegionkind.getConvertedMessage(Messages.MASSACTION_SPLITTER);
+            selectedName = selectedRegionkind.replaceVariables(Messages.MASSACTION_SPLITTER);
         } else {
             Region selectedRegion = AdvancedRegionMarket.getInstance().getRegionManager()
                     .getRegionbyNameAndWorldCommands(args[1], player.getWorld().getName());
@@ -65,18 +68,30 @@ public class SetPriceCommand extends BasicArmCommand {
             long extend = RentPrice.stringToTime(args[3]);
             long maxrenttime = RentPrice.stringToTime(args[4]);
 
-            for (Region region : selectedregions) {
-                price = new RentPrice(priceint, extend, maxrenttime);
-                region.setPrice(price);
+            try {
+                for (Region region : selectedregions) {
+                    price = new RentPrice(priceint, extend, maxrenttime);
+                    if(region instanceof SellRegion) {
+                        ((SellRegion) region).setSellPrice(price);
+                    } else if(region instanceof ContractRegion) {
+                        ((ContractRegion) region).setContractPrice(price);
+                    } else if(region instanceof RentRegion) {
+                        ((RentRegion) region).setRentPrice(price);
+                    } else {
+                        throw new RuntimeException("This is a bug! SetPriceCommand doesn't know hot to set the price for " + region.getClass().getName());
+                    }
+                }
+            } catch (IllegalArgumentException e) {
+                throw new InputException(sender, e.getMessage());
             }
+
         } else {
             AutoPrice selectedAutoprice = AutoPrice.getAutoprice(args[2]);
             if (selectedAutoprice == null) {
                 throw new InputException(sender, ChatColor.RED + "Autoprice does not exist!");
             }
             for (Region region : selectedregions) {
-                price = new RentPrice(selectedAutoprice);
-                region.setPrice(price);
+                region.setAutoPrice(selectedAutoprice);
             }
         }
 

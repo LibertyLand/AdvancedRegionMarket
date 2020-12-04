@@ -1,4 +1,4 @@
-package net.alex9849.arm.regionkind.commands;
+package net.alex9849.arm.regionkind.regionkindcommands;
 
 import net.alex9849.arm.AdvancedRegionMarket;
 import net.alex9849.arm.Messages;
@@ -14,37 +14,32 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class AddLoreLineCommand extends BasicArmCommand {
+public class InfoCommand extends BasicArmCommand {
 
-    public AddLoreLineCommand() {
-        super(true, "addloreline",
-                Arrays.asList("(?i)addloreline [^;\n ]+ [^;\n]+"),
-                Arrays.asList("addloreline [REGIONKIND] [loreline]"),
-                Arrays.asList(Permission.REGIONKIND_ADD_LORE_LINE));
+    public InfoCommand() {
+        super(true, "info",
+                Arrays.asList("(?i)info [^;\n ]+"),
+                Arrays.asList("info [REGIONKIND]"),
+                Arrays.asList(Permission.REGIONKIND_INFO));
     }
 
     @Override
     protected boolean runCommandLogic(CommandSender sender, String command, String commandLabel) throws InputException, CmdSyntaxException {
-        String[] args = command.split(" ");
-        RegionKind regionKind = AdvancedRegionMarket.getInstance().getRegionKindManager().getRegionKind(args[1]);
+        RegionKind regionKind = AdvancedRegionMarket.getInstance().getRegionKindManager().getRegionKind(command.split(" ")[1]);
         if (regionKind == null) {
             throw new InputException(sender, Messages.REGIONKIND_DOES_NOT_EXIST);
         }
 
-        List<String> loreLine = new ArrayList<>();
-        for (int i = 2; i < args.length; i++) {
-            loreLine.add(args[i]);
+        List<String> messages = new ArrayList<>(Messages.REGIONKIND_INFO);
+        for(String msg : messages) {
+            sender.sendMessage(regionKind.replaceVariables(msg));
         }
-        regionKind.getRawLore().add(Messages.getStringList(loreLine, x -> x, " "));
-        regionKind.queueSave();
-
-        sender.sendMessage(Messages.PREFIX + Messages.REGIONKIND_MODIFIED);
         return true;
     }
 
     @Override
     protected List<String> onTabCompleteLogic(Player player, String[] args) {
-        if (args.length != 2) {
+        if(args.length != 2) {
             return new ArrayList<>();
         }
         return AdvancedRegionMarket.getInstance().getRegionKindManager().completeTabRegionKinds(args[1], "");

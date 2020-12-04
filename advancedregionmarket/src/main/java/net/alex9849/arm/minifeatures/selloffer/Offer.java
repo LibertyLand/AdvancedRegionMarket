@@ -3,8 +3,6 @@ package net.alex9849.arm.minifeatures.selloffer;
 import net.alex9849.arm.AdvancedRegionMarket;
 import net.alex9849.arm.Messages;
 import net.alex9849.arm.exceptions.*;
-import net.alex9849.arm.limitgroups.LimitGroup;
-import net.alex9849.arm.regionkind.RegionKind;
 import net.alex9849.arm.regions.Region;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
@@ -31,13 +29,13 @@ public class Offer {
         this.offerListener = new OfferListener(seller, buyer, this);
     }
 
-    public static Offer createOffer(Region region, double price, Player seller, Player buyer) throws DublicateException, IllegalArgumentException {
+    public static Offer createOffer(Region region, double price, Player seller, Player buyer) throws DuplicateException, IllegalArgumentException {
         for (Offer offer : offerList) {
             if (offer.getBuyer().getUniqueId() == buyer.getUniqueId()) {
-                throw new DublicateException(Messages.BUYER_ALREADY_GOT_AN_OFFER);
+                throw new DuplicateException(Messages.BUYER_ALREADY_GOT_AN_OFFER);
             }
             if (offer.getSeller().getUniqueId() == seller.getUniqueId()) {
-                throw new DublicateException(Messages.SELLER_ALREADY_CREATED_AN_OFFER);
+                throw new DuplicateException(Messages.SELLER_ALREADY_CREATED_AN_OFFER);
             }
         }
 
@@ -93,24 +91,19 @@ public class Offer {
     public void accept() throws RegionNotOwnException, NoPermissionException, OutOfLimitExeption, NotEnoughMoneyException {
         if (!region.isSold() || !region.getRegion().hasOwner(seller.getUniqueId())) {
             this.reject();
-            throw new RegionNotOwnException(this.getConvertedMessage(Messages.SELLER_DOES_NOT_LONGER_OWN_REGION));
+            throw new RegionNotOwnException(this.replaceVariables(Messages.SELLER_DOES_NOT_LONGER_OWN_REGION));
         }
 
-        if (!RegionKind.hasPermission(buyer, this.region.getRegionKind())) {
+        if (!AdvancedRegionMarket.getInstance().getLimitGroupManager().isCanBuyAnother(buyer, region.getRegionKind())) {
             this.reject();
-            throw new NoPermissionException(this.getConvertedMessage(Messages.NO_PERMISSIONS_TO_BUY_THIS_KIND_OF_REGION));
-        }
-
-        if (!LimitGroup.isCanBuyAnother(buyer, region)) {
-            this.reject();
-            throw new OutOfLimitExeption(LimitGroup.getRegionBuyOutOfLimitMessage(buyer, region.getRegionKind()));
+            throw new OutOfLimitExeption(replaceVariables(region.replaceVariables(Messages.REGION_BUY_OUT_OF_LIMIT)));
         }
 
         Economy econ = AdvancedRegionMarket.getInstance().getEcon();
 
         if (econ.getBalance(buyer) < price) {
             this.reject();
-            throw new NotEnoughMoneyException(this.getConvertedMessage(Messages.NOT_ENOUGHT_MONEY));
+            throw new NotEnoughMoneyException(this.replaceVariables(Messages.NOT_ENOUGH_MONEY));
         }
         econ.depositPlayer(seller, price);
         econ.withdrawPlayer(buyer, price);
@@ -146,7 +139,7 @@ public class Offer {
         this.offerListener.activateCancelTimer(ticks);
     }
 
-    public String getConvertedMessage(String message) {
+    public String replaceVariables(String message) {
         message = message.replace("%seller%", this.seller.getDisplayName());
         message = message.replace("%buyer%", this.buyer.getDisplayName());
         message = message.replace("%region%", this.region.getRegion().getId());
@@ -155,7 +148,7 @@ public class Offer {
         message = message.replace("%price%", this.price + "");
         message = message.replace("%currency%", Messages.CURRENCY);
         if (this.region != null) {
-            message = this.region.getConvertedMessage(message);
+            message = this.region.replaceVariables(message);
         }
         return message;
     }

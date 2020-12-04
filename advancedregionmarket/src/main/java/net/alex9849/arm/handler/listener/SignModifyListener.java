@@ -9,7 +9,10 @@ import net.alex9849.arm.flaggroups.FlagGroup;
 import net.alex9849.arm.presets.ActivePresetManager;
 import net.alex9849.arm.presets.presets.Preset;
 import net.alex9849.arm.presets.presets.PresetType;
+import net.alex9849.arm.regions.ContractRegion;
 import net.alex9849.arm.regions.Region;
+import net.alex9849.arm.regions.RentRegion;
+import net.alex9849.arm.regions.SellRegion;
 import net.alex9849.arm.regions.price.Autoprice.AutoPrice;
 import net.alex9849.arm.regions.price.ContractPrice;
 import net.alex9849.arm.regions.price.Price;
@@ -48,10 +51,7 @@ public class SignModifyListener implements Listener {
             if (!priceLine.matches(SELLPRICE_LINE_REGEX)) {
                 throw new InputException(sender, ChatColor.DARK_RED + "Please write a positive number as price or an AutoPrice at line 4");
             }
-            price = new Price(Integer.parseInt(priceLine));
-        }
-        if (price.getPrice() < 0) {
-            throw new InputException(sender, ChatColor.DARK_RED + "Price must be positive!");
+            price = new Price(Double.parseDouble(priceLine));
         }
         return price;
     }
@@ -68,13 +68,10 @@ public class SignModifyListener implements Listener {
                         "<Price>;<Extendtime (ex.: 5d)>");
             }
             String[] priceSegments = priceLine.split("(;|:)");
-            int moneyAmount = Integer.parseInt(priceSegments[0]);
+            double moneyAmount = Double.parseDouble(priceSegments[0]);
             long extendTime = ContractPrice.stringToTime(priceSegments[1]);
 
             price = new ContractPrice(moneyAmount, extendTime);
-        }
-        if (price.getPrice() < 0) {
-            throw new InputException(sender, ChatColor.DARK_RED + "Price must be positive!");
         }
         return price;
     }
@@ -91,14 +88,11 @@ public class SignModifyListener implements Listener {
                         "<Price>;<Extend per Click (ex.: 5d)>;<Max rent Time (ex.: 10d)>");
             }
             String[] priceSegments = priceLine.split("(;|:)");
-            int moneyAmount = Integer.parseInt(priceSegments[0]);
+            double moneyAmount = Double.parseDouble(priceSegments[0]);
             long extendPerClick = RentPrice.stringToTime(priceSegments[1]);
             long maxRentTime = RentPrice.stringToTime(priceSegments[2]);
 
             price = new RentPrice(moneyAmount, extendPerClick, maxRentTime);
-        }
-        if (price.getPrice() < 0) {
-            throw new InputException(sender, ChatColor.DARK_RED + "Price must be positive!");
         }
         return price;
     }
@@ -112,31 +106,22 @@ public class SignModifyListener implements Listener {
         try {
             //Pick the right preset, parse price and check permissions
             PresetType presetType;
-            Price price = null;
             if (sign.getLine(0).equalsIgnoreCase("[ARM-Sell]")) {
                 presetType = PresetType.SELLPRESET;
-                if (!sign.getPlayer().hasPermission(Permission.ADMIN_CREATE_CONTRACT))
+                if (!sign.getPlayer().hasPermission(Permission.ADMIN_CREATE_SELL))
                     throw new InputException(sign.getPlayer(), Messages.NO_PERMISSION);
-                if (!sign.getLine(3).equalsIgnoreCase("")) {
-                    price = parseSellPrice(sign.getLine(3), sign.getPlayer());
-                }
             } else if (sign.getLine(0).equalsIgnoreCase("[ARM-Rent]")) {
                 presetType = PresetType.RENTPRESET;
-                if (!sign.getPlayer().hasPermission(Permission.ADMIN_CREATE_CONTRACT))
+                if (!sign.getPlayer().hasPermission(Permission.ADMIN_CREATE_RENT))
                     throw new InputException(sign.getPlayer(), Messages.NO_PERMISSION);
-                if (!sign.getLine(3).equalsIgnoreCase("")) {
-                    price = this.parseRentPrice(sign.getLine(3), sign.getPlayer());
-                }
             } else if (sign.getLine(0).equalsIgnoreCase("[ARM-Contract]")) {
                 presetType = PresetType.CONTRACTPRESET;
                 if (!sign.getPlayer().hasPermission(Permission.ADMIN_CREATE_CONTRACT))
                     throw new InputException(sign.getPlayer(), Messages.NO_PERMISSION);
-                if (!sign.getLine(3).equalsIgnoreCase("")) {
-                    price = this.parseContractPrice(sign.getLine(3), sign.getPlayer());
-                }
             } else {
                 return;
             }
+            String priceLine = sign.getLine(3);
 
             Preset preset = ActivePresetManager.getPreset(sign.getPlayer(), presetType);
             if (preset == null) {
@@ -175,10 +160,20 @@ public class SignModifyListener implements Listener {
             } else {
                 List<SignData> signDataList = new ArrayList<>();
                 signDataList.add(signData);
-                Region newArmRegion = preset.generateRegion(wgRegion, regionWorld, sign.getPlayer(), signDataList);
+                Region newArmRegion = preset.generateRegion(wgRegion, regionWorld, sign.getPlayer(), false, signDataList);
 
-                if(price != null) {
-                    newArmRegion.setPrice(price);
+                //Apply Price
+                if(!priceLine.isEmpty()) {
+                    if(newArmRegion instanceof SellRegion) {
+                        ((SellRegion) newArmRegion).setSellPrice(parseSellPrice(priceLine, sign.getPlayer()));
+                    } else if (newArmRegion instanceof ContractRegion) {
+                        ((ContractRegion) newArmRegion).setContractPrice(parseContractPrice(priceLine, sign.getPlayer()));
+                    } else if (newArmRegion instanceof RentRegion) {
+                        ((RentRegion) newArmRegion).setRentPrice(parseRentPrice(priceLine, sign.getPlayer()));
+                    } else {
+                        throw new RuntimeException("This is a bug! SignModifyListener does not know how to set the " +
+                                "Price in region-class " + newArmRegion.getClass().getName() + "!");
+                    }
                 } else if (!preset.canPriceLineBeLetEmpty()) {
                     sign.getPlayer().sendMessage(Messages.PREFIX + "Price not defined! Using default Autoprice!");
                 }
@@ -190,14 +185,17 @@ public class SignModifyListener implements Listener {
                 }
                 AdvancedRegionMarket.getInstance().getRegionManager().add(newArmRegion);
                 newArmRegion.updateSigns();
+                preset.executeSetupCommands(sign.getPlayer(), newArmRegion);
                 sign.setCancelled(true);
-                sign.getPlayer().sendMessage(Messages.PREFIX + Messages.REGION_ADDED_TO_ARM);
+                sign.getPlayer().sendMessage(Messages.PREFIX + Messages.REGION_AND_SIGN_ADDED_TO_ARM);
                 return;
             }
 
 
         } catch (InputException inputException) {
             inputException.sendMessages(Messages.PREFIX);
+        } catch (IllegalArgumentException e) {
+            sign.getPlayer().sendMessage(Messages.PREFIX + e.getMessage());
         }
     }
 
@@ -240,7 +238,7 @@ public class SignModifyListener implements Listener {
                                 return;
                             } else {
                                 block.setCancelled(true);
-                                throw new InputException(block.getPlayer(), Messages.NOT_ALLOWED_TO_REMOVE_SUB_REGION_SOLD);
+                                throw new InputException(block.getPlayer(), Messages.NOT_ALLOWED_TO_REMOVE_SUBREGION_SOLD);
                             }
                         } else {
                             if (block.getPlayer().hasPermission(Permission.SUBREGION_DELETE_AVAILABLE)) {
@@ -248,7 +246,7 @@ public class SignModifyListener implements Listener {
                                 return;
                             } else {
                                 block.setCancelled(true);
-                                throw new InputException(block.getPlayer(), Messages.NOT_ALLOWED_TO_REMOVE_SUB_REGION_AVAILABLE);
+                                throw new InputException(block.getPlayer(), Messages.NOT_ALLOWED_TO_REMOVE_SUBREGION_AVAILABLE);
                             }
                         }
                     } else {
@@ -267,8 +265,7 @@ public class SignModifyListener implements Listener {
         String message = Messages.SIGN_REMOVED_FROM_REGION.replace("%remaining%", region.getNumberOfSigns() + "");
         player.sendMessage(Messages.PREFIX + message);
         if(region.getNumberOfSigns() == 0) {
-            region.delete(AdvancedRegionMarket.getInstance().getRegionManager());
-            player.sendMessage(Messages.PREFIX + Messages.REGION_REMOVED_FROM_ARM);
+            player.sendMessage(Messages.PREFIX + region.replaceVariables(Messages.REGION_ZERO_SIGNS_REACHED));
         }
     }
 

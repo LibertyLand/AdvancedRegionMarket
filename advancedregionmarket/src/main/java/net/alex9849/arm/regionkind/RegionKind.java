@@ -2,14 +2,12 @@ package net.alex9849.arm.regionkind;
 
 import net.alex9849.arm.AdvancedRegionMarket;
 import net.alex9849.arm.Messages;
-import net.alex9849.arm.Permission;
 import net.alex9849.arm.util.MaterialFinder;
 import net.alex9849.arm.util.Saveable;
 import net.alex9849.arm.util.stringreplacer.StringCreator;
 import net.alex9849.arm.util.stringreplacer.StringReplacer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -17,7 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class RegionKind implements Saveable {
+public class RegionKind implements LimitGroupElement, Saveable {
     public static RegionKind DEFAULT = new RegionKind("Default", MaterialFinder.getRedBed(), new ArrayList<String>(), "Default", true, true);
     public static RegionKind SUBREGION = new RegionKind("Subregion", MaterialFinder.getRedBed(), new ArrayList<String>(), "Subregion", false, false);
     private String name;
@@ -49,6 +47,28 @@ public class RegionKind implements Saveable {
         variableReplacements.put("%regionkinddisplayingui%", () -> {
             return Messages.convertYesNo(this.isDisplayInRegionfinder());
         });
+        variableReplacements.put("%regionkindlore%", () -> {
+            return Messages.getStringList(this.getLore(), x -> ChatColor.translateAlternateColorCodes('&', x), "\n");
+        });
+        variableReplacements.put("%regionkindlorelist%", () -> {
+            return Messages.getStringList(this.getLore(), x -> ChatColor.translateAlternateColorCodes('&', "&r- " + x), "\n");
+        });
+        variableReplacements.put("%regionkindregionkindgroups%", () -> {
+            return Messages.getStringList(AdvancedRegionMarket.getInstance()
+                    .getRegionKindGroupManager().getRegionKindGroupsForRegionKind(this),
+                    x -> x.getName(), ", ");
+        });
+        variableReplacements.put("%regionkindregionkindgroupsdisplay%", () -> {
+            return Messages.getStringList(AdvancedRegionMarket.getInstance()
+                            .getRegionKindGroupManager().getRegionKindGroupsForRegionKind(this),
+                    x -> x.getDisplayName(), ", ");
+        });
+        variableReplacements.put("%regionkindregionkindgroupsdisplaywithbrackets%", () -> {
+            String msg =  Messages.getStringList(AdvancedRegionMarket.getInstance()
+                            .getRegionKindGroupManager().getRegionKindGroupsForRegionKind(this),
+                    x -> x.getDisplayName(), ", ");
+            return msg.isEmpty() ? "" : "(" + msg + ")";
+        });
 
         this.stringReplacer = new StringReplacer(variableReplacements, 20);
     }
@@ -61,17 +81,6 @@ public class RegionKind implements Saveable {
         this.displayInRegionFinder = displayInRegionFinder;
         this.displayInLimits = displayInLimits;
         this.needsSave = false;
-    }
-
-    public static boolean hasPermission(CommandSender sender, RegionKind regionKind) {
-        if (!AdvancedRegionMarket.getInstance().getPluginSettings().isActivateRegionKindPermissions()) {
-            return true;
-        }
-        if (regionKind == RegionKind.DEFAULT) {
-            return true;
-        } else {
-            return sender.hasPermission(Permission.ARM_BUYKIND + regionKind.getName());
-        }
     }
 
     public static RegionKind parse(ConfigurationSection confSection, String name) {
@@ -153,7 +162,7 @@ public class RegionKind implements Saveable {
         this.queueSave();
     }
 
-    public String getConvertedMessage(String message) {
+    public String replaceVariables(String message) {
         return this.stringReplacer.replace(message).toString();
     }
 

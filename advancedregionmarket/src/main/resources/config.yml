@@ -62,28 +62,35 @@ FlagGroups:
 Limits:
   examplegroup1:
     total: 2
-    Default: -1
-    starter: 1
-    small: 1
-    medium: 0
-    large: 0
-    shop: 1
+    regionkinds:
+      Default: -1
+      starter: 1
+      small: 3
+      medium: 5
+      large: 0
+      shop: 1
+    regionkindgroups:
+      citybuild-plot: 4
   examplegroup2:
     total: 10
-    Default: -1
-    starter: 1
-    small: 2
-    medium: 1
-    large: 1
-    shop: 1
+    regionkinds:
+      Default: -1
+      starter: 1
+      small: 2
+      medium: 1
+      large: 1
+      shop: 1
+    regionkindgroups: {}
   examplegroup3:
     total: -1
-    Default: -1
-    starter: 1
-    small: 2
-    medium: 2
-    large: 2
-    shop: 2
+    regionkinds:
+      Default: -1
+      starter: 1
+      small: 2
+      medium: 2
+      large: 2
+      shop: 2
+    regionkindgroups: {}
 
 
 # InactivityExpirationGroups can be assigned to players by giving them the permission arm.inactivityexpiration.INACTIVITYEXPIRATIONGROUP
@@ -109,11 +116,6 @@ InactivityExpiration:
 DefaultInactivityExpiration:
   resetAfter: 'none'
   takeOverAfter: 'none'
-
-RegionKinds:
-  # If true players need the permission 'arm.buykind.REGIONKIND_INTERNAL_NAME' to see the regionkind in the regionfinder
-  # and to be able to buy them. Replace REGIONKIND_INTERNAL_NAME with the internal name of the regionkind
-  activateRegionKindPermissions: false
 
 SignLinkingMode:
   # The regions listed below will automatically be ignored if you try to select a region via SignLinkingMode
@@ -165,16 +167,9 @@ Other:
   TeleporterTimer: 0
   # If you execute /arm info arm will display the region borders of the region (only for the player who executes the command)
   RegionInfoParticleBorder: true
-  # The regionfinder can teleport the player to a sign of the region or the region itself. If you set this setting to true, the player can decide if he wants to get teleported
-  # to a sign or the the region
-  AllowRegionfinderTeleportToBuySign: true
   # If true all entities will be removed if the region gets resetted
   RemoveEntitiesOnRegionRestore: true
-  # If true the plugin will send me your servers ip address and playercount every 5 minutes. This allows me to visit your server and is one
-  # of my biggest motivations to continue to develop this plugin. If you disable this plugin or set Sendstats to false and do not start it
-  # for 2 weeks, all data from your server will automatically be deleted.
-  Sendstats: true
-  #The language of the plugin. Available languages: en, de, fr, ru
+  #The language of the plugin. Available languages: en, de, fr, ru, es
   #You can send me your own translations of the plugin and I'll
   #include them into the plugin. You have to remove the messages.yml
   #and reload/restart the plugin if you want that arm regenerates the
@@ -247,6 +242,8 @@ GUI:
   DisplayRegionOwnerButton: true
   DisplayRegionMemberButton: true
   DisplayRegionFinderButton: true
+# Can cause lags, because skins need to be fetched from Mojang-Server
+  DisplayPlayerSkins: false
 
 #Do not change this
 Version: ${project.version}

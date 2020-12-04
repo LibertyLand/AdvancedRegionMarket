@@ -63,7 +63,7 @@ public class EntityLimitGroupManager extends YamlFileManager<EntityLimitGroup> {
     }
 
     @Override
-    public List<EntityLimitGroup> loadSavedObjects(YamlConfiguration yamlConfiguration) {
+    protected List<EntityLimitGroup> loadSavedObjects(YamlConfiguration yamlConfiguration) {
         ArrayList<EntityLimitGroup> entityLimitGroups = new ArrayList<>();
         yamlConfiguration.options().copyDefaults(true);
         boolean fileupdated = false;
@@ -108,12 +108,12 @@ public class EntityLimitGroupManager extends YamlFileManager<EntityLimitGroup> {
     }
 
     @Override
-    public void saveObjectToYamlObject(EntityLimitGroup entityLimitGroup, YamlConfiguration yamlConfiguration) {
+    protected void saveObjectToYamlObject(EntityLimitGroup entityLimitGroup, YamlConfiguration yamlConfiguration) {
         yamlConfiguration.set("EntityLimits." + entityLimitGroup.getName(), entityLimitGroup.toConfigurationSection());
     }
 
     @Override
-    public void writeStaticSettings(YamlConfiguration yamlConfiguration) {
+    protected void writeStaticSettings(YamlConfiguration yamlConfiguration) {
         yamlConfiguration.set("DefaultEntityLimit", EntityLimitGroup.DEFAULT.toConfigurationSection());
         EntityLimitGroup.DEFAULT.setSaved();
         yamlConfiguration.set("SubregionEntityLimit", EntityLimitGroup.SUBREGION.toConfigurationSection());
@@ -159,17 +159,17 @@ public class EntityLimitGroupManager extends YamlFileManager<EntityLimitGroup> {
 
     private boolean updateDefaults(ConfigurationSection section) {
         boolean updated = false;
-        updated |= this.addDefault(section, "softtotal", -1);
-        updated |= this.addDefault(section, "hardtotal", -1);
-        updated |= this.addDefault(section, "pricePerExtraEntity", 0);
+        updated |= addDefault(section, "softtotal", -1);
+        updated |= addDefault(section, "hardtotal", -1);
+        updated |= addDefault(section, "pricePerExtraEntity", 0);
 
         List<String> entityNumbers = new ArrayList<>(section.getKeys(false));
         for (String entityNumber : entityNumbers) {
             if (!(entityNumber.equalsIgnoreCase("softtotal") || entityNumber.equalsIgnoreCase("hardtotal") || entityNumber.equalsIgnoreCase("pricePerExtraEntity"))) {
-                updated |= this.addDefault(section, entityNumber + ".entityType", EntityType.ARMOR_STAND.name());
-                updated |= this.addDefault(section, entityNumber + ".softLimit", 1);
-                updated |= this.addDefault(section, entityNumber + ".hardLimit", 1);
-                updated |= this.addDefault(section, entityNumber + ".pricePerExtraEntity", 1);
+                updated |= addDefault(section, entityNumber + ".entityType", EntityType.ARMOR_STAND.name());
+                updated |= addDefault(section, entityNumber + ".softLimit", 1);
+                updated |= addDefault(section, entityNumber + ".hardLimit", 1);
+                updated |= addDefault(section, entityNumber + ".pricePerExtraEntity", 1);
             }
         }
         return updated;

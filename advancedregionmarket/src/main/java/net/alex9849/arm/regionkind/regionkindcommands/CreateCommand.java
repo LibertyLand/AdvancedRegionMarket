@@ -1,4 +1,4 @@
-package net.alex9849.arm.regionkind.commands;
+package net.alex9849.arm.regionkind.regionkindcommands;
 
 import net.alex9849.arm.AdvancedRegionMarket;
 import net.alex9849.arm.Messages;
@@ -20,7 +20,7 @@ public class CreateCommand extends BasicArmCommand {
 
     public CreateCommand() {
         super(true, "create",
-                Arrays.asList("(?i)create [^;\n ]+"),
+                Arrays.asList("(?i)create [^;\n\\. ]+"),
                 Arrays.asList("create [REGIONKINDNAME]"),
                 Arrays.asList(Permission.REGIONKIND_CREATE));
     }

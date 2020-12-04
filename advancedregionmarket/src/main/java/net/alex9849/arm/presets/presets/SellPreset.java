@@ -1,5 +1,6 @@
 package net.alex9849.arm.presets.presets;
 
+import net.alex9849.arm.Messages;
 import net.alex9849.arm.regions.Region;
 import net.alex9849.arm.regions.SellRegion;
 import net.alex9849.arm.regions.price.Autoprice.AutoPrice;
@@ -14,7 +15,10 @@ import java.util.List;
 public class SellPreset extends Preset {
 
     @Override
-    public void getAdditionalInfo(CommandSender sender) {
+    public void sendPresetInfo(CommandSender sender) {
+        for(String msg : Messages.PRESET_INFO_SELLREGION) {
+            sender.sendMessage(this.replaceVariables(msg));
+        }
     }
 
     @Override
@@ -35,8 +39,8 @@ public class SellPreset extends Preset {
     @Override
     public void applyToRegion(Region region) {
         super.applyToRegion(region);
-        if(this.getPrice() != null)
-            region.setPrice(new Price(this.getPrice()));
+        if(this.getPrice() != null && region instanceof SellRegion)
+            ((SellRegion) region).setSellPrice(new Price(this.getPrice()));
     }
 
 }

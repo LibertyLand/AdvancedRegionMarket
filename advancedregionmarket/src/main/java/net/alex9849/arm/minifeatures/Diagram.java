@@ -53,8 +53,7 @@ public class Diagram {
         }
 
         String regtypesting = Messages.REGION_STATS_PATTERN;
-        sender.sendMessage(regtypesting.replace("%regionkind%", Messages.LIMIT_INFO_TOTAL)
-                .replace("%regionkinddisplay%", Messages.LIMIT_INFO_TOTAL));
+        sender.sendMessage(regtypesting.replace("%regionkind%", "Total"));
         sender.sendMessage(generateDiagramm(allSoldRegions, allRegions));
         sendStatsBySellType(sender, SellType.SELL);
         sendStatsBySellType(sender, SellType.CONTRACT);
@@ -73,7 +72,7 @@ public class Diagram {
                 }
             }
         }
-        sender.sendMessage(regionKind.getConvertedMessage(Messages.REGION_STATS_PATTERN));
+        sender.sendMessage(regionKind.replaceVariables(Messages.REGION_STATS_PATTERN));
         sender.sendMessage(generateDiagramm(soldregions, regions));
     }
 

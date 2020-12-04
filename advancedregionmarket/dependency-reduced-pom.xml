@@ -7,7 +7,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>advancedregionmarket</artifactId>
-  <version>3.0</version>
+  <version>3.2.8</version>
   <build>
     <resources>
       <resource>
@@ -16,14 +16,15 @@
         <includes>
           <include>plugin.yml</include>
           <include>config.yml</include>
-          <include>messages_en.yml</include>
           <include>messages_de.yml</include>
+          <include>messages_es.yml</include>
           <include>messages_fr.yml</include>
           <include>messages_ru.yml</include>
           <include>regions.yml</include>
           <include>presets.yml</include>
           <include>entitylimits.yml</include>
           <include>regionkinds.yml</include>
+          <include>regionkindgroups.yml</include>
           <include>flaggroups.yml</include>
         </includes>
       </resource>
@@ -55,6 +56,14 @@
               <pattern>org.bstats</pattern>
               <shadedPattern>net.alex9849.arm.bstats</shadedPattern>
             </relocation>
+            <relocation>
+              <pattern>net.alex9849.pluginstats.client</pattern>
+              <shadedPattern>net.alex9849.arm.analytics</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>org.ahocorasick</pattern>
+              <shadedPattern>net.alex9849.arm.ahocorasick</shadedPattern>
+            </relocation>
           </relocations>
         </configuration>
       </plugin>
@@ -64,7 +73,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.15.1-R0.1-SNAPSHOT</version>
+      <version>1.16.2-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -90,70 +99,54 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.bukkit</groupId>
-      <artifactId>bukkit</artifactId>
-      <version>1.15.1-R0.1-SNAPSHOT</version>
-      <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>commons-lang</artifactId>
-          <groupId>commons-lang</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>guava</artifactId>
-          <groupId>com.google.guava</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>gson</artifactId>
-          <groupId>com.google.code.gson</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>snakeyaml</artifactId>
-          <groupId>org.yaml</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>com.sk89q.worldedit</groupId>
       <artifactId>worldedit-bukkit</artifactId>
-      <version>6.1.1-SNAPSHOT</version>
+      <version>7.2.0-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
-        <exclusion>
-          <artifactId>dummypermscompat</artifactId>
-          <groupId>com.sk89q</groupId>
-        </exclusion>
         <exclusion>
           <artifactId>worldedit-core</artifactId>
           <groupId>com.sk89q.worldedit</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>bukkit-classloader-check</artifactId>
-          <groupId>org.sk89q.bukkit</groupId>
+          <artifactId>bukkit</artifactId>
+          <groupId>com.sk89q.worldedit.worldedit-libs</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>paperlib</artifactId>
+          <groupId>io.papermc</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>log4j-slf4j-impl</artifactId>
+          <groupId>org.apache.logging.log4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>fastutil</artifactId>
+          <groupId>it.unimi.dsi</groupId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>com.sk89q</groupId>
-      <artifactId>worldguard</artifactId>
-      <version>6.1</version>
+      <groupId>com.sk89q.worldguard</groupId>
+      <artifactId>worldguard-bukkit</artifactId>
+      <version>7.0.3</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
-          <artifactId>worldedit</artifactId>
-          <groupId>com.sk89q</groupId>
+          <artifactId>bukkit</artifactId>
+          <groupId>org.bukkit</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>bukkit-classloader-check</artifactId>
-          <groupId>com.sk89q.spigot</groupId>
+          <artifactId>worldguard-core</artifactId>
+          <groupId>com.sk89q.worldguard</groupId>
         </exclusion>
         <exclusion>
           <artifactId>commandbook</artifactId>
           <groupId>com.sk89q</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>jsr305</artifactId>
-          <groupId>com.google.code.findbugs</groupId>
+          <artifactId>paperlib</artifactId>
+          <groupId>io.papermc</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -162,12 +155,12 @@
       <artifactId>VaultAPI</artifactId>
       <version>1.7</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.boydti</groupId>
-      <artifactId>fawe-api</artifactId>
-      <version>latest</version>
-      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>bukkit</artifactId>
+          <groupId>org.bukkit</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 </project>

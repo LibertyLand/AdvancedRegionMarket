@@ -11,13 +11,23 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RegionKindManager extends YamlFileManager<RegionKind> {
+    private RegionKindGroupManager regionKindGroupManager = null;
 
     public RegionKindManager(File savepath) {
         super(savepath);
     }
 
     @Override
-    public List<RegionKind> loadSavedObjects(YamlConfiguration yamlConfiguration) {
+    public boolean remove(RegionKind regionKind) {
+        if(super.remove(regionKind) && regionKindGroupManager != null) {
+            regionKindGroupManager.notifyRegionKindDelete(regionKind);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected List<RegionKind> loadSavedObjects(YamlConfiguration yamlConfiguration) {
         List<RegionKind> regionKindList = new ArrayList<>();
         boolean fileupdated = false;
 
@@ -64,12 +74,12 @@ public class RegionKindManager extends YamlFileManager<RegionKind> {
     }
 
     @Override
-    public void saveObjectToYamlObject(RegionKind regionKind, YamlConfiguration yamlConfiguration) {
+    protected void saveObjectToYamlObject(RegionKind regionKind, YamlConfiguration yamlConfiguration) {
         yamlConfiguration.set("RegionKinds." + regionKind.getName(), regionKind.toConfigurationSection());
     }
 
     @Override
-    public void writeStaticSettings(YamlConfiguration yamlConfiguration) {
+    protected void writeStaticSettings(YamlConfiguration yamlConfiguration) {
         yamlConfiguration.set("DefaultRegionKind", RegionKind.DEFAULT.toConfigurationSection());
         RegionKind.DEFAULT.setSaved();
         yamlConfiguration.set("SubregionRegionKind", RegionKind.SUBREGION.toConfigurationSection());
@@ -84,21 +94,15 @@ public class RegionKindManager extends YamlFileManager<RegionKind> {
         List<String> returnme = new ArrayList<>();
 
         for (RegionKind regionkind : this) {
-            if (player == null || RegionKind.hasPermission(player, regionkind)) {
-                if ((returnPrefix + regionkind.getName()).toLowerCase().startsWith(arg)) {
-                    returnme.add(returnPrefix + regionkind.getName());
-                }
+            if ((returnPrefix + regionkind.getName()).toLowerCase().startsWith(arg)) {
+                returnme.add(returnPrefix + regionkind.getName());
             }
         }
         if ((returnPrefix + "default").startsWith(arg)) {
-            if (player == null || RegionKind.hasPermission(player, RegionKind.DEFAULT)) {
-                returnme.add(returnPrefix + "default");
-            }
+            returnme.add(returnPrefix + "default");
         }
         if ((returnPrefix + "subregion").startsWith(arg)) {
-            if (player == null || RegionKind.hasPermission(player, RegionKind.SUBREGION)) {
-                returnme.add(returnPrefix + "subregion");
-            }
+            returnme.add(returnPrefix + "subregion");
         }
 
         return returnme;
@@ -121,10 +125,7 @@ public class RegionKindManager extends YamlFileManager<RegionKind> {
         if (kind.equalsIgnoreCase("subregion")) {
             return true;
         }
-        if (kind.equalsIgnoreCase(RegionKind.SUBREGION.getDisplayName())) {
-            return true;
-        }
-        return false;
+        return kind.equalsIgnoreCase(RegionKind.SUBREGION.getDisplayName());
     }
 
     public RegionKind getRegionKind(String name) {
@@ -146,13 +147,15 @@ public class RegionKindManager extends YamlFileManager<RegionKind> {
 
     private boolean updateDefaults(ConfigurationSection section) {
         boolean fileupdated = false;
-        fileupdated |= this.addDefault(section, "item", "RED_BED");
-        fileupdated |= this.addDefault(section, "displayName", "Default Displayname");
-        fileupdated |= this.addDefault(section, "displayName", "Default Displayname");
-        fileupdated |= this.addDefault(section, "displayInLimits", true);
-        fileupdated |= this.addDefault(section, "displayInGUI", true);
-        fileupdated |= this.addDefault(section, "lore", new ArrayList<String>(Arrays.asList("Default lore")));
+        fileupdated |= addDefault(section, "item", "RED_BED");
+        fileupdated |= addDefault(section, "displayName", "Default Displayname");
+        fileupdated |= addDefault(section, "displayInLimits", true);
+        fileupdated |= addDefault(section, "displayInGUI", true);
+        fileupdated |= addDefault(section, "lore", new ArrayList<String>(Arrays.asList("Default lore")));
         return fileupdated;
     }
 
+    public void setRegionKindGroupManager(RegionKindGroupManager regionKindGroupManger) {
+        this.regionKindGroupManager = regionKindGroupManger;
+    }
 }

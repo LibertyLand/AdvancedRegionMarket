@@ -6,12 +6,12 @@ import net.alex9849.arm.flaggroups.FlagGroup;
 import net.alex9849.arm.regionkind.RegionKind;
 import net.alex9849.arm.regions.Region;
 import net.alex9849.arm.regions.price.Autoprice.AutoPrice;
-import net.alex9849.arm.regions.price.Price;
 import net.alex9849.arm.util.Saveable;
+import net.alex9849.arm.util.stringreplacer.StringCreator;
+import net.alex9849.arm.util.stringreplacer.StringReplacer;
 import net.alex9849.inter.WGRegion;
 import net.alex9849.signs.SignData;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -19,7 +19,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class Preset implements Saveable, Cloneable {
     private String name = "default";
@@ -37,7 +39,7 @@ public abstract class Preset implements Saveable, Cloneable {
     private EntityLimitGroup entityLimitGroup;
     private List<String> setupCommands = new ArrayList<>();
     private boolean needsSave = false;
-
+    private StringReplacer stringReplacer = new StringReplacer(getVariableReplacements(), 50);
 
     /*#########################
     ######### Getter ##########
@@ -169,9 +171,6 @@ public abstract class Preset implements Saveable, Cloneable {
     }
 
     public void setRegionKind(RegionKind regionKind) {
-        if (regionKind == null) {
-            regionKind = RegionKind.DEFAULT;
-        }
         this.regionKind = regionKind;
     }
 
@@ -207,7 +206,7 @@ public abstract class Preset implements Saveable, Cloneable {
     ##### Abstract methods #####
     ##########################*/
 
-    public abstract void getAdditionalInfo(CommandSender sender);
+    public abstract void sendPresetInfo(CommandSender sender);
 
     public abstract PresetType getPresetType();
 
@@ -229,49 +228,45 @@ public abstract class Preset implements Saveable, Cloneable {
     ##########################*/
 
     public Object clone() throws CloneNotSupportedException {
-        Object obj =  super.clone();
+        Object obj = super.clone();
         if(obj instanceof Preset) {
             Preset preset = (Preset) obj;
             preset.setupCommands = new ArrayList<>();
-            for (String cmd : this.getCommands()) {
-                preset.setupCommands.add(cmd);
-            }
+            preset.setupCommands.addAll(this.getCommands());
+            preset.stringReplacer = new StringReplacer(preset.getVariableReplacements(), 50);
         }
         return obj;
     }
 
-    public void executeSavedCommands(CommandSender sender, Region region) {
+    public HashMap<String, StringCreator> getVariableReplacements() {
+        HashMap<String, StringCreator> variableReplacements = new HashMap<>();
+        variableReplacements.put("%presetname%", this::getName);
+        variableReplacements.put("%presetinactivityreset%", () -> Messages.getStringValue(this.isInactivityReset(), Messages::convertYesNo, Messages.NOT_DEFINED));
+        variableReplacements.put("%presetishotel%", () -> Messages.getStringValue(this.isHotel(), Messages::convertYesNo, Messages.NOT_DEFINED));
+        variableReplacements.put("%presetautorestore%", () -> Messages.getStringValue(this.isAutoRestore(), Messages::convertYesNo, Messages.NOT_DEFINED));
+        variableReplacements.put("%presetisuserrestorable%", () -> Messages.getStringValue(this.isUserRestorable(), Messages::convertYesNo, Messages.NOT_DEFINED));
+        variableReplacements.put("%presetallowedsubregions%", () -> Messages.getStringValue(this.getAllowedSubregions(), Object::toString, Messages.NOT_DEFINED));
+        variableReplacements.put("%presetmaxmembers%", () -> Messages.getStringValue(this.getMaxMembers(), Object::toString, Messages.NOT_DEFINED));
+        variableReplacements.put("%presetpaybackpercentage%", () -> Messages.getStringValue(this.getPaybackPercentage(), Object::toString, Messages.NOT_DEFINED));
+        variableReplacements.put("%presetprice%", () -> Messages.getStringValue(this.getPrice(), Object::toString, Messages.NOT_DEFINED));
+        variableReplacements.put("%presetautoprice%", () -> Messages.getStringValue(this.getAutoPrice(), AutoPrice::getName, Messages.NOT_DEFINED));
+        variableReplacements.put("%presetregionkind%", () -> Messages.getStringValue(this.getRegionKind(), RegionKind::getName, Messages.NOT_DEFINED));
+        variableReplacements.put("%presetflaggroup%", () -> Messages.getStringValue(this.getFlagGroup(), FlagGroup::getName, Messages.NOT_DEFINED));
+        variableReplacements.put("%presetentitylimitgroup%", () -> Messages.getStringValue(this.getEntityLimitGroup(), EntityLimitGroup::getName, Messages.NOT_DEFINED));
+        variableReplacements.put("%presetsetupcommands%", () -> Messages.getStringList(this.setupCommands.stream()
+                .map(x -> (this.setupCommands.indexOf(x) + 1) + ". /" + x).collect(Collectors.toList()), x -> x, "\n"));
+        return variableReplacements;
+    }
+
+    public void executeSetupCommands(CommandSender sender, Region region) {
         for (String command : this.setupCommands) {
-            String cmd = region.getConvertedMessage(command);
+            String cmd = region.replaceVariables(command);
 
             if (sender instanceof Player) {
                 ((Player) sender).performCommand(cmd);
             } else {
                 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd);
             }
-        }
-    }
-
-    public void getPresetInfo(CommandSender sender) {
-        String notDefined = "not defined";
-
-        sender.sendMessage(ChatColor.GOLD + "=========[Preset INFO]=========");
-        sender.sendMessage(Messages.REGION_INFO_AUTOPRICE + Messages.getStringValue(this.getAutoPrice(), x -> x.getName(), notDefined));
-        sender.sendMessage(Messages.REGION_INFO_PRICE + Messages.getStringValue(this.getPrice(), x -> x.toString(), notDefined));
-        this.getAdditionalInfo(sender);
-        sender.sendMessage(Messages.REGION_INFO_TYPE + Messages.getStringValue(this.getRegionKind(), x -> x.getName(), notDefined));
-        sender.sendMessage(Messages.REGION_INFO_MAX_MEMBERS + Messages.getStringValue(this.getMaxMembers(), x -> x.toString(), notDefined));
-        sender.sendMessage(Messages.REGION_INFO_FLAGGROUP + Messages.getStringValue(this.getFlagGroup(), x -> x.getName(), notDefined));
-        sender.sendMessage(Messages.REGION_INFO_ENTITYLIMITGROUP + Messages.getStringValue(this.getEntityLimitGroup(), x -> x.getName(), notDefined));
-        sender.sendMessage(Messages.REGION_INFO_INACTIVITYRESET + Messages.getStringValue(this.isInactivityReset(), x -> Messages.convertYesNo(x), notDefined));
-        sender.sendMessage(Messages.REGION_INFO_HOTEL + Messages.getStringValue(this.isHotel(), x -> Messages.convertYesNo(x), notDefined));
-        sender.sendMessage(Messages.REGION_INFO_AUTORESTORE + Messages.getStringValue(this.isAutoRestore(), x -> Messages.convertYesNo(x), notDefined));
-        sender.sendMessage(Messages.REGION_INFO_IS_USER_RESTORABLE + Messages.getStringValue(this.isUserRestorable(), x -> Messages.convertYesNo(x), notDefined));
-        sender.sendMessage(Messages.REGION_INFO_ALLOWED_SUBREGIONS + Messages.getStringValue(this.getAllowedSubregions(), x -> x.toString(), notDefined));
-        sender.sendMessage(Messages.PRESET_SETUP_COMMANDS);
-        for (int i = 0; i < this.setupCommands.size(); i++) {
-            String message = (i + 1) + ". /" + this.setupCommands.get(i);
-            sender.sendMessage(ChatColor.GOLD + message);
         }
     }
 
@@ -283,17 +278,20 @@ public abstract class Preset implements Saveable, Cloneable {
      * @param world    The world of the WorldGuard region
      * @param sender   The sender that executes the saved commands
      * @param signs    The signs that should be linked to the region
+     * @param withSetupCommands If true setupcommands will be executed for the newly generated region
      * @return A Region with the given arguments
      */
-    public Region generateRegion(WGRegion wgRegion, World world, CommandSender sender, List<SignData> signs) {
+    public Region generateRegion(WGRegion wgRegion, World world, CommandSender sender, boolean withSetupCommands, List<SignData> signs) {
         Region region = generateBasicRegion(wgRegion, world, signs);
-        this.applyToRegion(region, sender);
+        this.applyToRegion(region, sender, withSetupCommands);
         return region;
     }
 
-    public void applyToRegion(Region region, CommandSender sender) {
+    public void applyToRegion(Region region, CommandSender sender, boolean withSetupCommands) {
         this.applyToRegion(region);
-        this.executeSavedCommands(sender, region);
+        if(withSetupCommands) {
+            this.executeSetupCommands(sender, region);
+        }
     }
 
     /**
@@ -302,7 +300,7 @@ public abstract class Preset implements Saveable, Cloneable {
      */
     public void applyToRegion(Region region) {
         if(this.autoPrice != null)
-            region.setPrice(new Price(this.getAutoPrice()));
+            region.setAutoPrice(this.getAutoPrice());
         if(this.inactivityReset != null)
             region.setInactivityReset(this.isInactivityReset());
         if(this.isHotel != null)
@@ -347,6 +345,10 @@ public abstract class Preset implements Saveable, Cloneable {
         }
         section.set("setupcommands", this.getCommands());
         return section;
+    }
+
+    public String replaceVariables(String message) {
+        return this.stringReplacer.replace(message).toString();
     }
 
 }

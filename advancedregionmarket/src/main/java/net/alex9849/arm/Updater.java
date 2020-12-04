@@ -153,6 +153,18 @@ public class Updater {
                 AdvancedRegionMarket.getInstance().getLogger().log(Level.WARNING, "Updating AdvancedRegionMarket config to 3.0...");
                 updateTo3p0(pluginConfig);
             }
+            if (new Version(3, 0, 1).biggerThan(lastVersion)) {
+                AdvancedRegionMarket.getInstance().getLogger().log(Level.WARNING, "Updating AdvancedRegionMarket config to 3.0.1...");
+                updateTo3p0p1(pluginConfig);
+            }
+            if(new Version(3, 1).biggerThan(lastVersion)) {
+                AdvancedRegionMarket.getInstance().getLogger().log(Level.WARNING, "Updating AdvancedRegionMarket config to 3.1...");
+                updateTo3p1(pluginConfig);
+            }
+            if(new Version(3, 2, 2).biggerThan(lastVersion)) {
+                AdvancedRegionMarket.getInstance().getLogger().log(Level.WARNING, "Updating AdvancedRegionMarket config to 3.2.2...");
+                updateTo3p2p2(pluginConfig);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1031,12 +1043,38 @@ public class Updater {
     private static void updateTo3p0(FileConfiguration pluginConfig) {
         pluginConfig.set("Subregions.SubregionMaxMembers", -1);
         pluginConfig.set("Subregions.SubregionPaybackPercentage", 0);
+        pluginConfig.set("Other.Sendstats", null);
         pluginConfig.set("Version", 3.0);
         AdvancedRegionMarket.getInstance().saveConfig();
     }
 
-    private static class UpdateHelpMethods {
+    private static void updateTo3p0p1(FileConfiguration pluginConfig) {
+        UpdateHelpMethods.addFlagGroupVariable("overwriteParent", true, true, false);
+        pluginConfig.set("Version", "3.0.1");
+        AdvancedRegionMarket.getInstance().saveConfig();
+    }
 
+    private static void updateTo3p1(FileConfiguration pluginConfig) {
+        ConfigurationSection cs = pluginConfig.getConfigurationSection("Limits");
+        for(String group : cs.getKeys(false)) {
+            ConfigurationSection rKs = cs.getConfigurationSection(group);
+            cs.set(group, null);
+            rKs.set("total", null);
+            cs.set(group + ".regionkinds", rKs);
+            cs.set(group + ".total", rKs.get("total"));
+            cs.createSection(group + ".regionkindgroups");
+        }
+        pluginConfig.set("Version", "3.1");
+        AdvancedRegionMarket.getInstance().saveConfig();
+    }
+
+    private static void updateTo3p2p2(FileConfiguration pluginConfig) {
+        pluginConfig.set("GUI.DisplayPlayerSkins", false);
+        pluginConfig.set("Version", "3.2.2");
+        AdvancedRegionMarket.getInstance().saveConfig();
+    }
+
+    private static class UpdateHelpMethods {
 
         private static void replaceVariableInMessagesYML(String variable, String replacement) throws IOException {
             File messagesConfDic = new File(AdvancedRegionMarket.getInstance().getDataFolder() + "/messages.yml");
@@ -1111,6 +1149,25 @@ public class Updater {
             flagUpdater.updateFlagGroup(flaggroupsConf.getConfigurationSection("DefaultFlagGroup"));
             flagUpdater.updateFlagGroup(flaggroupsConf.getConfigurationSection("SubregionFlagGroup"));
             flaggroupsConf.save(flaggroupsConfDic);
+        }
+
+        private static void addFlagGroupVariable(String key, Object value, Object defaultFgVar, Object subregFgVar) {
+            File flaggroupsConfDic = new File(AdvancedRegionMarket.getInstance().getDataFolder() + "/flaggroups.yml");
+            YamlConfiguration flaggroupsConf = YamlConfiguration.loadConfiguration(flaggroupsConfDic);
+            ConfigurationSection groupsSection = flaggroupsConf.getConfigurationSection("FlagGroups");
+            if(groupsSection != null) {
+                Set<String> keys = groupsSection.getKeys(false);
+                for(String fgName : keys) {
+                    groupsSection.set(fgName + "." + key, value);
+                }
+            }
+            flaggroupsConf.set("DefaultFlagGroup." + key, defaultFgVar);
+            flaggroupsConf.set("SubregionFlagGroup." + key, subregFgVar);
+            try {
+                flaggroupsConf.save(AdvancedRegionMarket.getInstance().getDataFolder() + "/flaggroups.yml");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
     }

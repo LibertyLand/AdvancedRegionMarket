@@ -9,7 +9,6 @@ jdk:
   - openjdk8
 
 script:
-  - chmod +x .travis/mvn-deploy.sh
   - mvn clean
   - mvn install
 after_success:

@@ -16,8 +16,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.util.*;
 
 public class FlagGroup implements Saveable {
-    public static FlagGroup DEFAULT = new FlagGroup("Default", 10, new ArrayList<>(), new ArrayList<>());
-    public static FlagGroup SUBREGION = new FlagGroup("Subregion", 10, new ArrayList<>(), new ArrayList<>());
+    public static FlagGroup DEFAULT = new FlagGroup("Default", 10, true, new ArrayList<>(), new ArrayList<>());
+    public static FlagGroup SUBREGION = new FlagGroup("Subregion", 10, false, new ArrayList<>(), new ArrayList<>());
     private boolean needsSave;
     private StringReplacer stringReplacer;
     private static boolean featureEnabled = false;
@@ -26,6 +26,7 @@ public class FlagGroup implements Saveable {
     private List<FlagSettings> flagSettingsAvailable;
 
     private int priority;
+    private boolean overwriteParent;
     private String name;
 
 
@@ -39,10 +40,11 @@ public class FlagGroup implements Saveable {
     }
 
 
-    public FlagGroup(String name, int priority, List<FlagSettings> flagsSold, List<FlagSettings> flagsAvailable) {
+    public FlagGroup(String name, int priority, boolean overwriteParent, List<FlagSettings> flagsSold, List<FlagSettings> flagsAvailable) {
         this.needsSave = false;
         this.name = name;
         this.priority = priority;
+        this.overwriteParent = overwriteParent;
         this.flagSettingsSold = flagsSold;
         this.flagSettingsAvailable = flagsAvailable;
     }
@@ -61,7 +63,8 @@ public class FlagGroup implements Saveable {
             flagListAvailable = parseFlags(availableSection);
         }
 
-        return new FlagGroup(name, configurationSection.getInt("priority"), flagListSold, flagListAvailable);
+        return new FlagGroup(name, configurationSection.getInt("priority"),
+                configurationSection.getBoolean("overwriteParent"), flagListSold, flagListAvailable);
     }
 
     private static List<FlagSettings> parseFlags(ConfigurationSection yamlConfiguration) {
@@ -93,9 +96,7 @@ public class FlagGroup implements Saveable {
             }
 
             if (guiDescriptionList != null) {
-                for (String msg : guiDescriptionList) {
-                    guidescription.add(msg);
-                }
+                guidescription.addAll(guiDescriptionList);
             }
 
 
@@ -122,7 +123,7 @@ public class FlagGroup implements Saveable {
      * @throws FeatureDisabledException if the FlagGroup-feature is disabled
      */
     public void applyToRegion(Region region, ResetMode resetMode, boolean forceApply) throws FeatureDisabledException {
-        if (!(this.isFeatureEnabled() || forceApply)) {
+        if (!(isFeatureEnabled() || forceApply)) {
             throw new FeatureDisabledException();
         }
         if (region.isSold()) {
@@ -147,7 +148,7 @@ public class FlagGroup implements Saveable {
 
             flagSettings.applyTo(region);
         }
-        if (!region.isSubregion()) {
+        if (!region.isSubregion() && this.overwriteParent) {
             region.getRegion().setPriority(this.priority);
         }
     }
@@ -156,6 +157,7 @@ public class FlagGroup implements Saveable {
     public ConfigurationSection toConfigurationSection() {
         YamlConfiguration configurationSection = new YamlConfiguration();
         configurationSection.set("priority", this.priority);
+        configurationSection.set("overwriteParent", this.overwriteParent);
         configurationSection.set("available", this.getFlagSettingsAsConfigurationSection(this.flagSettingsAvailable));
         configurationSection.set("sold", this.getFlagSettingsAsConfigurationSection(this.flagSettingsSold));
         return configurationSection;
@@ -210,7 +212,7 @@ public class FlagGroup implements Saveable {
         return this.name;
     }
 
-    public String getConvertedMessage(String message) {
+    public String replaceVariables(String message) {
         return this.stringReplacer.replace(message).toString();
     }
 
